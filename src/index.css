@@ -41,7 +41,7 @@ li {
   align-items: center;
 }
 
-.shopping-list {
+.list {
   background: none;
   font-size: 18px;
   border: none;
@@ -49,7 +49,7 @@ li {
   cursor: pointer;
 }
 
-.calendar {
+.main {
   margin-top: 0;
   display: flex;
 }
@@ -64,14 +64,14 @@ li {
   flex: 1;
 }
 
-.meal-types {
+.categories {
   display: flex;
   justify-content: space-around;
   margin: 0;
   margin-left: 152px;
 }
 
-.meal {
+.post {
   font-size: 23px;
   display: flex;
   flex-direction: column;
@@ -80,7 +80,7 @@ li {
   justify-content: center;
 }
 
-.meal svg {
+.post svg {
   margin: 0 auto;
   display: block;
   margin-top: 15px;
@@ -117,7 +117,7 @@ li {
   text-align: center;
 }
 
-.food-input {
+.item-input {
   width: 90%;
   padding: 10px;
   font-size: 1em;
@@ -125,7 +125,7 @@ li {
   outline: none;
 }
 
-.search {
+.posts {
   display: flex;
 }
 
@@ -138,13 +138,13 @@ li {
   padding: 50px 0;
 }
 
-.food-list {
+.post-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-.food-list li {
+.post-list li {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -153,38 +153,38 @@ li {
   cursor: pointer;
 }
 
-.food-list img {
+.post-list img {
   width: 100px;
   height: 100px;
   margin: 0 auto;
   border-radius: 3px;
 }
 
-.ingredients-list {
+.comment-list {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.ingredients-list li {
+.comment-list li {
   font-size: 24px;
   padding: 5px;
 }
 
-.food-item {
+.post-item {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.food-item img {
+.post-item img {
   width: 100px;
   height: 100px;
   border-radius: 3px;
 }
 
-.food-item button {
+.post-item button {
   background: none;
   border: none;
   text-decoration: underline;
