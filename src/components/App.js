@@ -10,7 +10,7 @@ import * as dispatchers from '../actions'
 class App extends Component {
   state = {
     categories: [],
-    currentCategory: null
+    currentCategory: this.context
   }
 
   componentDidMount(){
@@ -19,15 +19,12 @@ class App extends Component {
     api.getCategories().then((categories) => {
       this.setState({categories})
     })
-    //If there is a current category selected, load posts under it
-    category? api.getPosts(category).then((posts) => {
-      console.log("getting category posts")
-      this.props.getCategoryPosts({posts, category})
-    })
-    //else load all posts
-    : api.getAllPosts().then((posts) => {
+    console.log("if there is a category don't get posts", category)
+    //TODO: Get url value to decide route and initialize state accordingly
+    if(!category) api.getAllPosts().then((posts) => {
       this.props.getAllPosts({posts, category})
-    })//TODO add then() between categories and posts
+    })
+
   }
 
   // componentWillReceiveProps(){
@@ -60,7 +57,9 @@ class App extends Component {
                 {categories? categories.map((category) => 
                 <div key={category.name} className="list">                
                   <Link to={`/${category.path}`}
-                  onClick={() => this.props.getCategoryPosts({posts, category})} 
+                  onClick={() => 
+                    this.props.getCategoryPosts({posts, category})
+                  } 
                   key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
                 : <h2>No categories to display</h2>}
@@ -68,7 +67,7 @@ class App extends Component {
                   <span className='header'> All Posts</span>
                     {posts && posts.map((post) => 
                       <li key={post.id}>
-                          <Post key={post.id} post={post}>
+                          <Post post={post}>
                           </Post>
                       </li>)
                     } 
@@ -76,9 +75,11 @@ class App extends Component {
               </div>              
               }
             />
-            {category &&
-            <Route path={`/${category.path}`} className="container"
-                render={() => <Category ></Category>}
+            {
+            <Route path="/:category" className="container"
+                render={({match}) => 
+                  <Category currentCategory={{name: match.params.category, path:match.params.category}}></Category>
+                }
               />}
           </div>
         </div>

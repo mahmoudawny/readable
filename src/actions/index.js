@@ -71,7 +71,7 @@ export function rateComment({comment, option}){
 
 
 
-export function getPosts({posts, category}) {
+export function getPosts({posts}) {
   return {
     type: GET_POSTS,
     posts,

@@ -7,21 +7,28 @@ import * as dispatchers from '../actions'
 import {Link} from 'react-router-dom'
 
 class Category extends Component { 
-// TODO: Back button stopped working, Need to run this code somewhere
-    componentWillUnmount(){
-        console.log("will unmount")
-        const {posts, category} = this.props
-        this.props.getAllPosts({posts, category})       
+// TODO: Back button stopped working
+// TODO: Loading category page as initial page is overwritten by App didmount
+
+
+    componentDidMount(){
+        const {currentCategory} = this.props
+
+        api.getPosts(currentCategory.name).then((posts) => {
+        this.props.getCategoryPosts({posts, category: currentCategory})
+        })
     }
 
     render(){
-        const {category, posts} = this.props
+        const {category, posts, currentCategory} = this.props
         return(
             <div className='category'>
                 <Link className="close-create-contact"
-                    to='/'>Back
+                    to='/' onClick={() => api.getAllPosts().then((posts) => {
+                    this.props.getAllPosts({posts})
+                    }) }>Back
                 </Link>
-                <h2 className='subheader'>{capitalize(category.name)}</h2>
+                <h2 className='subheader'>{capitalize(currentCategory.name)}</h2>
                 <ul className='post-list'>
                     {posts && posts.map((post) => 
                     <li key={post.id}>
@@ -36,8 +43,6 @@ class Category extends Component {
 }
 
 function mapStateToProps({posts, comments, category}){
-    // console.log("cat posts: ")
-    // console.log(posts)
   return {posts, comments, category}
 }
 

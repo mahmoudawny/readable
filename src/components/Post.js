@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 
 class Post extends Component{
+    //TODO: On click open post details with comments
     render(){
         const {post, category} = this.props
         return(
@@ -17,6 +18,7 @@ class Post extends Component{
         )
     }
 }
+
 function mapStateToProps({posts, comments, category}){
   return {
     posts, 
