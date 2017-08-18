@@ -18,12 +18,11 @@ export const getCategories = () =>
 export const getPosts = (category) =>
   fetch(`${api}/${category}/posts`, { headers })
     .then(res => res.json())
-    .then(data => data.posts)
-
+ 
+//TODO: check which methods to remove data from?
 export const getAllPosts = () =>
   fetch(`${api}/posts`, { headers })
     .then(res => res.json())
-    .then(data => data.posts)
 
 export const getPost = (post) =>
   fetch(`${api}/posts/${post.id}`, { headers })
