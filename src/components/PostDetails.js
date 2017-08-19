@@ -1,4 +1,4 @@
-/*Category component displays page of posts which belong to the selected category*/
+/*PostDetails component displays a single post's details and comments, and allows commenting and rating*/
 import React, { Component } from 'react'
 import {capitalize} from '../utils/Helpers'
 import Post from './Post'
@@ -7,24 +7,22 @@ import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import {Link} from 'react-router-dom'
 
-class Category extends Component { 
+class PostDetails extends Component { 
 
     componentDidMount(){
-        const {currentCategory} = this.props
-        console.log(this.props.location)
-        api.getPosts(currentCategory.name).then((posts) => {
-        this.props.getCategoryPosts({posts, category: currentCategory})
+        api.getPosts().then((posts) => {
+        this.props.getAllPosts({posts})
         })
     }
 
     render(){
-        const {posts, currentCategory} = this.props
+        const {posts} = this.props
         return(
             <div className='category'>
                 <Link className="close-create-contact"
                     to='/' >Back
                 </Link>
-                <h2 className='subheader'>{capitalize(currentCategory.name)}</h2>
+                <h2 className='subheader'>All Posts sorted by</h2>
                 <ul className='post-list'>
                     {posts && posts.map((post) => 
                     <li key={post.id}>
@@ -53,8 +51,8 @@ function mapDispatchToProps(dispatch){
     editComment: (data) => dispatch(dispatchers.editComment(data)),
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
     getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
-    getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
+    getAllPosts: (data) => dispatch(dispatchers.getPosts(data))
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Category)
+export default connect(mapStateToProps,mapDispatchToProps)(PostDetails)

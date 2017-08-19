@@ -1,14 +1,15 @@
+/*Root component sets the App component with Redux store and Router history */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Provider } from 'react-redux'
-import { Router, Route, browserHistory } from 'react-router'
+import {  Route, BrowserRouter } from 'react-router-dom'
 import App from './App'
 
 const Root = ({ store }) => (
   <Provider store={store}>
-    <Router history={browserHistory}>
-      <Route path="/(:filter)" component={App} />
-    </Router>
+    <BrowserRouter>
+      <Route component={App} />
+    </BrowserRouter>
   </Provider>
 )
 

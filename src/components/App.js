@@ -1,3 +1,4 @@
+/*App component handles main application routes*/
 import React, { Component } from 'react';
 import {Route, Link} from 'react-router-dom'
 import {capitalize} from '../utils/Helpers'
@@ -7,43 +8,45 @@ import * as api from '../utils/ReadableAPI'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 
+//TODO: Add global add post button 
+
 class App extends Component {
   state = {
-    categories: [],
-    currentCategory: this.context
+    categories: []
   }
 
-  componentDidMount(){
-    const {category} = this.props
-    //Load categories
+  componentWillMount(){
+    const {category, location} = this.props
+    //Get all categories on loading App
     api.getCategories().then((categories) => {
       this.setState({categories})
     })
-    console.log("if there is a category don't get posts", category)
-    //TODO: Get url value to decide route and initialize state accordingly
-    if(!category) api.getAllPosts().then((posts) => {
+
+    if(location.pathname === '/') api.getAllPosts().then((posts) => {
       this.props.getAllPosts({posts, category})
     })
 
   }
 
-  // componentWillReceiveProps(){
-  //   const {category} = this.props
-  //   //Load categories
+  componentWillReceiveProps(nextProps){ 
+    const {category, location} = this.props
+    if(nextProps.location.pathname !== location.pathname){
+      if(nextProps.location.pathname === '/') 
+        api.getAllPosts().then((posts) => {
+        this.props.getAllPosts({posts, category})
+      })
+    }
+  }
 
-  //   //If there is a current category selected, load posts under it
-  //   category? api.getPosts(category).then((posts) => {
-  //     this.props.getCategoryPosts({posts, category})
-  //   })
-  //   //else load all posts
-  //   : api.getAllPosts().then((posts) => {
-  //     this.props.getAllPosts({posts, category})
-  //   })
-  // }
-
+/*Main App routes:
+- Global menu component (displays categories as menu items)
+- Home route '/' displays all posts
+- Category route displays selected category page
+- Add route displays add post page
+*/
   render() {
-    const {posts, category} = this.props
-    const {categories, currentCategory} = this.state
+    const {posts} = this.props
+    const {categories} = this.state
     return (
       <div className="App">
         <div className="container">
@@ -57,9 +60,6 @@ class App extends Component {
                 {categories? categories.map((category) => 
                 <div key={category.name} className="list">                
                   <Link to={`/${category.path}`}
-                  onClick={() => 
-                    this.props.getCategoryPosts({posts, category})
-                  } 
                   key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
                 : <h2>No categories to display</h2>}
@@ -77,8 +77,8 @@ class App extends Component {
             />
             {
             <Route path="/:category" className="container"
-                render={({match}) => 
-                  <Category currentCategory={{name: match.params.category, path:match.params.category}}></Category>
+                render={(props) => 
+                  <Category location={props.location} currentCategory={{name: props.match.params.category, path: props.match.params.category}}></Category>
                 }
               />}
           </div>

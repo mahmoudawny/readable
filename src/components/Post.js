@@ -1,3 +1,4 @@
+/*Post component displays a post's fields to be displayed in a list of posts*/
 import React, { Component } from 'react';
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'

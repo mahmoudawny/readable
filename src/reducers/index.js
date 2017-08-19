@@ -18,9 +18,8 @@ function comments(state = null, action){
     const {comment} = action
     switch(action.type){
         case COMMENT:
-            return {
-                     state: state.comments.concat(comment)
-                    }
+            return comments.concat(comment)
+                    
         case DELETE_COMMENT:
             return {
                      ...state,

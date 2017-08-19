@@ -81,11 +81,14 @@ export function getPosts({posts}) {
 
 
 
-export function getCategoryPosts({posts, category}) {
+export function getCategoryPosts({posts, category, history}) {
   return {
     type: CATEGORY_POSTS,
     posts,
-    category
+    category,
+    history
   }
 }
+
+
 
