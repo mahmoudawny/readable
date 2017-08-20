@@ -6,23 +6,27 @@ import * as api from '../utils/ReadableAPI'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import {Link} from 'react-router-dom'
-
+import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
+//TODO stopped loading category posts on refresh 
 class Category extends Component { 
 
     componentDidMount(){
+        //load current category's posts
         const {currentCategory} = this.props
-        console.log(this.props.location)
-        api.getPosts(currentCategory.name).then((posts) => {
-        this.props.getCategoryPosts({posts, category: currentCategory})
+        if(currentCategory)
+            api.getPosts(currentCategory.name).then((posts) => {
+            this.props.getCategoryPosts({posts, category: currentCategory})
         })
     }
 
     render(){
         const {posts, currentCategory} = this.props
         return(
-            <div className='category'>
-                <Link className="close-create-contact"
-                    to='/' >Back
+            currentCategory &&
+            <div className='category'>                
+                <Link className="close-create-post"
+                    to='/' ><button className='icon-btn'> 
+                        <FaArrowCircleOLeft size='40'/></button>
                 </Link>
                 <h2 className='subheader'>{capitalize(currentCategory.name)}</h2>
                 <ul className='post-list'>

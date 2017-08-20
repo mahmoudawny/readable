@@ -5,17 +5,23 @@ import * as dispatchers from '../actions'
 
 class Post extends Component{
     //TODO: On click open post details with comments
+    //TODO: better UI design
     render(){
         const {post, category} = this.props
+        let timestamp = new Date(post.timestamp);
         return(
-            <div className='container'>
+          <div>
+            <div className='post-details'>
                 {!category && <p>{post.category}</p>}
-                <p>{post.title}</p>
-                <p>{post.body}</p>
-                <p>{post.author}</p>
-                <p>{post.timestamp}</p>
-                <p>{post.voteScore}</p>
+                <p>Title: {post.title}</p>
+                <p>Body: {post.body}</p>
+                <p>Author: {post.author}</p>
+                <p>Date: {timestamp.toLocaleDateString()}</p>
+                <p>Time: {timestamp.toLocaleTimeString()}</p>
+                <p>Score: {post.voteScore}</p>
             </div>
+            <button className='post-remove' >Remove me</button>
+          </div>
         )
     }
 }

@@ -1,3 +1,4 @@
+/* API for communcating with the Readable project server*/
 const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
 
 let token = localStorage.token

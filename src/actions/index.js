@@ -9,7 +9,7 @@ export const RATE_COMMENT = 'RATE_COMMENT'
 export const GET_POSTS = 'GET_POSTS'
 export const CATEGORY_POSTS = 'CATEGORY_POSTS'
 export const POST_PAGE = 'POST_PAGE'
-
+export const CATEGORIES = 'CATEGORIES'
 
 export function deletePost({post}){
     return{
@@ -91,4 +91,9 @@ export function getCategoryPosts({posts, category, history}) {
 }
 
 
-
+export function getCategories({categories}) {
+    return {
+        type: CATEGORIES,
+        categories
+    }
+}

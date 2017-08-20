@@ -1,7 +1,15 @@
 import {combineReducers} from 'redux'
-import {POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
+import {CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
 
-
+function categories(state = null, action){
+    const {categories} = action
+    switch(action.type){
+        case CATEGORIES:
+            return categories
+        default:
+            return state
+    }
+}
 function category(state = null, action){
     const {category} = action
     switch(action.type){
@@ -55,9 +63,8 @@ function posts(state = null, action){
             return posts.filter((post) => post.category === category.name)
            
         case POST:
-            return {
-                     state: state.posts.concat(post)
-                    }
+            return posts.concat(post)
+                    
         case DELETE_POST:
             return {
                      ...state,
@@ -80,5 +87,5 @@ function posts(state = null, action){
     }
 }
 
-export default combineReducers({posts, comments, category})
+export default combineReducers({posts, comments, category, categories})
 

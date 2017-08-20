@@ -4,38 +4,52 @@ import {Route, Link} from 'react-router-dom'
 import {capitalize} from '../utils/Helpers'
 import Category from './Category'
 import Post from './Post'
+import CreatePost from './CreatePost'
 import * as api from '../utils/ReadableAPI'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
+import FaPlusSquare from 'react-icons/lib/fa/plus-square'
 
-//TODO: Add global add post button 
+//TODO: Make add post button disappear in Create Post
+//TODO: Design CSS
 
 class App extends Component {
-  state = {
-    categories: []
-  }
 
-  componentWillMount(){
+  componentDidMount(){
     const {category, location} = this.props
     //Get all categories on loading App
     api.getCategories().then((categories) => {
-      this.setState({categories})
+      this.props.getCategories({categories})
     })
-
-    if(location.pathname === '/') api.getAllPosts().then((posts) => {
-      this.props.getAllPosts({posts, category})
+    //If homepage load all posts
+    if(location.pathname === '/')
+      api.getAllPosts().then((posts) => {
+        this.props.getAllPosts({posts, category})
     })
 
   }
 
   componentWillReceiveProps(nextProps){ 
+    //If url changes check props to reload all posts when returning 
+    //to homepage 
     const {category, location} = this.props
+    let checkCategory = this.isCategory(nextProps.location.pathname.substr(1))
     if(nextProps.location.pathname !== location.pathname){
       if(nextProps.location.pathname === '/') 
         api.getAllPosts().then((posts) => {
-        this.props.getAllPosts({posts, category})
+          this.props.getAllPosts({posts, category})
       })
     }
+  }
+  //isCategory method to check if a string value exists in currently
+  // loaded categories
+  isCategory(category){
+    if(this.props.categories) {
+      for(let i=0; i< this.props.categories.length; i++){
+        if(category === this.props.categories[i].name) return true
+      }
+    }
+    return false
   }
 
 /*Main App routes:
@@ -45,13 +59,16 @@ class App extends Component {
 - Add route displays add post page
 */
   render() {
-    const {posts} = this.props
-    const {categories} = this.state
+    const {posts, categories, location} = this.props 
     return (
       <div className="App">
         <div className="container">
           <div className="subheader">
             <h2>Welcome to the Readable posts project! </h2>
+            <Link 
+                to = "/add_post"
+                className = 'icon-btn' 
+                ><FaPlusSquare size='40'/></Link>
           </div>
           <div>
             <Route exact path='/' className="main"
@@ -74,13 +91,19 @@ class App extends Component {
                 </ul>  
               </div>              
               }
-            />
-            {
+            />{this.isCategory(location.pathname.substr(1)) &&
             <Route path="/:category" className="container"
                 render={(props) => 
-                  <Category location={props.location} currentCategory={{name: props.match.params.category, path: props.match.params.category}}></Category>
+                  <Category  currentCategory={this.isCategory(props.match.params.category)?
+                  {name: props.match.params.category, path: props.match.params.category}
+                  :null}></Category>
                 }
-              />}
+            />}
+            <Route path="/add_post" className="container"
+              render={() => 
+                <CreatePost  ></CreatePost>
+              }
+            />
           </div>
         </div>
       </div>
@@ -89,11 +112,12 @@ class App extends Component {
 }
 
 
-function mapStateToProps({posts, comments, category}){
+function mapStateToProps({posts, comments, category, categories}){
   return {
     posts, 
     comments,
-    category
+    category,
+    categories
   }
 }
 
@@ -109,6 +133,7 @@ function mapDispatchToProps(dispatch){
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
     getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
     getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
+    getCategories: (data) => dispatch(dispatchers.getCategories(data))
   }
 }
 
