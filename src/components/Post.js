@@ -8,7 +8,8 @@ class Post extends Component{
     //TODO: better UI design
     render(){
         const {post, category} = this.props
-        let timestamp = new Date(post.timestamp);
+        console.log(post.timestamp)
+        let timestamp = new Date(Number(post.timestamp));
         return(
           <div>
             <div className='post-details'>

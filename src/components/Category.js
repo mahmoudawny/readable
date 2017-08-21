@@ -7,7 +7,9 @@ import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import {Link} from 'react-router-dom'
 import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
-//TODO stopped loading category posts on refresh 
+
+//TODO: Sorting 
+
 class Category extends Component { 
 
     componentDidMount(){

@@ -12,7 +12,7 @@ import FaPlusSquare from 'react-icons/lib/fa/plus-square'
 
 //TODO: Make add post button disappear in Create Post
 //TODO: Design CSS
-
+//TODO: Sorting 
 class App extends Component {
 
   componentDidMount(){
@@ -33,7 +33,6 @@ class App extends Component {
     //If url changes check props to reload all posts when returning 
     //to homepage 
     const {category, location} = this.props
-    let checkCategory = this.isCategory(nextProps.location.pathname.substr(1))
     if(nextProps.location.pathname !== location.pathname){
       if(nextProps.location.pathname === '/') 
         api.getAllPosts().then((posts) => {

@@ -6,14 +6,17 @@ import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import * as api from '../utils/ReadableAPI.js'
 import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
-//TODO hidden fields not serialized
+import {capitalize} from '../utils/Helpers'
+
+//TODO: load posts to prevent reducer concat error, check loading from App 
+//TODO: check if thunk helps in waiting for posts and categories to load in props
 class CreatePost extends Component{
     newSubmit=(e)=>{
         e.preventDefault()
+        const {posts} = this.props
         const values = serializeForm(e.target,{hash:true})
-        api.post(values).then((res) => {
-            console.log(res)
-            this.props.addPost(values)
+        api.post(values).then((post) => {
+            this.props.addPost({posts, post})
         })
     }
 
@@ -25,11 +28,17 @@ class CreatePost extends Component{
             <button className='icon-btn'> <FaArrowCircleOLeft size='40'/></button></Link>
             <form onSubmit={this.newSubmit} className='create-contact-form'>
                 <div className='create-post-details'>
-                    <hidden name='id' value={Math.random().toString(36).substr(-8)}/>
-                    <hidden name='timestamp' value={Date.now()}/>
-                    <input name='title' placeholder='Title' type='text'/>
-                    <input name='body' placeholder='Body' type='text'/>
-                    <input name='author' placeholder='Author' type='text'/>
+                    {this.props.category? <input type='hidden' name='category' value={this.props.category.name}/>
+                    :<select required name='category'>
+                    {this.props.categories && this.props.categories.map((category) => 
+                        <option value={category.name} key={category.name}>{capitalize(category.name)}</option>
+                        )}
+                    </select>}
+                    <input type='hidden' name='id' value={Math.random().toString(36).substr(-8)}/>
+                    <input type='hidden' name='timestamp' value={Number(Date.now())}/>
+                    <input required name='title' placeholder='Title' type='text'/>
+                    <input required name='body' placeholder='Body' type='text'/>
+                    <input required name='author' placeholder='Author' type='text'/>
                     <button className='icon-btn' title='Add Post'>
                         <FaArrowCircleORight size='40'/>
                     </button>
@@ -40,8 +49,8 @@ class CreatePost extends Component{
     }
 }
 
-function mapStateToProps({posts}){
-  return {posts}
+function mapStateToProps({posts, category, categories}){
+  return {posts, category, categories}
 }
 
 function mapDispatchToProps(dispatch){
