@@ -10,6 +10,10 @@ export const GET_POSTS = 'GET_POSTS'
 export const CATEGORY_POSTS = 'CATEGORY_POSTS'
 export const POST_PAGE = 'POST_PAGE'
 export const CATEGORIES = 'CATEGORIES'
+export const SUCCESS = 'SUCCESS'
+export const WARNING = 'WARNING'
+export const DANGER = 'DANGER'
+export const CLEAR = 'CLEAR'
 
 export function deletePost({post}){
     return{
@@ -95,5 +99,31 @@ export function getCategories({categories}) {
     return {
         type: CATEGORIES,
         categories
+    }
+}
+
+export function successMessage({message}) {
+    return {
+        type: SUCCESS,
+        message
+    }
+}
+export function warningMessage({message}) {
+    return {
+        type: WARNING,
+        message
+    }
+}
+export function dangerMessage({message}) {
+    return {
+        type: DANGER,
+        message
+    }
+}
+
+export function clearMessage() {
+    return {
+        type: CLEAR,
+        message: null
     }
 }

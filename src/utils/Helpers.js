@@ -3,3 +3,9 @@ export function capitalize (str = '') {
     ? ''
     : str[0].toUpperCase() + str.slice(1)
 }
+
+export function delay(t) {
+   return new Promise(function(resolve) { 
+       setTimeout(resolve, t)
+   });
+}

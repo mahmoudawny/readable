@@ -9,10 +9,14 @@ import * as api from '../utils/ReadableAPI'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import FaPlusSquare from 'react-icons/lib/fa/plus-square'
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap-theme.css';
+import {Alert} from 'react-bootstrap'
 
 //TODO: Make add post button disappear in Create Post
 //TODO: Design CSS
 //TODO: Sorting 
+//TODO: creation and update and delete messages (5 second autoclose)
 class App extends Component {
 
   componentDidMount(){
@@ -58,9 +62,15 @@ class App extends Component {
 - Add route displays add post page
 */
   render() {
-    const {posts, categories, location} = this.props 
+    const {posts, categories, location, alert} = this.props 
     return (
       <div className="App">
+        {alert && <Alert className="fade in" bsStyle="success" onDismiss={this.handleAlertDismiss}>
+          <button type="button" className="close" aria-label="Close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          <h4>{alert}</h4>
+        </Alert>}
         <div className="container">
           <div className="subheader">
             <h2>Welcome to the Readable posts project! </h2>
@@ -111,12 +121,13 @@ class App extends Component {
 }
 
 
-function mapStateToProps({posts, comments, category, categories}){
+function mapStateToProps({posts, comments, category, categories, alert}){
   return {
     posts, 
     comments,
     category,
-    categories
+    categories,
+    alert
   }
 }
 

@@ -1,5 +1,21 @@
 import {combineReducers} from 'redux'
-import {CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
+import {CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
+
+function alert(state = null, action){
+    const {message} = action
+    switch(action.type){
+        case SUCCESS:
+            return message
+        case DANGER:
+            return message
+        case WARNING:
+            return message
+        case CLEAR:
+            return null
+        default:
+            return state
+    }
+}
 
 function categories(state = null, action){
     const {categories} = action
@@ -10,6 +26,7 @@ function categories(state = null, action){
             return state
     }
 }
+
 function category(state = null, action){
     const {category} = action
     switch(action.type){
@@ -87,5 +104,5 @@ function posts(state = null, action){
     }
 }
 
-export default combineReducers({posts, comments, category, categories})
+export default combineReducers({posts, comments, category, categories, alert})
 
