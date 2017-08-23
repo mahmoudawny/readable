@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Link} from 'react-router-dom'
+import {Link, withRouter} from 'react-router-dom'
 import serializeForm from 'form-serialize'
 import FaArrowCircleORight from 'react-icons/lib/fa/arrow-circle-right'
 import {connect} from 'react-redux'
@@ -9,8 +9,8 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 import {capitalize} from '../utils/Helpers'
 import * as messages from '../utils/Messages'
 
-//TODO: page does not redirect to home(previous page) after submitting
-//TODO: check if thunk helps in waiting for posts and categories to load in props
+//TODO: check thunk
+
 class CreatePost extends Component{
     newSubmit=(e)=>{
         e.preventDefault()
@@ -19,10 +19,8 @@ class CreatePost extends Component{
         api.post(values).then((post) => {
             if(post.id){
                 document.postform.reset()
-                this.props.successMessage({message: messages.postCreated}) 
-                api.getAllPosts().then((posts) => {
-                    this.props.getAllPosts({posts, category: this.props.category? this.props.category: null})
-                })               
+                this.props.successMessage({message: messages.postCreated})    
+                this.props.history.push("/")           
                 setTimeout(() => {this.props.clearMessage()
                 }, 3000)                   
             }
@@ -36,6 +34,8 @@ class CreatePost extends Component{
             <Link className="close-create-post"
             to='/'>
             <button className='icon-btn'> <FaArrowCircleOLeft size='40'/></button></Link>
+            <div className="header">Create a post</div>
+            <span><p>Just fill all fields and click the right arrow!</p></span>
             <form name="postform" onSubmit={this.newSubmit} className='create-contact-form'>
                 <div className='create-post-details'>
                     {this.props.category? <input type='hidden' name='category' value={this.props.category.name}/>
@@ -74,4 +74,4 @@ function mapDispatchToProps(dispatch){
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(CreatePost)
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(CreatePost))

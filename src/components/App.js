@@ -13,10 +13,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import {Alert} from 'react-bootstrap'
 
-//TODO: Make add post button disappear in Create Post
+
 //TODO: Design CSS
 //TODO: Sorting 
-//TODO: creation and update and delete messages (5 second autoclose)
+//TODO: update and delete buttons, functions and messages 
+//TODO: voting buttons
+//TODO: comments
+
 class App extends Component {
 
   componentDidMount(){
@@ -55,6 +58,7 @@ class App extends Component {
     return false
   }
 
+
 /*Main App routes:
 - Global menu component (displays categories as menu items)
 - Home route '/' displays all posts
@@ -74,10 +78,10 @@ class App extends Component {
         <div className="container">
           <div className="subheader">
             <h2>Welcome to the Readable posts project! </h2>
-            <Link 
+            {location.pathname !== "/add_post" && <Link 
                 to = "/add_post"
                 className = 'icon-btn' 
-                ><FaPlusSquare size='40'/></Link>
+                ><FaPlusSquare size='40'/></Link>}
           </div>
           <div>
             <Route exact path='/' className="main"
@@ -110,7 +114,7 @@ class App extends Component {
             />}
             <Route path="/add_post" className="container"
               render={() => 
-                <CreatePost  ></CreatePost>
+                <CreatePost ></CreatePost>
               }
             />
           </div>
@@ -119,6 +123,7 @@ class App extends Component {
     );
   }
 }
+
 
 
 function mapStateToProps({posts, comments, category, categories, alert}){
