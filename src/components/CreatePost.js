@@ -14,13 +14,15 @@ import * as messages from '../utils/Messages'
 class CreatePost extends Component{
     newSubmit=(e)=>{
         e.preventDefault()
-        // const {posts} = this.props
         const values = serializeForm(e.target,{hash:true})
         api.post(values).then((post) => {
             if(post.id){
                 document.postform.reset()
                 this.props.successMessage({message: messages.postCreated})    
-                this.props.history.push("/")           
+                
+                //return to home or previous page after posting
+                this.props.category? this.props.history.goBack() 
+                : this.props.history.push("/")        
                 setTimeout(() => {this.props.clearMessage()
                 }, 3000)                   
             }
@@ -50,7 +52,7 @@ class CreatePost extends Component{
                     <input required name='title' placeholder='Title' type='text'/>
                     <input required name='body' placeholder='Body' type='text'/>
                     <input required name='author' placeholder='Author' type='text'/>
-                    <button className='icon-btn' title='Add Post'>
+                    <button id="submit" className='icon-btn' title='Add Post'>
                         <FaArrowCircleORight size='40'/>
                     </button>
                 </div>

@@ -11,7 +11,7 @@ import * as dispatchers from '../actions'
 import FaPlusSquare from 'react-icons/lib/fa/plus-square'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import {Alert} from 'react-bootstrap'
+import {Alert, Collapse} from 'react-bootstrap'
 
 
 //TODO: Design CSS
@@ -69,12 +69,14 @@ class App extends Component {
     const {posts, categories, location, alert} = this.props 
     return (
       <div className="App">
-        {alert && <Alert className="fade in" bsStyle="success" onDismiss={this.handleAlertDismiss}>
-          <button type="button" className="close" aria-label="Close" data-dismiss="alert">
-              <span aria-hidden="true">&times;</span>
-          </button>
-          <h4>{alert}</h4>
-        </Alert>}
+        <Collapse 
+            in={alert? true: false}>
+            <div><Alert bsStyle="success" onDismiss={this.handleAlertDismiss}>
+              <button type="button" className="close" aria-label="Close" data-dismiss="alert">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+              <h4>{alert}</h4></Alert></div>
+        </Collapse> 
         <div className="container">
           <div className="subheader">
             <h2>Welcome to the Readable posts project! </h2>
