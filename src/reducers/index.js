@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux'
-import {CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
+import {GET_COMMENTS, CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
 
 function alert(state = null, action){
     const {message} = action
@@ -39,43 +39,54 @@ function category(state = null, action){
     }
 }
 
-function comments(state = null, action){
-    const {comment} = action
-    switch(action.type){
-        case COMMENT:
-            return comments.concat(comment)
+// function comments(state = null, action){
+//     const {comment, comments, post} = action
+//     switch(action.type){
+
+
+
+//         case COMMENT:
+//             return comments.concat(comment)
                     
-        case DELETE_COMMENT:
-            return {
-                     ...state,
-                     [comment]: state[comment].deleted = true 
-                    }
-        case EDIT_COMMENT:
-            return {
-                     ...state,
-                     [comment]: state[comment] = comment 
-                    }
-        case RATE_COMMENT:
-            return {
-                     ...state,
-                     [comment]: action.option === "upVote"? 
-                     state[comment].voteScore++ 
-                     : state[comment].voteScore--
-                    }
-        default:
-            return state
-    }
-}
+//         case DELETE_COMMENT:
+//             return {
+//                      ...state,
+//                      [comment]: state[comment].deleted = true 
+//                     }
+//         case EDIT_COMMENT:
+//             return {
+//                      ...state,
+//                      [comment]: state[comment] = comment 
+//                     }
+//         case RATE_COMMENT:
+//             return {
+//                      ...state,
+//                      [comment]: action.option === "upVote"? 
+//                      state[comment].voteScore++ 
+//                      : state[comment].voteScore--
+//                     }
+//         default:
+//             return state
+//     }
+// }
 
 function posts(state = null, action){
-    const {post, posts, category} = action
+    const {post, posts, comments, category} = action
     switch(action.type){
         case POST_PAGE:
             return post
 
         case GET_POSTS:
             return posts
+
+        case GET_COMMENTS:
+        {
             
+            return posts.map((p) => {
+                if(p.id === post.id) p.comments = comments
+                return p
+            })
+        }   
         case CATEGORY_POSTS:
             return posts.filter((post) => post.category === category.name)
            
@@ -104,5 +115,5 @@ function posts(state = null, action){
     }
 }
 
-export default combineReducers({posts, comments, category, categories, alert})
+export default combineReducers({posts, category, categories, alert})
 

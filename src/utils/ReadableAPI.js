@@ -77,12 +77,10 @@ export const postComment = (body) =>
 export const getComments = (post) =>
   fetch(`${api}/posts/${post.id}/comments`, { headers })
     .then(res => res.json())
-    .then(data => data.post)
 
 export const getComment = (comment) =>
   fetch(`${api}/comments/${comment.id}`, { headers })
     .then(res => res.json())
-    .then(data => data.post)
 
 export const rateComment = (comment, body) =>
   fetch(`${api}/comments/${comment.id}`, {

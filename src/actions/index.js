@@ -14,6 +14,7 @@ export const SUCCESS = 'SUCCESS'
 export const WARNING = 'WARNING'
 export const DANGER = 'DANGER'
 export const CLEAR = 'CLEAR'
+export const GET_COMMENTS = 'GET_COMMENTS'
 
 export function deletePost({post}){
     return{
@@ -80,6 +81,15 @@ export function getPosts({posts}) {
     type: GET_POSTS,
     posts,
     category: null
+  }
+}
+
+export function getComments({posts, post, comments}) {
+  return {
+    type: GET_COMMENTS,
+    comments,
+    post,
+    posts
   }
 }
 
