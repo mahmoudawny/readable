@@ -2,45 +2,51 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
-import * as api from '../utils/ReadableAPI.js'
-import {withRouter} from 'react-router-dom'
+import {Link} from 'react-router-dom'
+// import * as api from '../utils/ReadableAPI.js'
+
 
 class Post extends Component{
     //TODO: On click open post details with comments
     //TODO: better UI design
     
-    componentDidMount(){
-        const {post, posts} = this.props
-        api.getComments(post).then((comments) => {
-          this.props.getComments({posts, post, comments})
-        })
-    }
+    // componentDidMount(){
+    //     const {post, posts} = this.props
+    //     api.getComments(post).then((comments) => {
+    //       this.props.getComments({posts, post, comments})
+    //     })
+    // }
 
-    componentWillReceiveProps(nextProps){ 
-      //If url changes check props to reload comments 
-      const {location} = this.props
-      if(nextProps.location.pathname !== location.pathname){
-          const {post, posts} = this.props
-          api.getComments(post).then((comments) => {
-            this.props.getComments({posts, post, comments})
-          })
-      }
-    }
+    // componentWillReceiveProps(nextProps){ 
+    //   //If url changes check props to reload comments 
+    //   const {location} = this.props
+    //   if(nextProps.location.pathname !== location.pathname){
+    //       const {post, posts} = this.props
+    //       api.getComments(post).then((comments) => {
+    //         this.props.getComments({posts, post, comments})
+    //       })
+    //   }
+    // }
 
     render(){
-        const {post, category} = this.props
+        const {post, category, comments} = this.props
+        console.log(post, post.comments)
         let timestamp = new Date(Number(post.timestamp));
         return(
           <div>
             <div className='post-details'>
                 {!category && <p>{post.category}</p>}
+                <Link 
+                to = {`/${post.category}/${post.id}`}
+                className = 'icon-btn'> 
                 <p>Title: {post.title}</p>
                 <p>Body: {post.body}</p>
                 <p>Author: {post.author}</p>
                 <p>Date: {timestamp.toLocaleDateString()}</p>
                 <p>Time: {timestamp.toLocaleTimeString()}</p>
                 <p>Score: {post.voteScore}</p>
-                {post.comments && <a>Comments: {post.comments.length}</a>}
+                {comments && <p>Comments: {comments.length}</p>}
+                </Link>
             </div>
             <button className='post-edit' >Edit</button>
             <button className='post-remove' >Delete</button>
@@ -51,9 +57,8 @@ class Post extends Component{
     }
 }
 
-function mapStateToProps({posts, post, comments, category}){
+function mapStateToProps({category}){
   return {
-    posts,
     category
   }
 }
@@ -74,4 +79,4 @@ function mapDispatchToProps(dispatch){
   }
 }
 
-export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Post));
+export default connect(mapStateToProps,mapDispatchToProps)(Post);

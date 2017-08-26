@@ -24,9 +24,9 @@ class Comment extends Component{
     }
 }
 
-function mapStateToProps({postID}){
+function mapStateToProps({post}){
   return {
-    postID
+    post
   }
 }
 
@@ -36,7 +36,6 @@ function mapDispatchToProps(dispatch){
     deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
     editComment: (data) => dispatch(dispatchers.editComment(data)),
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
-    getComments: (data) => dispatch(dispatchers.getComments(data)),
   }
 }
 

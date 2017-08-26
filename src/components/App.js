@@ -12,41 +12,79 @@ import FaPlusSquare from 'react-icons/lib/fa/plus-square'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import {Alert, Collapse} from 'react-bootstrap'
-
+import PostDetails from './PostDetails'
 
 //TODO: Design CSS
 //TODO: Sorting 
 //TODO: update and delete buttons, functions and messages 
 //TODO: voting buttons
-//TODO: comments
+//TODO: why comments won't appear in home and categories
+//TODO: make back button appear in post details
+//TODO: display all comments in PostDetails
+//TODO: Change state to have Loading status and use thunk actions
+//to fetch from server only when needed
 
 class App extends Component {
 
   componentDidMount(){
-    const {category, location} = this.props
+    const {location} = this.props
     //Get all categories on loading App
     api.getCategories().then((categories) => {
       this.props.getCategories({categories})
     })
     //If homepage load all posts
     if(location.pathname === '/')
-      api.getAllPosts().then((posts) => {
-        this.props.getAllPosts({posts, category})
-    })
-
+        this.getPostsAndComments()
   }
 
   componentWillReceiveProps(nextProps){ 
     //If url changes check props to reload all posts when returning 
     //to homepage 
-    const {category, location} = this.props
+    const {location} = this.props
     if(nextProps.location.pathname !== location.pathname){
       if(nextProps.location.pathname === '/') 
+        this.getPostsAndComments()
+    }
+  }
+
+  //getPostsAndComments inserts comments in their posts objects
+  getPostsAndComments = (category) => {
+    if(!category){
         api.getAllPosts().then((posts) => {
-          this.props.getAllPosts({posts, category})
+          if(posts) posts.map((post) => {
+              api.getComments(post).then((comments) => {
+                post.comments = comments
+              })
+              return post
+            })
+            this.props.getAllPosts({posts}) 
+        })
+    }
+      else{
+        api.getPosts(category.name).then((posts) => {
+        if(posts) this.props.getCategoryPosts({
+          posts: posts.map((post) => {
+            api.getComments(post).then((comments) => {
+              post.comments = comments
+            })
+            return post
+          }),
+          category
+        }) 
       })
     }
   }
+
+   //getPostAndComments inserts comments in a post object
+  getPostAndComments = (id) => {
+        api.getPost({id}).then((post) => {
+          if(post) api.getComments(post).then((comments) => {
+                post.comments = comments
+                this.props.getPost({post})
+              })           
+        })
+    }
+
   //isCategory method to check if a string value exists in currently
   // loaded categories
   isCategory(category){
@@ -67,6 +105,7 @@ class App extends Component {
 */
   render() {
     const {posts, categories, location, alert} = this.props 
+    if(posts) console.log(posts[0])
     return (
       <div className="App">
         <Collapse 
@@ -109,9 +148,17 @@ class App extends Component {
             />{this.isCategory(location.pathname.substr(1)) &&
             <Route path="/:category" className="container"
                 render={(props) => 
-                  <Category  currentCategory={this.isCategory(props.match.params.category)?
+                  <Category getPostsAndComments={(category) => this.getPostsAndComments(category)} currentCategory={this.isCategory(props.match.params.category)?
                   {name: props.match.params.category, path: props.match.params.category}
                   :null}></Category>
+                }
+            />}
+            {this.isCategory(location.pathname.substr(1).split('/')[0]) &&
+            <Route path="/:category/:post" className="container"
+                render={(props) => 
+                  <PostDetails getPostAndComments={(id) => this.getPostAndComments(id)} 
+                  postId = {props.match.params.post}
+                  ></PostDetails>
                 }
             />}
             <Route path="/add_post" className="container"
@@ -139,6 +186,7 @@ function mapStateToProps({posts, category, categories, alert}){
 
 function mapDispatchToProps(dispatch){
   return{
+    getPost:  (data) => dispatch(dispatchers.getPost(data)),
     addPost: (data) => dispatch(dispatchers.post(data)),
     deletePost: (data) => dispatch(dispatchers.deletePost(data)),
     editPost: (data) => dispatch(dispatchers.editPost(data)),

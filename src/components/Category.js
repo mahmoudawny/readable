@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import {capitalize} from '../utils/Helpers'
 import Post from './Post'
-import * as api from '../utils/ReadableAPI'
+// import * as api from '../utils/ReadableAPI'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import {Link} from 'react-router-dom'
@@ -16,9 +16,7 @@ class Category extends Component {
         //load current category's posts
         const {currentCategory} = this.props
         if(currentCategory)
-            api.getPosts(currentCategory.name).then((posts) => {
-            this.props.getCategoryPosts({posts, category: currentCategory})
-        })
+            this.props.getPostsAndComments(currentCategory)
     }
 
     render(){

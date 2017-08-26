@@ -1,43 +1,47 @@
 /*PostDetails component displays a single post's details and comments, and allows commenting and rating*/
-import React, { Component } from 'react'
-import {capitalize} from '../utils/Helpers'
-import Post from './Post'
-import * as api from '../utils/ReadableAPI'
+import React, { Component } from 'react';
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
-import {Link} from 'react-router-dom'
 
-class PostDetails extends Component { 
-
+class PostDetails extends Component{
+    
     componentDidMount(){
-        api.getPosts().then((posts) => {
-        this.props.getAllPosts({posts})
-        })
+        this.props.getPostAndComments(this.props.postId)
     }
 
     render(){
-        const {posts} = this.props
+        const {post} = this.props
+        if(post) {
+        let timestamp = new Date(Number(post.timestamp));
         return(
-            <div className='category'>
-                <Link className="close-create-contact"
-                    to='/' >Back
-                </Link>
-                <h2 className='subheader'>All Posts sorted by</h2>
-                <ul className='post-list'>
-                    {posts && posts.map((post) => 
-                    <li key={post.id}>
-                        <Post post={post}>
-                        </Post>
-                    </li>
-                    )}
-                </ul>
+          <div>
+            <div className='post-details'>
+                <p>{post.category}</p>
+                <p>Title: {post.title}</p>
+                <p>Body: {post.body}</p>
+                <p>Author: {post.author}</p>
+                <p>Date: {timestamp.toLocaleDateString()}</p>
+                <p>Time: {timestamp.toLocaleTimeString()}</p>
+                <p>Score: {post.voteScore}</p>
+                {post.comments && <a>Comments: {post.comments.length}</a>}
             </div>
+            <button className='post-edit' >Edit</button>
+            <button className='post-remove' >Delete</button>
+            <button className='post-voteup' >Vote Up</button>
+            <button className='post-votedown' >Vote Down</button>
+          </div>
         )
+        }
+    else return(
+        <div><p>Nothing</p></div>
+    )
     }
 }
 
-function mapStateToProps({posts, comments, category}){
-  return {posts, comments, category}
+function mapStateToProps({post}){
+  return {
+    post
+  }
 }
 
 function mapDispatchToProps(dispatch){
@@ -50,9 +54,9 @@ function mapDispatchToProps(dispatch){
     deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
     editComment: (data) => dispatch(dispatchers.editComment(data)),
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
+    getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
     getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
-    getAllPosts: (data) => dispatch(dispatchers.getPosts(data))
+    getComments: (data) => dispatch(dispatchers.getComments(data)),
   }
 }
-
 export default connect(mapStateToProps,mapDispatchToProps)(PostDetails)
