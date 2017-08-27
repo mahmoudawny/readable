@@ -8,8 +8,7 @@ import * as dispatchers from '../actions'
 
 
 //TODO: Sorting 
-//TODO: Category posts filtering if coming from home, else load only 
-//category posts from server
+//TODO: only category posts from server on refreshing
 
 class Category extends Component { 
 
@@ -17,7 +16,7 @@ class Category extends Component {
         //load current category's posts
         const {currentCategory} = this.props
         if(currentCategory)
-            this.props.getPostsAndComments(currentCategory)
+            this.props.getPostsAndComments(currentCategory.name)
     }
 
     render(){
@@ -28,7 +27,7 @@ class Category extends Component {
                 <h2 className='subheader'>{capitalize(currentCategory.name)}</h2>
                 <ul className='post-list'>
                     {posts.items && posts.items.map((post) => 
-                    <div key={post.id}>{post.category === currentCategory &&
+                    <div key={post.id}>{post.category === currentCategory.name &&
                         <li key={post.id}>
                         <Post post={post}>
                         </Post>
@@ -55,8 +54,6 @@ function mapDispatchToProps(dispatch){
     deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
     editComment: (data) => dispatch(dispatchers.editComment(data)),
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
-    getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
-    getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
   }
 }
 

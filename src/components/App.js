@@ -20,7 +20,7 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 //TODO: Sorting 
 //TODO: update and delete buttons, functions and messages 
 //TODO: voting buttons
-//TODO: why comments won't appear in home and categories
+//TODO: why posts won't appear in categories
 //TODO: make back button appear in post details
 
 
@@ -43,7 +43,10 @@ class App extends Component {
     const {location} = this.props
     if(nextProps.location.pathname !== location.pathname){
       if(nextProps.location.pathname === '/') 
-        this.getPostsAndComments()
+        {
+          this.props.invalidatePosts()
+          this.getPostsAndComments(null)
+        }
     }
   }
 
@@ -59,7 +62,7 @@ class App extends Component {
         //     })
         //     this.props.getAllPosts({posts}) 
         // })
-        this.props.fetchPosts() 
+        this.props.fetchPosts(null) 
     }
       else{
         this.props.fetchPosts(category)          
@@ -96,7 +99,7 @@ class App extends Component {
 */
   render() {
     const {posts, categories, location, alert} = this.props
-    const {items, isLoading} = posts
+    const {items} = posts
     // console.log(JSON.stringify(isLoading))
     return (
       <div className="App">
@@ -129,7 +132,7 @@ class App extends Component {
               <div className='container'>
                 {categories? categories.map((category) => 
                 <div key={category.name} className="list">                
-                  <Link to={`/${category.path}`}
+                  <Link onClick={() => this.props.setCategory(category.name)} to={`/${category.path}`}
                   key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
                 : <h2>No categories to display</h2>}
@@ -148,7 +151,8 @@ class App extends Component {
             />{this.isCategory(location.pathname.substr(1)) &&
             <Route path="/:category" className="container"
                 render={(props) => 
-                  <Category getPostsAndComments={(category) => this.getPostsAndComments(category)} currentCategory={this.isCategory(props.match.params.category)?
+                  <Category getPostsAndComments={(category) => this.getPostsAndComments(category)} 
+                    currentCategory={this.isCategory(props.match.params.category)?
                   {name: props.match.params.category, path: props.match.params.category}
                   :null}></Category>
                 }
@@ -195,10 +199,11 @@ function mapDispatchToProps(dispatch){
     deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
     editComment: (data) => dispatch(dispatchers.editComment(data)),
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
-    getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
     getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
     getCategories: (data) => dispatch(dispatchers.getCategories(data)),
     fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),
+    setCategory: (data) => dispatch(dispatchers.setCategory(data)),
+    invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
   }
 }
 

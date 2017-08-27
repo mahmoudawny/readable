@@ -1,7 +1,7 @@
 import {combineReducers} from 'redux'
-import {INVALIDATE_POST, RECEIVE_POSTS, GET_POST, INVALIDATE_COMMENT, GET_COMMENTS, RECEIVE_COMMENTS, CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
+import {SET_CATEGORY, INVALIDATE_POST, RECEIVE_POSTS, GET_POST, INVALIDATE_COMMENT, GET_COMMENTS, RECEIVE_COMMENTS, CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
 
-
+//TODO: Add comment ids in posts
 
 function posts(state = {
                 isLoading: false,
@@ -59,6 +59,12 @@ function comments(state = {
         items: state.items? state.items.concat(action.comments): action.comments,
         lastUpdated: action.receivedAt
       })
+    case GET_POSTS:
+      return Object.assign({}, state, {
+        isLoading: true,
+        didInvalidate: true,
+        items: []
+      })
     // case RECEIVE_COMMENTS:
     //   return Object.assign({}, state, {[state.comments]: action.comments})
     default:
@@ -95,10 +101,9 @@ function categories(state = null, action){
 function category(state = null, action){
     const {category} = action
     switch(action.type){
-        case CATEGORY_POSTS:
-            return category
         case GET_POSTS:
-            return null
+        case SET_CATEGORY:
+            return category
         default:
             return state
     }

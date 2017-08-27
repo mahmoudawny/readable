@@ -1,15 +1,14 @@
 import React, { Component } from 'react'
-import {Link, withRouter} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import serializeForm from 'form-serialize'
 import FaArrowCircleORight from 'react-icons/lib/fa/arrow-circle-right'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import * as api from '../utils/ReadableAPI.js'
-import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 import {capitalize} from '../utils/Helpers'
 import * as messages from '../utils/Messages'
 
-//TODO: check thunk
+//TODO: add post to store 
 
 class CreatePost extends Component{
     newSubmit=(e)=>{
@@ -33,9 +32,6 @@ class CreatePost extends Component{
     render(){
         return(
         <div>
-            <Link className="close-create-post"
-            to='/'>
-            <button className='icon-btn'> <FaArrowCircleOLeft size='40'/></button></Link>
             <div className="header">Create a post</div>
             <span><p>Just fill all fields and click the right arrow!</p></span>
             <form name="postform" onSubmit={this.newSubmit} className='create-contact-form'>
@@ -62,8 +58,8 @@ class CreatePost extends Component{
     }
 }
 
-function mapStateToProps({posts, category, categories, message}){
-  return {posts, category, categories, message}
+function mapStateToProps({category, categories, message}){
+  return {category, categories, message}
 }
 
 function mapDispatchToProps(dispatch){

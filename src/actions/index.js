@@ -22,7 +22,32 @@ export const RECEIVE_COMMENTS = 'RECEIVE_COMMENTS'
 export const GET_POST = 'GET_POST'
 export const INVALIDATE_POST = 'INVALIDATE_POST'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
+export const SET_CATEGORY = 'SET_CATEGORY'
 
+const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
+
+let token = localStorage.token
+
+if (!token)
+  token = localStorage.token = Math.random().toString(36).substr(-8)
+
+const headers = {
+  'Accept': 'application/json',
+  'Authorization': token
+}
+
+export function setCategory(category){
+    return {
+        type: SET_CATEGORY,
+        category
+    }
+}
+
+export function invalidatePosts(){
+    return {
+        type: INVALIDATE_POST
+    }
+}
 
 function requestPosts(category) {
   return {
@@ -56,17 +81,7 @@ function receiveComments(comments) {
   }
 }
 
-const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
 
-let token = localStorage.token
-
-if (!token)
-  token = localStorage.token = Math.random().toString(36).substr(-8)
-
-const headers = {
-  'Accept': 'application/json',
-  'Authorization': token
-}
 
 function fetchPosts(category) {
   return dispatch => {

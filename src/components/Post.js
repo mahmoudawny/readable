@@ -10,32 +10,14 @@ class Post extends Component{
     //TODO: On click open post details with comments
     //TODO: better UI design
     
-    // componentDidMount(){
-    //     const {post, posts} = this.props
-    //     api.getComments(post).then((comments) => {
-    //       this.props.getComments({posts, post, comments})
-    //     })
-    // }
-
-    // componentWillReceiveProps(nextProps){ 
-    //   //If url changes check props to reload comments 
-    //   const {location} = this.props
-    //   if(nextProps.location.pathname !== location.pathname){
-    //       const {post, posts} = this.props
-    //       api.getComments(post).then((comments) => {
-    //         this.props.getComments({posts, post, comments})
-    //       })
-    //   }
-    // }
 
     render(){
-        const {post, category, posts, comments} = this.props
+        const {post, category, comments} = this.props
         let postComments = comments.items.filter((comment) => comment.parentId === post.id)
         
         let timestamp = new Date(Number(post.timestamp));
         return(
-          <div>{posts.isLoading? <div></div>
-            :<div>
+          <div>            
               <div className='post-details'>
                 {!category && <p>{post.category}</p>}
                 <Link 
@@ -55,14 +37,12 @@ class Post extends Component{
             <button className='post-voteup' >Vote Up</button>
             <button className='post-votedown' >Vote Down</button>
             </div>
-          }</div>
         )
     }
 }
 
-function mapStateToProps({comments, posts, category}){
+function mapStateToProps({comments, category}){
   return {
-    posts,
     comments,
     category
   }
