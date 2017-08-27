@@ -13,6 +13,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import {Alert, Collapse} from 'react-bootstrap'
 import PostDetails from './PostDetails'
+import Loading from 'react-loading'
+import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 
 //TODO: Design CSS
 //TODO: Sorting 
@@ -20,9 +22,7 @@ import PostDetails from './PostDetails'
 //TODO: voting buttons
 //TODO: why comments won't appear in home and categories
 //TODO: make back button appear in post details
-//TODO: display all comments in PostDetails
-//TODO: Change state to have Loading status and use thunk actions
-//to fetch from server only when needed
+
 
 class App extends Component {
 
@@ -50,28 +50,19 @@ class App extends Component {
   //getPostsAndComments inserts comments in their posts objects
   getPostsAndComments = (category) => {
     if(!category){
-        api.getAllPosts().then((posts) => {
-          if(posts) posts.map((post) => {
-              api.getComments(post).then((comments) => {
-                post.comments = comments
-              })
-              return post
-            })
-            this.props.getAllPosts({posts}) 
-        })
+        // api.getAllPosts().then((posts) => {
+        //   if(posts) posts.map((post) => {
+        //       api.getComments(post).then((comments) => {
+        //         post.comments = comments
+        //       })
+        //       return post
+        //     })
+        //     this.props.getAllPosts({posts}) 
+        // })
+        this.props.fetchPosts() 
     }
       else{
-        api.getPosts(category.name).then((posts) => {
-        if(posts) this.props.getCategoryPosts({
-          posts: posts.map((post) => {
-            api.getComments(post).then((comments) => {
-              post.comments = comments
-            })
-            return post
-          }),
-          category
-        }) 
-      })
+        this.props.fetchPosts(category)          
     }
   }
 
@@ -104,8 +95,9 @@ class App extends Component {
 - Add route displays add post page
 */
   render() {
-    const {posts, categories, location, alert} = this.props 
-    if(posts) console.log(posts[0])
+    const {posts, categories, location, alert} = this.props
+    const {items, isLoading} = posts
+    // console.log(JSON.stringify(isLoading))
     return (
       <div className="App">
         <Collapse 
@@ -118,8 +110,15 @@ class App extends Component {
         </Collapse> 
         <div className="container">
           <div className="subheader">
+              {location.pathname !== "/" &&
+                <Link className="close-create-post"
+                    to='/' ><button className='icon-btn'> 
+                        <FaArrowCircleOLeft size='40'/></button>
+                </Link>}
+          </div>
+          <div className="subheader">
             <h2>Welcome to the Readable posts project! </h2>
-            {location.pathname !== "/add_post" && <Link 
+              {location.pathname !== "/add_post" && <Link 
                 to = "/add_post"
                 className = 'icon-btn' 
                 ><FaPlusSquare size='40'/></Link>}
@@ -134,15 +133,16 @@ class App extends Component {
                   key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
                 : <h2>No categories to display</h2>}
-                <ul className='list'>
+                {posts.isLoading? <Loading delay={200} type='spin' color='#222' className='loading' />
+                :<ul className='list'>
                   <span className='header'> All Posts</span>
-                    {posts && posts.map((post) => 
+                    {items && items.map((post) => 
                       <li key={post.id}>
                           <Post post={post}>
                           </Post>
                       </li>)
                     } 
-                </ul>  
+                </ul>}  
               </div>              
               }
             />{this.isCategory(location.pathname.substr(1)) &&
@@ -197,7 +197,8 @@ function mapDispatchToProps(dispatch){
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
     getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
     getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
-    getCategories: (data) => dispatch(dispatchers.getCategories(data))
+    getCategories: (data) => dispatch(dispatchers.getCategories(data)),
+    fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),
   }
 }
 

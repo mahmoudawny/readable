@@ -1,50 +1,70 @@
 import {combineReducers} from 'redux'
-import {GET_POST, GET_COMMENTS, CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
-import {INVALIDATE_POST, REQUEST_POSTS, RECEIVE_POSTS} from '../actions'
+import {INVALIDATE_POST, RECEIVE_POSTS, GET_POST, INVALIDATE_COMMENT, GET_COMMENTS, RECEIVE_COMMENTS, CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
 
 
-// function posts(
-//   state = {
-//     isFetching: false,
-//     didInvalidate: false,
-//     items: []
-//   },
-//   action
-// ) {
-//   switch (action.type) {
-//     case INVALIDATE_POST:
-//       return Object.assign({}, state, {
-//         didInvalidate: true
-//       })
-//     case REQUEST_POSTS:
-//       return Object.assign({}, state, {
-//         isFetching: true,
-//         didInvalidate: false
-//       })
-//     case RECEIVE_POSTS:
-//       return Object.assign({}, state, {
-//         isFetching: false,
-//         didInvalidate: false,
-//         items: action.posts,
-//         lastUpdated: action.receivedAt
-//       })
-//     default:
-//       return state
-//   }
-// }
 
-// function postsAndComments(state = {}, action) {
-//   switch (action.type) {
-//     case INVALIDATE_POST:
-//     case RECEIVE_POSTS:
-//     case REQUEST_POSTS:
-//       return Object.assign({}, state, {
-//         [action.subreddit]: posts(state[action.subreddit], action)
-//       })
-//     default:
-//       return state
-//   }
-// }
+function posts(state = {
+                isLoading: false,
+                didInvalidate: false,
+                items: []
+                }, action) {
+  switch (action.type) {
+    case INVALIDATE_POST:
+      return Object.assign({}, state, {
+        didInvalidate: true
+      })
+    case GET_POSTS:
+      return Object.assign({}, state, {
+        isLoading: true,
+        didInvalidate: false
+      })
+    case RECEIVE_POSTS:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didInvalidate: false,
+        items: action.posts,
+        lastUpdated: action.receivedAt
+      })
+    // case RECEIVE_COMMENTS:
+    // return Object.assign({}, state, {
+    //     isLoading: false,
+    //     didInvalidate: false,
+    //     items: action.posts.map((post) => comments(post, action)),
+    //     lastUpdated: action.receivedAt
+    //   })
+    default:
+      return state
+  }
+}
+
+function comments(state = {
+                isLoading: false,
+                didInvalidate: false,
+                items: []
+                }, action) {
+    switch (action.type) {
+    case INVALIDATE_COMMENT:
+      return Object.assign({}, state, {
+        didInvalidate: true
+      })
+    case GET_COMMENTS:
+      return Object.assign({}, state, {
+        isLoading: true,
+        didInvalidate: false
+      })
+    case RECEIVE_COMMENTS:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didInvalidate: false,
+        items: state.items? state.items.concat(action.comments): action.comments,
+        lastUpdated: action.receivedAt
+      })
+    // case RECEIVE_COMMENTS:
+    //   return Object.assign({}, state, {[state.comments]: action.comments})
+    default:
+      return state
+  }
+}
 
 function alert(state = null, action){
     const {message} = action
@@ -125,50 +145,42 @@ function post(state = null, action){
     }
 }
 
-function posts(state = null, action){
-    const {post, posts, category} = action
-    switch(action.type){
-        case POST_PAGE:
-            return post
+// function posts(state = null, action){
+//     const {post, posts, category} = action
+//     switch(action.type){
+//         case POST_PAGE:
+//             return post
 
-        case GET_POSTS:
-            return posts
+//         case GET_POSTS:
+//             return posts
 
-        // case GET_COMMENTS:
-        // {            
-        //     return posts.map((p) => {
-        //         if(p.id === post.id) p.comments = comments
-        //         return p
-        //     })
-        // }
-
-        case CATEGORY_POSTS:
-            return posts.filter((post) => post.category === category.name)
+//         case CATEGORY_POSTS:
+//             return posts.filter((post) => post.category === category.name)
            
-        case POST:
-            return posts.concat(post)
+//         case POST:
+//             return posts.concat(post)
                     
-        case DELETE_POST:
-            return {
-                     ...state,
-                     [post]: state[post].deleted = true 
-                    }
-        case EDIT_POST:
-            return {
-                     ...state,
-                     [post]: state[post] = post 
-                    }
-        case RATE_POST:
-            return {
-                     ...state,
-                     [post]: action.option === "upVote"? 
-                     state[post].voteScore++ 
-                     : state[post].voteScore--
-                    }
-        default:
-            return state
-    }
-}
+//         case DELETE_POST:
+//             return {
+//                      ...state,
+//                      [post]: state[post].deleted = true 
+//                     }
+//         case EDIT_POST:
+//             return {
+//                      ...state,
+//                      [post]: state[post] = post 
+//                     }
+//         case RATE_POST:
+//             return {
+//                      ...state,
+//                      [post]: action.option === "upVote"? 
+//                      state[post].voteScore++ 
+//                      : state[post].voteScore--
+//                     }
+//         default:
+//             return state
+//     }
+// }
 
-export default combineReducers({post, posts, category, categories, alert})
+export default combineReducers({post, posts, comments, category, categories, alert})
 

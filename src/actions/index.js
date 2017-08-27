@@ -17,24 +17,41 @@ export const WARNING = 'WARNING'
 export const DANGER = 'DANGER'
 export const CLEAR = 'CLEAR'
 export const GET_COMMENTS = 'GET_COMMENTS'
+export const INVALIDATE_COMMENT = 'INVALIDATE_COMMENT'
+export const RECEIVE_COMMENTS = 'RECEIVE_COMMENTS'
 export const GET_POST = 'GET_POST'
-
-export const REQUEST_POSTS = 'REQUEST_POSTS'
+export const INVALIDATE_POST = 'INVALIDATE_POST'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
+
 
 function requestPosts(category) {
   return {
-    type: REQUEST_POSTS,
+    type: GET_POSTS,
     category
   }
 }
 
 
-function receivePosts(category, json) {
+function receivePosts(category, posts) {
   return {
     type: RECEIVE_POSTS,
     category,
-    posts: json.data.children.map(child => child.data),
+    posts,
+    receivedAt: Date.now()
+  }
+}
+
+function getComments(posts){
+    return {
+        type: GET_COMMENTS,
+        posts
+    }
+}
+
+function receiveComments(comments) {
+  return {
+    type: RECEIVE_COMMENTS,
+    comments,
     receivedAt: Date.now()
   }
 }
@@ -57,17 +74,46 @@ function fetchPosts(category) {
     if(!category)
         return fetch(`${api}/posts`, { headers })
         .then(response => response.json())
-        .then(json => dispatch(receivePosts(category, json)))
+        .then(posts => {
+                dispatch(receivePosts(category, posts)) 
+                dispatch(fetchComments(posts))         
+        })
+        
     else
         return fetch(`${api}/${category}/posts`, { headers })
         .then(response => response.json())
-        .then(json => dispatch(receivePosts(category, json)))
+        .then(posts => {
+            dispatch(receivePosts(category, posts))
+            dispatch(fetchComments(posts))                     
+        })
   }
 }
 
+function fetchComments(posts){
+
+    return dispatch => {
+    dispatch(getComments(posts))
+    return Promise.all(posts.map((post) => {
+        return fetch(`${api}/posts/${post.id}/comments`, { headers })}
+    ))
+        .then(responses => {
+            responses.forEach((response) => {
+                // console.log(response.json())
+                response.json().then((comments) => dispatch(receiveComments(comments)))
+            })
+            
+        })
+        // .then(comments => {
+        //     console.log(comments)
+        //     dispatch(receiveComments(comments))
+        // }) 
+    }
+    
+}
+
 function shouldFetchPosts(state, category) {
-  const posts = state[category]
-  if (!posts) {
+  const {posts} = state
+  if (!posts.items.length) {
     return true
   } else if (posts.isFetching) {
     return false
@@ -76,10 +122,10 @@ function shouldFetchPosts(state, category) {
   }
 }
 
-export function fetchPostsIfNeeded(subreddit) {
+export function fetchPostsIfNeeded(category) {
   return (dispatch, getState) => {
-    if (shouldFetchPosts(getState(), subreddit)) {
-      return dispatch(fetchPosts(subreddit))
+   if (shouldFetchPosts(getState(), category)) {
+      return dispatch(fetchPosts(category))
     } else {
       return Promise.resolve()
     }
@@ -158,15 +204,6 @@ export function getPosts({posts}) {
     type: GET_POSTS,
     posts,
     category: null
-  }
-}
-
-export function getComments({posts, post, comments}) {
-  return {
-    type: GET_COMMENTS,
-    comments,
-    post,
-    posts
   }
 }
 

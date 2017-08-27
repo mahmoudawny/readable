@@ -5,10 +5,11 @@ import Post from './Post'
 // import * as api from '../utils/ReadableAPI'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
-import {Link} from 'react-router-dom'
-import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
+
 
 //TODO: Sorting 
+//TODO: Category posts filtering if coming from home, else load only 
+//category posts from server
 
 class Category extends Component { 
 
@@ -24,17 +25,15 @@ class Category extends Component {
         return(
             currentCategory &&
             <div className='category'>                
-                <Link className="close-create-post"
-                    to='/' ><button className='icon-btn'> 
-                        <FaArrowCircleOLeft size='40'/></button>
-                </Link>
                 <h2 className='subheader'>{capitalize(currentCategory.name)}</h2>
                 <ul className='post-list'>
-                    {posts && posts.map((post) => 
-                    <li key={post.id}>
+                    {posts.items && posts.items.map((post) => 
+                    <div key={post.id}>{post.category === currentCategory &&
+                        <li key={post.id}>
                         <Post post={post}>
                         </Post>
-                    </li>
+                        </li>}
+                    </div>
                     )}
                 </ul>
             </div>

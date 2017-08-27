@@ -10,7 +10,7 @@ import Root from './components/Root'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(combineReducers, composeEnhancers(
-applyMiddleware(logger), applyMiddleware(thunk)))
+applyMiddleware(thunk), applyMiddleware(logger)))
 
 ReactDOM.render(
   <Root store={store} />,

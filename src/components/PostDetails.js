@@ -1,7 +1,8 @@
 /*PostDetails component displays a single post's details and comments, and allows commenting and rating*/
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
+import Comment from './Comment'
 
 class PostDetails extends Component{
     
@@ -23,7 +24,14 @@ class PostDetails extends Component{
                 <p>Date: {timestamp.toLocaleDateString()}</p>
                 <p>Time: {timestamp.toLocaleTimeString()}</p>
                 <p>Score: {post.voteScore}</p>
-                {post.comments && <a>Comments: {post.comments.length}</a>}
+                {post.comments && 
+                <div>
+                  <a>Comments: {post.comments.length}</a>
+                  {post.comments.map((comment) => 
+                  <Comment key={comment.id} comment = {comment}/>
+                  )}
+                </div>
+                }
             </div>
             <button className='post-edit' >Edit</button>
             <button className='post-remove' >Delete</button>
@@ -38,9 +46,10 @@ class PostDetails extends Component{
     }
 }
 
-function mapStateToProps({post}){
+function mapStateToProps({post, comments}){
   return {
-    post
+    post,
+    comments
   }
 }
 
@@ -56,7 +65,6 @@ function mapDispatchToProps(dispatch){
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
     getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
     getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
-    getComments: (data) => dispatch(dispatchers.getComments(data)),
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(PostDetails)

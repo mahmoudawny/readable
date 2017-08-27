@@ -29,12 +29,14 @@ class Post extends Component{
     // }
 
     render(){
-        const {post, category, comments} = this.props
-        console.log(post, post.comments)
+        const {post, category, posts, comments} = this.props
+        let postComments = comments.items.filter((comment) => comment.parentId === post.id)
+        
         let timestamp = new Date(Number(post.timestamp));
         return(
-          <div>
-            <div className='post-details'>
+          <div>{posts.isLoading? <div></div>
+            :<div>
+              <div className='post-details'>
                 {!category && <p>{post.category}</p>}
                 <Link 
                 to = {`/${post.category}/${post.id}`}
@@ -45,20 +47,23 @@ class Post extends Component{
                 <p>Date: {timestamp.toLocaleDateString()}</p>
                 <p>Time: {timestamp.toLocaleTimeString()}</p>
                 <p>Score: {post.voteScore}</p>
-                {comments && <p>Comments: {comments.length}</p>}
+                {postComments && <p>Comments: {postComments.length}</p>}
                 </Link>
             </div>
             <button className='post-edit' >Edit</button>
             <button className='post-remove' >Delete</button>
             <button className='post-voteup' >Vote Up</button>
             <button className='post-votedown' >Vote Down</button>
-          </div>
+            </div>
+          }</div>
         )
     }
 }
 
-function mapStateToProps({category}){
+function mapStateToProps({comments, posts, category}){
   return {
+    posts,
+    comments,
     category
   }
 }
@@ -75,7 +80,6 @@ function mapDispatchToProps(dispatch){
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),
     getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
     getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
-    getComments: (data) => dispatch(dispatchers.getComments(data)),
   }
 }
 
