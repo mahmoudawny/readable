@@ -98,7 +98,7 @@ class App extends Component {
 - Add route displays add post page
 */
   render() {
-    const {posts, categories, location, alert} = this.props
+    const {posts, categories, location, alert, history} = this.props
     const {items} = posts
     // console.log(JSON.stringify(isLoading))
     return (
@@ -115,7 +115,7 @@ class App extends Component {
           <div className="subheader">
               {location.pathname !== "/" &&
                 <Link className="close-create-post"
-                    to='/' ><button className='icon-btn'> 
+                    to="/" ><button onClick={history.goBack} className='icon-btn'> 
                         <FaArrowCircleOLeft size='40'/></button>
                 </Link>}
           </div>
