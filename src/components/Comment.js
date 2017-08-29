@@ -33,7 +33,7 @@ function mapStateToProps({post}){
 
 function mapDispatchToProps(dispatch){
   return{
-    addComment: (data) => dispatch(dispatchers.comment(data)),
+    //addComment: (data) => dispatch(dispatchers.comment(data)),
     deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
     editComment: (data) => dispatch(dispatchers.editComment(data)),
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),

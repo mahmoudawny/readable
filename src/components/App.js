@@ -20,8 +20,7 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 //TODO: Sorting 
 //TODO: update and delete buttons, functions and messages 
 //TODO: voting buttons
-//TODO: why posts won't appear in categories
-//TODO: make back button appear in post details
+//TODO: Back button works like browser back not app back
 
 
 class App extends Component {
@@ -31,10 +30,14 @@ class App extends Component {
     //Get all categories on loading App
     api.getCategories().then((categories) => {
       this.props.getCategories({categories})
+      //If homepage load all posts
+      if(location.pathname === '/')
+        this.props.fetchPosts(null) 
+      else if(this.isCategory(location.pathname.substr(1))){
+        this.props.fetchPosts(location.pathname.substr(1))        
+      }
     })
-    //If homepage load all posts
-    if(location.pathname === '/')
-        this.getPostsAndComments()
+
   }
 
   componentWillReceiveProps(nextProps){ 
@@ -45,31 +48,15 @@ class App extends Component {
       if(nextProps.location.pathname === '/') 
         {
           this.props.invalidatePosts()
-          this.getPostsAndComments(null)
+          this.props.fetchPosts(null) 
         }
+      else if(this.isCategory(nextProps.location.pathname.substr(1))){
+        this.props.setCategory(nextProps.location.pathname.substr(1))        
+      }
     }
   }
 
-  //getPostsAndComments inserts comments in their posts objects
-  getPostsAndComments = (category) => {
-    if(!category){
-        // api.getAllPosts().then((posts) => {
-        //   if(posts) posts.map((post) => {
-        //       api.getComments(post).then((comments) => {
-        //         post.comments = comments
-        //       })
-        //       return post
-        //     })
-        //     this.props.getAllPosts({posts}) 
-        // })
-        this.props.fetchPosts(null) 
-    }
-      else{
-        this.props.fetchPosts(category)          
-    }
-  }
-
-   //getPostAndComments inserts comments in a post object
+   //getPostAndComments retrieves post and inserts comments in a post object 
   getPostAndComments = (id) => {
         api.getPost({id}).then((post) => {
           if(post) api.getComments(post).then((comments) => {
@@ -94,35 +81,37 @@ class App extends Component {
 /*Main App routes:
 - Global menu component (displays categories as menu items)
 - Home route '/' displays all posts
-- Category route displays selected category page
-- Add route displays add post page
+- /Category route displays selected category page
+- /AddPost route displays add post page
+- /Category/post displays post details and its comments page
 */
   render() {
     const {posts, categories, location, alert, history} = this.props
     const {items} = posts
-    // console.log(JSON.stringify(isLoading))
     return (
-      <div className="App">
+      <div className="App">         
         <Collapse 
             in={alert? true: false}>
-            <div><Alert bsStyle="success" onDismiss={this.handleAlertDismiss}>
+            <div><Alert bsStyle={alert? alert.type : "success"} onDismiss={this.handleAlertDismiss}>
               <button type="button" className="close" aria-label="Close" data-dismiss="alert">
                   <span aria-hidden="true">&times;</span>
               </button>
-              <h4>{alert}</h4></Alert></div>
+              <h4>{alert && alert.message}</h4></Alert></div>
         </Collapse> 
         <div className="container">
           <div className="subheader">
               {location.pathname !== "/" &&
-                <Link className="close-create-post"
-                    to="/" ><button onClick={history.goBack} className='icon-btn'> 
+                <Link className="back"
+                    to={location.pathname !== "/"? "/":{javascript: this.button.click()}} ><button onClick={() => history.goBack()} className='icon-btn'> 
                         <FaArrowCircleOLeft size='40'/></button>
                 </Link>}
           </div>
           <div className="subheader">
             <h2>Welcome to the Readable posts project! </h2>
-              {location.pathname !== "/add_post" && <Link 
-                to = "/add_post"
+              {location.pathname.substr(1).split('/').pop() !== "add_post" && <Link 
+                to = {this.isCategory(location.pathname.substr(1).split('/')[0])?
+                 `/${location.pathname.substr(1).split('/')[0]}/add_post` :
+                 "/add_post"}
                 className = 'icon-btn' 
                 ><FaPlusSquare size='40'/></Link>}
           </div>
@@ -151,13 +140,14 @@ class App extends Component {
             />{this.isCategory(location.pathname.substr(1)) &&
             <Route path="/:category" className="container"
                 render={(props) => 
-                  <Category getPostsAndComments={(category) => this.getPostsAndComments(category)} 
+                  <Category 
                     currentCategory={this.isCategory(props.match.params.category)?
                   {name: props.match.params.category, path: props.match.params.category}
                   :null}></Category>
                 }
             />}
             {this.isCategory(location.pathname.substr(1).split('/')[0]) &&
+            location.pathname.substr(1).split('/').pop() !== "add_post" &&
             <Route path="/:category/:post" className="container"
                 render={(props) => 
                   <PostDetails getPostAndComments={(id) => this.getPostAndComments(id)} 
@@ -165,11 +155,14 @@ class App extends Component {
                   ></PostDetails>
                 }
             />}
-            <Route path="/add_post" className="container"
+            {location.pathname.substr(1).split('/').pop() === "add_post" &&
+            <Route path={this.isCategory(location.pathname.substr(1).split('/')[0])? 
+            `/:category/add_post` :
+            "/add_post"} className="container"
               render={() => 
                 <CreatePost ></CreatePost>
               }
-            />
+            />}
           </div>
         </div>
       </div>
@@ -190,15 +183,7 @@ function mapStateToProps({posts, category, categories, alert}){
 
 function mapDispatchToProps(dispatch){
   return{
-    getPost:  (data) => dispatch(dispatchers.getPost(data)),
-    addPost: (data) => dispatch(dispatchers.post(data)),
-    deletePost: (data) => dispatch(dispatchers.deletePost(data)),
-    editPost: (data) => dispatch(dispatchers.editPost(data)),
-    ratePost: (data) => dispatch(dispatchers.ratePost(data)),
-    addComment: (data) => dispatch(dispatchers.comment(data)),
-    deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
-    editComment: (data) => dispatch(dispatchers.editComment(data)),
-    rateComment: (data) => dispatch(dispatchers.rateComment(data)),
+    getPost: (data) => dispatch(dispatchers.getPost(data)),
     getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
     getCategories: (data) => dispatch(dispatchers.getCategories(data)),
     fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),

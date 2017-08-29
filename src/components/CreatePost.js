@@ -8,25 +8,29 @@ import * as api from '../utils/ReadableAPI.js'
 import {capitalize} from '../utils/Helpers'
 import * as messages from '../utils/Messages'
 
-//TODO: add post to store 
+//TODO: add post to store
 
 class CreatePost extends Component{
-    newSubmit=(e)=>{
+    newSubmit = (e) => {
         e.preventDefault()
         const values = serializeForm(e.target,{hash:true})
-        api.post(values).then((post) => {
-            if(post.id){
-                document.postform.reset()
-                this.props.successMessage({message: messages.postCreated})    
+        this.props.doPost(values)
+        this.props.category? this.props.history.push(`/${this.props.category}`) 
+        : this.props.history.push("/") 
+        // api.post(values).then((post) => {
+        //     if(post.id){
+        //         document.postform.reset()
+        //         this.props.successMessage({type:"SUCCESS", message: messages.postCreated})    
+        //         this.props.invalidatePosts()
+        //         //return to home or previous page after posting
+       
                 
-                //return to home or previous page after posting
-                this.props.category? this.props.history.goBack() 
-                : this.props.history.push("/")        
-                setTimeout(() => {this.props.clearMessage()
-                }, 3000)                   
-            }
-            else this.props.dangerMessage({message: messages.postFailed})
-        })
+        //         //clear message after 3 seconds
+        //         setTimeout(() => {this.props.clearMessage()
+        //         }, 3000)                   
+        //     }
+        //     //else this.props.dangerMessage({message: messages.postFailed})
+        // })
     }
 
     render(){
@@ -36,7 +40,7 @@ class CreatePost extends Component{
             <span><p>Just fill all fields and click the right arrow!</p></span>
             <form name="postform" onSubmit={this.newSubmit} className='create-contact-form'>
                 <div className='create-post-details'>
-                    {this.props.category? <input type='hidden' name='category' value={this.props.category.name}/>
+                    {this.props.category? <input type='hidden' name='category' value={this.props.category}/>
                     :<select required name='category'>
                         <option readOnly value="" >Please select a category</option>
                     {this.props.categories && this.props.categories.map((category) => 
@@ -58,16 +62,18 @@ class CreatePost extends Component{
     }
 }
 
-function mapStateToProps({category, categories, message}){
-  return {category, categories, message}
+function mapStateToProps({category, categories, alert}){
+  return {category, categories, alert}
 }
 
 function mapDispatchToProps(dispatch){
   return{
-    addPost: (data) => dispatch(dispatchers.post(data)),
+    //addPost: (data) => dispatch(dispatchers.post(data)),
+    doPost: (data) => dispatch(dispatchers.doPost(data)),
     getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
     clearMessage: (data) => dispatch(dispatchers.clearMessage(data)),
     successMessage: (data) => dispatch(dispatchers.successMessage(data)),
+    invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
     dangerMessage: (data) => dispatch(dispatchers.dangerMessage(data))
   }
 }

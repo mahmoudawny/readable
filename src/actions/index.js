@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import * as messages from '../utils/Messages'
 
 export const DELETE_POST = 'DELETE_POST'
 export const POST = 'POST'
@@ -24,6 +25,9 @@ export const INVALIDATE_POST = 'INVALIDATE_POST'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
 export const SET_CATEGORY = 'SET_CATEGORY'
 
+//TODO: Add Handling failed fetches in all fetches
+
+//server constants
 const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
 
 let token = localStorage.token
@@ -36,6 +40,7 @@ const headers = {
   'Authorization': token
 }
 
+
 export function setCategory(category){
     return {
         type: SET_CATEGORY,
@@ -46,6 +51,76 @@ export function setCategory(category){
 export function invalidatePosts(){
     return {
         type: INVALIDATE_POST
+    }
+}
+
+export function invalidateComments(){
+    return {
+        type: INVALIDATE_COMMENT
+    }
+}
+
+function posts(post){
+    return {
+        type: POST,
+        post
+    }
+}
+
+export function doPost(post){
+    return dispatch => {
+        dispatch(posts(post))
+        return fetch(`${api}/posts`, {
+            method: 'POST',
+            headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(post)
+        }).then(handleErrors)
+        .then((res) => res.json())
+        .then((post) => {
+            if(post.id) {
+                dispatch(successMessage({message: messages.postCreated}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.postFailed}))
+            }
+            setTimeout(() => {dispatch(clearMessage())}, 3000)                
+        }).catch((error) =>  {
+            console.log(error)
+            dispatch(dangerMessage({message: error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
+
+function comments(comment){
+    return {
+        type: COMMENT,
+        comment
+    }
+}
+
+export function doComment(comment){
+    return dispatch => {
+        const {commentCreated, commentFailed} = messages
+        dispatch(comments(comment))
+        return fetch(`${api}/comments`, {
+            method: 'POST',
+            headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(comment)
+        }).then((res) => res.json()).then((comment) => {
+            if(comment.id) {
+                document.forms[0].reset()
+                dispatch(successMessage({message: commentCreated}))
+            }
+            else dispatch(dangerMessage({message: commentFailed}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000)  
+        })
     }
 }
 
@@ -66,7 +141,7 @@ function receivePosts(category, posts) {
   }
 }
 
-function getComments(posts){
+function requestComments(posts){
     return {
         type: GET_COMMENTS,
         posts
@@ -82,10 +157,11 @@ function receiveComments(comments) {
 }
 
 
-
+//function to return fetch posts promise and then dispatch get posts' (if any) comments 
 function fetchPosts(category) {
   return dispatch => {
     dispatch(requestPosts(category))
+    //get all posts if category is not specified
     if(!category)
         return fetch(`${api}/posts`, { headers })
         .then(response => response.json())
@@ -93,7 +169,7 @@ function fetchPosts(category) {
                 dispatch(receivePosts(category, posts)) 
                 dispatch(fetchComments(posts))         
         })
-        
+    //get posts for a category    
     else
         return fetch(`${api}/${category}/posts`, { headers })
         .then(response => response.json())
@@ -105,27 +181,22 @@ function fetchPosts(category) {
 }
 
 function fetchComments(posts){
-
     return dispatch => {
-    dispatch(getComments(posts))
+    dispatch(requestComments(posts))
     return Promise.all(posts.map((post) => {
         return fetch(`${api}/posts/${post.id}/comments`, { headers })}
     ))
         .then(responses => {
             responses.forEach((response) => {
-                // console.log(response.json())
                 response.json().then((comments) => dispatch(receiveComments(comments)))
             })
             
         })
-        // .then(comments => {
-        //     console.log(comments)
-        //     dispatch(receiveComments(comments))
-        // }) 
     }
     
 }
 
+//function to check if a new call should be made (true if current state is empty or if posts are invalidated)
 function shouldFetchPosts(state, category) {
   const {posts} = state
   if (!posts.items.length) {
@@ -137,6 +208,7 @@ function shouldFetchPosts(state, category) {
   }
 }
 
+//main fetch function to call on loading posts and their comments
 export function fetchPostsIfNeeded(category) {
   return (dispatch, getState) => {
    if (shouldFetchPosts(getState(), category)) {
@@ -154,12 +226,6 @@ export function deletePost({post}){
     }
 }
 
-export function post({post}){
-    return{
-        type: POST,
-        post
-    }
-}
 
 export function getPost({post}){
     return{
@@ -186,13 +252,6 @@ export function ratePost({post, option}){
 export function deleteComment({comment}){
     return{
         type: DELETE_COMMENT,
-        comment
-    }
-}
-
-export function comment({comment}){
-    return{
-        type: COMMENT,
         comment
     }
 }
@@ -265,4 +324,12 @@ export function clearMessage() {
         type: CLEAR,
         message: null
     }
+}
+
+// error handler for fetch
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
 }

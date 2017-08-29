@@ -7,7 +7,6 @@ import {Link} from 'react-router-dom'
 
 
 class Post extends Component{
-    //TODO: On click open post details with comments
     //TODO: better UI design
     
 
@@ -50,11 +49,11 @@ function mapStateToProps({comments, category}){
 
 function mapDispatchToProps(dispatch){
   return{
-    addPost: (data) => dispatch(dispatchers.post(data)),
+    // addPost: (data) => dispatch(dispatchers.post(data)),
     deletePost: (data) => dispatch(dispatchers.deletePost(data)),
     editPost: (data) => dispatch(dispatchers.editPost(data)),
     ratePost: (data) => dispatch(dispatchers.ratePost(data)),
-    addComment: (data) => dispatch(dispatchers.comment(data)),
+    // addComment: (data) => dispatch(dispatchers.comment(data)),
     deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
     editComment: (data) => dispatch(dispatchers.editComment(data)),
     rateComment: (data) => dispatch(dispatchers.rateComment(data)),

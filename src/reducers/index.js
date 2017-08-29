@@ -3,91 +3,6 @@ import {SET_CATEGORY, INVALIDATE_POST, RECEIVE_POSTS, GET_POST, INVALIDATE_COMME
 
 //TODO: Add comment ids in posts
 
-function posts(state = {
-                isLoading: false,
-                didInvalidate: false,
-                items: []
-                }, action) {
-  switch (action.type) {
-    case INVALIDATE_POST:
-      return Object.assign({}, state, {
-        didInvalidate: true
-      })
-    case GET_POSTS:
-      return Object.assign({}, state, {
-        isLoading: true,
-        didInvalidate: false
-      })
-    case RECEIVE_POSTS:
-      return Object.assign({}, state, {
-        isLoading: false,
-        didInvalidate: false,
-        items: action.posts,
-        lastUpdated: action.receivedAt
-      })
-    // case RECEIVE_COMMENTS:
-    // return Object.assign({}, state, {
-    //     isLoading: false,
-    //     didInvalidate: false,
-    //     items: action.posts.map((post) => comments(post, action)),
-    //     lastUpdated: action.receivedAt
-    //   })
-    default:
-      return state
-  }
-}
-
-function comments(state = {
-                isLoading: false,
-                didInvalidate: false,
-                items: []
-                }, action) {
-    switch (action.type) {
-    case INVALIDATE_COMMENT:
-      return Object.assign({}, state, {
-        didInvalidate: true
-      })
-    case GET_COMMENTS:
-      return Object.assign({}, state, {
-        isLoading: true,
-        didInvalidate: false
-      })
-    case RECEIVE_COMMENTS:
-      return Object.assign({}, state, {
-        isLoading: false,
-        didInvalidate: false,
-        items: state.items? state.items.concat(action.comments): action.comments,
-        lastUpdated: action.receivedAt
-      })
-    case GET_POSTS:
-      return Object.assign({}, state, {
-        isLoading: true,
-        didInvalidate: true,
-        items: []
-      })
-    // case RECEIVE_COMMENTS:
-    //   return Object.assign({}, state, {[state.comments]: action.comments})
-    default:
-      return state
-  }
-}
-
-function alert(state = null, action){
-    const {message} = action
-    switch(action.type){
-        case SUCCESS:
-            return message
-        case DANGER:
-            return message
-        case WARNING:
-            return message
-        case CLEAR:
-            return null
-        default:
-            return state
-    }
-}
-
 function categories(state = null, action){
     const {categories} = action
     switch(action.type){
@@ -108,6 +23,121 @@ function category(state = null, action){
             return state
     }
 }
+
+function posts(state = {
+                isLoading: false,
+                didInvalidate: false,
+                items: []
+                }, action) {
+  switch (action.type) {
+    case INVALIDATE_POST:
+      return Object.assign({}, state, {
+        didInvalidate: true
+      })
+    case GET_POSTS:
+      return Object.assign({}, state, {
+        isLoading: true,
+        didInvalidate: false
+      })
+    case GET_COMMENTS:
+      return Object.assign({}, state, {
+        isLoading: true,
+        didInvalidate: false
+      })
+    case RECEIVE_COMMENTS:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didInvalidate: false
+      })
+    case RECEIVE_POSTS:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didInvalidate: false,
+        items: action.posts,
+        lastUpdated: action.receivedAt
+      })
+    case POST:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didInvalidate: false,
+        items: state.items? state.items.concat(action.post): [].push(action.post),
+        lastUpdated: action.receivedAt
+      })
+    // case RECEIVE_COMMENTS:
+    // return Object.assign({}, state, {
+    //     isLoading: false,
+    //     didInvalidate: false,
+    //     items: action.posts.map((post) => comments(post, action)),
+    //     lastUpdated: action.receivedAt
+    //   })
+    default:
+      return state
+  }
+}
+
+function comments(state = {
+                isLoading: false,
+                didInvalidate: false,
+                items: []
+                }, action) {
+    switch (action.type) {
+        case INVALIDATE_COMMENT:
+            return Object.assign({}, state, {
+                didInvalidate: true
+            })
+        case GET_COMMENTS:
+            return Object.assign({}, state, {
+                isLoading: true,
+                didInvalidate: false
+            })
+        case RECEIVE_COMMENTS:
+            return Object.assign({}, state, {
+                isLoading: false,
+                didInvalidate: false,
+                items: state.items? state.items.concat(action.comments): action.comments,
+                lastUpdated: action.receivedAt
+            })
+        case GET_POSTS:
+            return Object.assign({}, state, {
+                isLoading: true,
+                didInvalidate: true,
+                items: []
+            })
+        case COMMENT:
+            return Object.assign({}, state, {
+            isLoading: false,
+            didInvalidate: false,
+            items: state.items? state.items.concat(action.comment): [].push(action.comment),
+            lastUpdated: action.receivedAt
+        })
+        default:
+        return state
+    }
+}
+
+function alert(state = null, action){
+    const {message} = action
+    switch(action.type){
+        case SUCCESS:
+            return {
+                message,
+                type: "success"
+            }
+        case DANGER:
+            return {  
+                message,
+                type: "danger"
+            }
+        case WARNING:
+            return message
+        case CLEAR:
+            return null
+        default:
+            return state
+    }
+}
+
+
 
 // function comments(state = null, action){
 //     const {comment, comments, post} = action
