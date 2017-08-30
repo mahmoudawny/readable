@@ -14,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import {Alert, Collapse} from 'react-bootstrap'
 import PostDetails from './PostDetails'
 import Loading from 'react-loading'
+import EditPost from './EditPost'
 import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 
 //TODO: Design CSS
@@ -83,10 +84,11 @@ class App extends Component {
 - Home route '/' displays all posts
 - /Category route displays selected category page
 - /AddPost route displays add post page
+- /EditPost/id route displays edit post page
 - /Category/post displays post details and its comments page
 */
   render() {
-    const {posts, categories, location, alert, history} = this.props
+    const {posts, comments, categories, location, alert, history} = this.props
     const {items} = posts
     return (
       <div className="App">         
@@ -115,7 +117,8 @@ class App extends Component {
                 className = 'icon-btn' 
                 ><FaPlusSquare size='40'/></Link>}
           </div>
-          <div>
+          {(posts.isLoading || comments.isLoading) && <Loading delay={200} type='spin' color='#222' className='loading' />}
+           <div>
             <Route exact path='/' className="main"
               render={() => 
               <div className='container'>
@@ -125,8 +128,7 @@ class App extends Component {
                   key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
                 : <h2>No categories to display</h2>}
-                {posts.isLoading? <Loading delay={200} type='spin' color='#222' className='loading' />
-                :<ul className='list'>
+                <ul className='list'>
                   <span className='header'> All Posts</span>
                     {items && items.map((post) => 
                       <li key={post.id}>
@@ -134,7 +136,7 @@ class App extends Component {
                           </Post>
                       </li>)
                     } 
-                </ul>}  
+                </ul>  
               </div>              
               }
             />{this.isCategory(location.pathname.substr(1)) &&
@@ -147,12 +149,21 @@ class App extends Component {
                 }
             />}
             {this.isCategory(location.pathname.substr(1).split('/')[0]) &&
+            location.pathname.substr(1).split('/').pop() !== "edit_post" &&
             location.pathname.substr(1).split('/').pop() !== "add_post" &&
             <Route path="/:category/:post" className="container"
                 render={(props) => 
                   <PostDetails getPostAndComments={(id) => this.getPostAndComments(id)} 
                   postId = {props.match.params.post}
                   ></PostDetails>
+                }
+            />}
+            {location.pathname.substr(1).split('/').pop() === "edit_post" &&
+            <Route path="/:category/:post/edit_post" className="container"
+                render={(props) => 
+                  <EditPost getPostAndComments={(id) => this.getPostAndComments(id)} 
+                  postId = {props.match.params.post}
+                  ></EditPost>
                 }
             />}
             {location.pathname.substr(1).split('/').pop() === "add_post" &&
@@ -172,9 +183,10 @@ class App extends Component {
 
 
 
-function mapStateToProps({posts, category, categories, alert}){
+function mapStateToProps({posts, comments, category, categories, alert}){
   return {
-    posts, 
+    posts,
+    comments, 
     category,
     categories,
     alert

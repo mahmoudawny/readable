@@ -4,36 +4,29 @@ import serializeForm from 'form-serialize'
 import FaArrowCircleORight from 'react-icons/lib/fa/arrow-circle-right'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
-import * as api from '../utils/ReadableAPI.js'
 import {capitalize} from '../utils/Helpers'
-import * as messages from '../utils/Messages'
 
-//TODO: add post to store
+
+//TODO: alert slides up with green color
+//TODO: if categories are null disable buttons and refresh
+//TODO: check when to reenable submit and show/hide loading
 
 class CreatePost extends Component{
     newSubmit = (e) => {
         e.preventDefault()
+        this.props.setSubmitting()
         const values = serializeForm(e.target,{hash:true})
-        this.props.doPost(values)
-        this.props.category? this.props.history.push(`/${this.props.category}`) 
-        : this.props.history.push("/") 
-        // api.post(values).then((post) => {
-        //     if(post.id){
-        //         document.postform.reset()
-        //         this.props.successMessage({type:"SUCCESS", message: messages.postCreated})    
-        //         this.props.invalidatePosts()
-        //         //return to home or previous page after posting
-       
-                
-        //         //clear message after 3 seconds
-        //         setTimeout(() => {this.props.clearMessage()
-        //         }, 3000)                   
-        //     }
-        //     //else this.props.dangerMessage({message: messages.postFailed})
-        // })
+        this.props.doPost(values).then(() => {
+            if(this.props.alert.type === "success"){
+                this.props.setNotSubmitting()
+                this.props.category? this.props.history.push(`/${this.props.category}`) 
+                : this.props.history.push("/")
+            } 
+        }) 
     }
 
     render(){
+        const {submitting} = this.props
         return(
         <div>
             <div className="header">Create a post</div>
@@ -52,8 +45,8 @@ class CreatePost extends Component{
                     <input required name='title' placeholder='Title' type='text'/>
                     <input required name='body' placeholder='Body' type='text'/>
                     <input required name='author' placeholder='Author' type='text'/>
-                    <button id="submit" className='icon-btn' title='Add Post'>
-                        <FaArrowCircleORight size='40'/>
+                    <button disabled={submitting} id="submit"  className='icon-btn' title='Add Post'>
+                        <FaArrowCircleORight  size='40'/>
                     </button>
                 </div>
             </form>
@@ -62,8 +55,8 @@ class CreatePost extends Component{
     }
 }
 
-function mapStateToProps({category, categories, alert}){
-  return {category, categories, alert}
+function mapStateToProps({category, categories, alert, submitting}){
+  return {category, categories, alert, submitting}
 }
 
 function mapDispatchToProps(dispatch){
@@ -72,9 +65,9 @@ function mapDispatchToProps(dispatch){
     doPost: (data) => dispatch(dispatchers.doPost(data)),
     getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
     clearMessage: (data) => dispatch(dispatchers.clearMessage(data)),
-    successMessage: (data) => dispatch(dispatchers.successMessage(data)),
+    setSubmitting: (data) => dispatch(dispatchers.setSubmitting(data)),
     invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
-    dangerMessage: (data) => dispatch(dispatchers.dangerMessage(data))
+    setNotSubmitting: (data) => dispatch(dispatchers.setNotSubmitting(data))
   }
 }
 

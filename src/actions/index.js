@@ -24,6 +24,10 @@ export const GET_POST = 'GET_POST'
 export const INVALIDATE_POST = 'INVALIDATE_POST'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
 export const SET_CATEGORY = 'SET_CATEGORY'
+export const SUBMITTING = 'SUBMITTING'
+export const NOTSUBMITTING = 'NOTSUBMITTING'
+export const START_POST = 'START_POST'
+export const START_COMMENT = 'START_COMMENT'
 
 //TODO: Add Handling failed fetches in all fetches
 
@@ -40,6 +44,17 @@ const headers = {
   'Authorization': token
 }
 
+export function setSubmitting(){
+    return {
+        type: SUBMITTING
+    }
+}
+
+export function setNotSubmitting(){
+    return {
+        type: NOTSUBMITTING
+    }
+}
 
 export function setCategory(category){
     return {
@@ -60,16 +75,29 @@ export function invalidateComments(){
     }
 }
 
-function posts(post){
+function startPosting(){
+    return {
+        type: START_POST
+    }
+}
+
+function postDone(post){
     return {
         type: POST,
         post
     }
 }
 
+function editPostDone(post){
+    return {
+        type: EDIT_POST,
+        post
+    }
+}
+
 export function doPost(post){
     return dispatch => {
-        dispatch(posts(post))
+        dispatch(startPosting())
         return fetch(`${api}/posts`, {
             method: 'POST',
             headers: {
@@ -81,6 +109,7 @@ export function doPost(post){
         .then((res) => res.json())
         .then((post) => {
             if(post.id) {
+                dispatch(postDone(post))
                 dispatch(successMessage({message: messages.postCreated}))
             }
             else{
@@ -95,7 +124,44 @@ export function doPost(post){
     }
 }
 
-function comments(comment){
+export function editPost({post, body}){
+    console.log(body)
+    return dispatch => {
+        dispatch(startPosting())
+        return fetch(`${api}/posts/${post.id}`, { method: 'PUT', 
+            headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }).then(handleErrors)
+        .then(res => res.json())
+        .then((post) => {
+            // console.log("result:", post)
+            if(post.id) {
+                dispatch(editPostDone(post))
+                dispatch(successMessage({message: messages.postEdited}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.postEditFailed}))
+            }
+            setTimeout(() => {dispatch(clearMessage())}, 3000)                
+        }).catch((error) =>  {
+            console.log(error)
+            dispatch(dangerMessage({message: error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
+
+function startCommenting(comment){
+    return {
+        type: START_COMMENT,
+        comment
+    }
+}
+
+function commentDone(comment){
     return {
         type: COMMENT,
         comment
@@ -105,7 +171,7 @@ function comments(comment){
 export function doComment(comment){
     return dispatch => {
         const {commentCreated, commentFailed} = messages
-        dispatch(comments(comment))
+        dispatch(startCommenting(comment))
         return fetch(`${api}/comments`, {
             method: 'POST',
             headers: {
@@ -115,7 +181,8 @@ export function doComment(comment){
             body: JSON.stringify(comment)
         }).then((res) => res.json()).then((comment) => {
             if(comment.id) {
-                document.forms[0].reset()
+                dispatch(commentDone(comment))
+                document.forms[0].reset()                
                 dispatch(successMessage({message: commentCreated}))
             }
             else dispatch(dangerMessage({message: commentFailed}))
@@ -234,12 +301,6 @@ export function getPost({post}){
     }
 }
 
-export function editPost({post}){
-    return{
-        type: EDIT_POST,
-        post
-    }
-}
 
 export function ratePost({post, option}){
     return{

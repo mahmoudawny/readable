@@ -3,13 +3,10 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import {Link} from 'react-router-dom'
-// import * as api from '../utils/ReadableAPI.js'
+import FaEdit from 'react-icons/lib/fa/edit'
 
 
 class Post extends Component{
-    //TODO: better UI design
-    
-
     render(){
         const {post, category, comments} = this.props
         let postComments = comments.items.filter((comment) => comment.parentId === post.id)
@@ -31,7 +28,10 @@ class Post extends Component{
                 {postComments && <p>Comments: {postComments.length}</p>}
                 </Link>
             </div>
-            <button className='post-edit' >Edit</button>
+            <Link 
+                to = {`/${post.category}/${post.id}/edit_post`}
+                className = 'icon-btn' 
+                ><FaEdit size='40'/></Link>
             <button className='post-remove' >Delete</button>
             <button className='post-voteup' >Vote Up</button>
             <button className='post-votedown' >Vote Down</button>

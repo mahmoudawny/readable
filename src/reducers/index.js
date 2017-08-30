@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux'
-import {SET_CATEGORY, INVALIDATE_POST, RECEIVE_POSTS, GET_POST, INVALIDATE_COMMENT, GET_COMMENTS, RECEIVE_COMMENTS, CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
+import {START_COMMENT, START_POST, SUBMITTING, NOTSUBMITTING, SET_CATEGORY, INVALIDATE_POST, RECEIVE_POSTS, GET_POST, INVALIDATE_COMMENT, GET_COMMENTS, RECEIVE_COMMENTS, CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
 
 //TODO: Add comment ids in posts
 
@@ -56,11 +56,28 @@ function posts(state = {
         items: action.posts,
         lastUpdated: action.receivedAt
       })
+    case START_POST:
+    return Object.assign({}, state, {
+        isLoading: true,
+        didInvalidate: false
+      })
     case POST:
       return Object.assign({}, state, {
         isLoading: false,
         didInvalidate: false,
         items: state.items? state.items.concat(action.post): [].push(action.post),
+        lastUpdated: action.receivedAt
+      })
+    case EDIT_POST:
+    const {post} = action
+      return Object.assign({}, state, {
+        isLoading: false,
+        didInvalidate: false,
+        items: state.items.map((oldpost) => {
+            if(oldpost.id === post.id) 
+                return {...oldpost, ...action.post}
+            return oldpost
+        }),
         lastUpdated: action.receivedAt
       })
     // case RECEIVE_COMMENTS:
@@ -103,15 +120,20 @@ function comments(state = {
                 didInvalidate: true,
                 items: []
             })
+        case START_COMMENT:
+            return Object.assign({}, state, {
+                isLoading: true,
+                didInvalidate: false
+            })
         case COMMENT:
             return Object.assign({}, state, {
-            isLoading: false,
-            didInvalidate: false,
-            items: state.items? state.items.concat(action.comment): [].push(action.comment),
-            lastUpdated: action.receivedAt
-        })
-        default:
-        return state
+                isLoading: false,
+                didInvalidate: false,
+                items: state.items? state.items.concat(action.comment): [].push(action.comment),
+                lastUpdated: action.receivedAt
+            })
+            default:
+            return state
     }
 }
 
@@ -170,11 +192,25 @@ function alert(state = null, action){
 //     }
 // }
 
+
+//current post state
 function post(state = null, action){
     const {post} = action
     switch(action.type){
         case GET_POST:
             return post
+        default:
+            return state
+    }
+}
+
+//submitting flag
+function submitting(state = false, action){
+    switch(action.type){
+        case SUBMITTING:
+            return true
+        case NOTSUBMITTING:
+            return false
         default:
             return state
     }
@@ -217,5 +253,5 @@ function post(state = null, action){
 //     }
 // }
 
-export default combineReducers({post, posts, comments, category, categories, alert})
+export default combineReducers({submitting, post, posts, comments, category, categories, alert})
 

@@ -31,48 +31,48 @@ class PostDetails extends Component{
     render(){
         const {post} = this.props
         if(post) {
-        let timestamp = new Date(Number(post.timestamp));
-        return(
-          <div>
-            <div className='post-details'>
-                <p>{post.category}</p>
-                <p>Title: {post.title}</p>
-                <p>Body: {post.body}</p>
-                <p>Author: {post.author}</p>
-                <p>Date: {timestamp.toLocaleDateString()}</p>
-                <p>Time: {timestamp.toLocaleTimeString()}</p>
-                <p>Score: {post.voteScore}</p>
-                {post.comments && 
-                <div className='comments-list'>
-                  <a>Comments: {post.comments.length}</a>
-                  {post.comments.map((comment) => 
-                  <Comment key={comment.id} comment = {comment}/>
-                  )}
+            let timestamp = new Date(Number(post.timestamp));
+            return(
+            <div>
+                <div className='post-details'>
+                    <p>{post.category}</p>
+                    <p>Title: {post.title}</p>
+                    <p>Body: {post.body}</p>
+                    <p>Author: {post.author}</p>
+                    <p>Date: {timestamp.toLocaleDateString()}</p>
+                    <p>Time: {timestamp.toLocaleTimeString()}</p>
+                    <p>Score: {post.voteScore}</p>
+                    {post.comments && 
+                    <div className='comments-list'>
+                    <a>Comments: {post.comments.length}</a>
+                    {post.comments.map((comment) => 
+                    <Comment key={comment.id} comment = {comment}/>
+                    )}
+                    </div>
+                    }
                 </div>
-                }
+                <form name="commentform" onSubmit={this.newSubmit} className='create-contact-form'>
+                    <div className='create-comment-details'>
+                        <input type='hidden' name='parentId' value={post.id}/>
+                        <input type='hidden' name='id' value={Math.random().toString(36).substr(-8)}/>
+                        <input type='hidden' name='timestamp' value={Number(Date.now())}/>
+                        <input required name='body' placeholder='Body' type='text'/>
+                        <input required name='author' placeholder='Author' type='text'/>
+                        <button id="submit" className='icon-btn' title='Add Comment'>
+                            <FaArrowCircleORight size='20'/>
+                        </button>
+                    </div>
+                </form>
+                <button className='post-edit' >Edit</button>
+                <button className='post-remove' >Delete</button>
+                <button className='post-voteup' >Vote Up</button>
+                <button className='post-votedown' >Vote Down</button>
             </div>
-            <form name="commentform" onSubmit={this.newSubmit} className='create-contact-form'>
-                <div className='create-comment-details'>
-                    <input type='hidden' name='parentId' value={post.id}/>
-                    <input type='hidden' name='id' value={Math.random().toString(36).substr(-8)}/>
-                    <input type='hidden' name='timestamp' value={Number(Date.now())}/>
-                    <input required name='body' placeholder='Body' type='text'/>
-                    <input required name='author' placeholder='Author' type='text'/>
-                    <button id="submit" className='icon-btn' title='Add Comment'>
-                        <FaArrowCircleORight size='20'/>
-                    </button>
-                </div>
-            </form>
-            <button className='post-edit' >Edit</button>
-            <button className='post-remove' >Delete</button>
-            <button className='post-voteup' >Vote Up</button>
-            <button className='post-votedown' >Vote Down</button>
-          </div>
+            )
+            }
+        else return(
+            <div><p>Your page is being loaded, hit refresh if it takes too long.</p></div>
         )
-        }
-    else return(
-        <div><p>Unfortunately, the post you requested cannot be displayed at the moment.</p></div>
-    )
     }
 }
 
