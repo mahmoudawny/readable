@@ -8,7 +8,7 @@ import {capitalize} from '../utils/Helpers'
 
 
 //TODO: alert slides up with green color
-//TODO: if categories are null disable buttons and refresh
+//TODO: if categories are null disable buttons 
 //TODO: check when to reenable submit and show/hide loading
 
 class CreatePost extends Component{
@@ -31,7 +31,7 @@ class CreatePost extends Component{
         <div>
             <div className="header">Create a post</div>
             <span><p>Just fill all fields and click the right arrow!</p></span>
-            <form name="postform" onSubmit={this.newSubmit} className='create-contact-form'>
+            <form name="postform" onSubmit={this.newSubmit} >
                 <div className='create-post-details'>
                     {this.props.category? <input type='hidden' name='category' value={this.props.category}/>
                     :<select required name='category'>
@@ -61,12 +61,8 @@ function mapStateToProps({category, categories, alert, submitting}){
 
 function mapDispatchToProps(dispatch){
   return{
-    //addPost: (data) => dispatch(dispatchers.post(data)),
     doPost: (data) => dispatch(dispatchers.doPost(data)),
-    getAllPosts: (data) => dispatch(dispatchers.getPosts(data)),
-    clearMessage: (data) => dispatch(dispatchers.clearMessage(data)),
     setSubmitting: (data) => dispatch(dispatchers.setSubmitting(data)),
-    invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
     setNotSubmitting: (data) => dispatch(dispatchers.setNotSubmitting(data))
   }
 }

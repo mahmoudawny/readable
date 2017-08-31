@@ -21,6 +21,7 @@ export const GET_COMMENTS = 'GET_COMMENTS'
 export const INVALIDATE_COMMENT = 'INVALIDATE_COMMENT'
 export const RECEIVE_COMMENTS = 'RECEIVE_COMMENTS'
 export const GET_POST = 'GET_POST'
+export const GET_COMMENT = 'GET_COMMENT'
 export const INVALIDATE_POST = 'INVALIDATE_POST'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
 export const SET_CATEGORY = 'SET_CATEGORY'
@@ -28,6 +29,7 @@ export const SUBMITTING = 'SUBMITTING'
 export const NOTSUBMITTING = 'NOTSUBMITTING'
 export const START_POST = 'START_POST'
 export const START_COMMENT = 'START_COMMENT'
+export const CANCEL_COMMENTING = 'CANCEL_COMMENTING'
 
 //TODO: Add Handling failed fetches in all fetches
 
@@ -42,6 +44,49 @@ if (!token)
 const headers = {
   'Accept': 'application/json',
   'Authorization': token
+}
+
+//global 
+
+export function getCategories({categories}) {
+    return {
+        type: CATEGORIES,
+        categories
+    }
+}
+
+export function successMessage({message}) {
+    return {
+        type: SUCCESS,
+        message
+    }
+}
+export function warningMessage({message}) {
+    return {
+        type: WARNING,
+        message
+    }
+}
+export function dangerMessage({message}) {
+    return {
+        type: DANGER,
+        message
+    }
+}
+
+export function clearMessage() {
+    return {
+        type: CLEAR,
+        message: null
+    }
+}
+
+// error handler for fetch
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
 }
 
 export function setSubmitting(){
@@ -63,16 +108,30 @@ export function setCategory(category){
     }
 }
 
+//posts 
+
 export function invalidatePosts(){
     return {
         type: INVALIDATE_POST
     }
 }
 
-export function invalidateComments(){
-    return {
-        type: INVALIDATE_COMMENT
-    }
+function requestPosts(category) {
+  return {
+    type: GET_POSTS,
+    category
+  }
+}
+
+
+function receivePosts(category, posts, allPosts) {
+  return {
+    type: RECEIVE_POSTS,
+    category,
+    posts,
+    allPosts,
+    receivedAt: Date.now()
+  }
 }
 
 function startPosting(){
@@ -95,135 +154,6 @@ function editPostDone(post){
     }
 }
 
-export function doPost(post){
-    return dispatch => {
-        dispatch(startPosting())
-        return fetch(`${api}/posts`, {
-            method: 'POST',
-            headers: {
-            ...headers,
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(post)
-        }).then(handleErrors)
-        .then((res) => res.json())
-        .then((post) => {
-            if(post.id) {
-                dispatch(postDone(post))
-                dispatch(successMessage({message: messages.postCreated}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.postFailed}))
-            }
-            setTimeout(() => {dispatch(clearMessage())}, 3000)                
-        }).catch((error) =>  {
-            console.log(error)
-            dispatch(dangerMessage({message: error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
-    }
-}
-
-export function editPost({post, body}){
-    console.log(body)
-    return dispatch => {
-        dispatch(startPosting())
-        return fetch(`${api}/posts/${post.id}`, { method: 'PUT', 
-            headers: {
-            ...headers,
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        }).then(handleErrors)
-        .then(res => res.json())
-        .then((post) => {
-            // console.log("result:", post)
-            if(post.id) {
-                dispatch(editPostDone(post))
-                dispatch(successMessage({message: messages.postEdited}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.postEditFailed}))
-            }
-            setTimeout(() => {dispatch(clearMessage())}, 3000)                
-        }).catch((error) =>  {
-            console.log(error)
-            dispatch(dangerMessage({message: error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
-    }
-}
-
-function startCommenting(comment){
-    return {
-        type: START_COMMENT,
-        comment
-    }
-}
-
-function commentDone(comment){
-    return {
-        type: COMMENT,
-        comment
-    }
-}
-
-export function doComment(comment){
-    return dispatch => {
-        const {commentCreated, commentFailed} = messages
-        dispatch(startCommenting(comment))
-        return fetch(`${api}/comments`, {
-            method: 'POST',
-            headers: {
-            ...headers,
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(comment)
-        }).then((res) => res.json()).then((comment) => {
-            if(comment.id) {
-                dispatch(commentDone(comment))
-                document.forms[0].reset()                
-                dispatch(successMessage({message: commentCreated}))
-            }
-            else dispatch(dangerMessage({message: commentFailed}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000)  
-        })
-    }
-}
-
-function requestPosts(category) {
-  return {
-    type: GET_POSTS,
-    category
-  }
-}
-
-
-function receivePosts(category, posts) {
-  return {
-    type: RECEIVE_POSTS,
-    category,
-    posts,
-    receivedAt: Date.now()
-  }
-}
-
-function requestComments(posts){
-    return {
-        type: GET_COMMENTS,
-        posts
-    }
-}
-
-function receiveComments(comments) {
-  return {
-    type: RECEIVE_COMMENTS,
-    comments,
-    receivedAt: Date.now()
-  }
-}
-
-
 //function to return fetch posts promise and then dispatch get posts' (if any) comments 
 function fetchPosts(category) {
   return dispatch => {
@@ -233,7 +163,7 @@ function fetchPosts(category) {
         return fetch(`${api}/posts`, { headers })
         .then(response => response.json())
         .then(posts => {
-                dispatch(receivePosts(category, posts)) 
+                dispatch(receivePosts(category, posts, true)) 
                 dispatch(fetchComments(posts))         
         })
     //get posts for a category    
@@ -241,27 +171,13 @@ function fetchPosts(category) {
         return fetch(`${api}/${category}/posts`, { headers })
         .then(response => response.json())
         .then(posts => {
-            dispatch(receivePosts(category, posts))
+            dispatch(receivePosts(category, posts, false))
             dispatch(fetchComments(posts))                     
         })
   }
 }
 
-function fetchComments(posts){
-    return dispatch => {
-    dispatch(requestComments(posts))
-    return Promise.all(posts.map((post) => {
-        return fetch(`${api}/posts/${post.id}/comments`, { headers })}
-    ))
-        .then(responses => {
-            responses.forEach((response) => {
-                response.json().then((comments) => dispatch(receiveComments(comments)))
-            })
-            
-        })
-    }
-    
-}
+
 
 //function to check if a new call should be made (true if current state is empty or if posts are invalidated)
 function shouldFetchPosts(state, category) {
@@ -310,6 +226,204 @@ export function ratePost({post, option}){
     }
 }
 
+export function doPost(post){
+    return dispatch => {
+        dispatch(startPosting())
+        return fetch(`${api}/posts`, {
+            method: 'POST',
+            headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(post)
+        }).then(handleErrors)
+        .then((res) => res.json())
+        .then((post) => {
+            if(post.id) {
+                dispatch(postDone(post))
+                dispatch(successMessage({message: messages.postCreated}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.postFailed}))
+            }
+            setTimeout(() => {dispatch(clearMessage())}, 3000)                
+        }).catch((error) =>  {
+            dispatch(dangerMessage({message: error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
+
+export function editPost({post, body}){
+    return dispatch => {
+        dispatch(startPosting())
+        return fetch(`${api}/posts/${post.id}`, { method: 'PUT', 
+            headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }).then(handleErrors)
+        .then(res => res.json())
+        .then((post) => {
+            if(post.id) {
+                dispatch(editPostDone(post))
+                dispatch(successMessage({message: messages.postEdited}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.postEditFailed}))
+            }
+            setTimeout(() => {dispatch(clearMessage())}, 3000)                
+        }).catch((error) =>  {
+            dispatch(dangerMessage({message: error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
+
+//comments
+
+
+function requestComments(posts){
+    return {
+        type: GET_COMMENTS,
+        posts
+    }
+}
+
+function receiveComments(comments) {
+  return {
+    type: RECEIVE_COMMENTS,
+    comments,
+    receivedAt: Date.now()
+  }
+}
+
+export function invalidateComments(){
+    return {
+        type: INVALIDATE_COMMENT
+    }
+}
+
+function startCommenting(comment){
+    return {
+        type: START_COMMENT,
+        comment
+    }
+}
+
+function commentDone(comment){
+    return {
+        type: COMMENT,
+        comment
+    }
+}
+
+function editCommentDone(comment){
+    return {
+        type: EDIT_COMMENT,
+        comment
+    }
+}
+
+export function cancelEditComment(){
+    return {
+        type: CANCEL_COMMENTING
+    }
+}
+
+export function doComment(comment){
+    return dispatch => {
+        const {commentCreated, commentFailed} = messages
+        dispatch(startCommenting(comment))
+        return fetch(`${api}/comments`, {
+            method: 'POST',
+            headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(comment)
+        }).then((res) => res.json()).then((comment) => {
+            if(comment.id) {
+                dispatch(commentDone(comment))
+                document.forms[0].reset()                
+                dispatch(successMessage({message: commentCreated}))
+            }
+            else dispatch(dangerMessage({message: commentFailed}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000)  
+        }).catch((error) =>  {
+            dispatch(dangerMessage({message: error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
+
+export function getComment({comment}){
+    return{
+        type: GET_COMMENT,
+        comment
+    }
+}
+
+/*export const rateComment = (comment, body) =>
+  fetch(`${api}/comments/${comment.id}`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  }).then(res => res.json())
+*/
+
+export function editComment({comment, body}){
+    return dispatch => {
+        dispatch(startCommenting())
+        return fetch(`${api}/comments/${comment.id}`, { method: 'PUT', 
+            headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }).then(handleErrors)
+        .then(res => res.json())
+        .then((comment) => {
+            if(comment.id) {
+                document.forms[0].reset()
+                dispatch(editCommentDone(comment))
+                dispatch(successMessage({message: messages.commentEdited}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.commentEditFailed}))
+            }
+            setTimeout(() => {dispatch(clearMessage())}, 3000)                
+        }).catch((error) =>  {
+            dispatch(dangerMessage({message: messages.commentEditFailed + `\n` + error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
+
+
+
+function fetchComments(posts){
+    return dispatch => {
+    dispatch(requestComments(posts))
+    return Promise.all(posts.map((post) => {
+        return fetch(`${api}/posts/${post.id}/comments`, { headers })}
+    ))
+        .then(responses => {
+            responses.forEach((response) => {
+                response.json().then((comments) => dispatch(receiveComments(comments)))
+            })
+            
+        })
+    }
+    
+}
+
+
+
 export function deleteComment({comment}){
     return{
         type: DELETE_COMMENT,
@@ -317,12 +431,6 @@ export function deleteComment({comment}){
     }
 }
 
-export function editComment({comment}){
-    return{
-        type: EDIT_COMMENT,
-        comment
-    }
-}
 
 export function rateComment({comment, option}){
     return{
@@ -334,63 +442,23 @@ export function rateComment({comment, option}){
 
 
 
-export function getPosts({posts}) {
-  return {
-    type: GET_POSTS,
-    posts,
-    category: null
-  }
-}
+// export function getPosts({posts}) {
+//   return {
+//     type: GET_POSTS,
+//     posts,
+//     category: null
+//   }
+// }
 
 
 
-export function getCategoryPosts({posts, category, history}) {
-  return {
-    type: CATEGORY_POSTS,
-    posts,
-    category,
-    history
-  }
-}
+// export function getCategoryPosts({posts, category, history}) {
+//   return {
+//     type: CATEGORY_POSTS,
+//     posts,
+//     category,
+//     history
+//   }
+// }
 
 
-export function getCategories({categories}) {
-    return {
-        type: CATEGORIES,
-        categories
-    }
-}
-
-export function successMessage({message}) {
-    return {
-        type: SUCCESS,
-        message
-    }
-}
-export function warningMessage({message}) {
-    return {
-        type: WARNING,
-        message
-    }
-}
-export function dangerMessage({message}) {
-    return {
-        type: DANGER,
-        message
-    }
-}
-
-export function clearMessage() {
-    return {
-        type: CLEAR,
-        message: null
-    }
-}
-
-// error handler for fetch
-function handleErrors(response) {
-    if (!response.ok) {
-        throw Error(response.statusText);
-    }
-    return response;
-}

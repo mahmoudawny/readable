@@ -324,3 +324,7 @@ li {
   font-size: 14px;
   margin-top: 5px;
 }
+
+.body-field {
+  width: 100;
+}

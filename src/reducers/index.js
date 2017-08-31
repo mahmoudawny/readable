@@ -1,5 +1,18 @@
 import {combineReducers} from 'redux'
-import {START_COMMENT, START_POST, SUBMITTING, NOTSUBMITTING, SET_CATEGORY, INVALIDATE_POST, RECEIVE_POSTS, GET_POST, INVALIDATE_COMMENT, GET_COMMENTS, RECEIVE_COMMENTS, CLEAR, SUCCESS, DANGER, WARNING, CATEGORIES, POST_PAGE, CATEGORY_POSTS, GET_POSTS, POST, DELETE_POST, EDIT_POST, COMMENT, EDIT_COMMENT, DELETE_COMMENT, RATE_COMMENT, RATE_POST} from '../actions'
+import {SUBMITTING, NOTSUBMITTING, //set flag for posting operations
+        SET_CATEGORY, //set the current category
+        CATEGORIES, //get categories
+        START_COMMENT, START_POST, //async request actions for single items
+        CANCEL_COMMENTING, //to cancel editing comment
+        POST, COMMENT, EDIT_POST, EDIT_COMMENT, //async response for single items
+        DELETE_POST, DELETE_COMMENT, 
+        RATE_COMMENT, RATE_POST,
+        GET_POST, GET_COMMENT, //get single post/comment and save them in store
+        INVALIDATE_POST, INVALIDATE_COMMENT, //async refresh actions
+        GET_POSTS, GET_COMMENTS, //async request actions for all items
+        RECEIVE_POSTS, RECEIVE_COMMENTS, //async response actions for all items
+        CLEAR, SUCCESS, DANGER, WARNING, //alert actions
+    } from '../actions'
 
 //TODO: Add comment ids in posts
 
@@ -54,6 +67,7 @@ function posts(state = {
         isLoading: false,
         didInvalidate: false,
         items: action.posts,
+        allPosts: action.allPosts,
         lastUpdated: action.receivedAt
       })
     case START_POST:
@@ -66,7 +80,6 @@ function posts(state = {
         isLoading: false,
         didInvalidate: false,
         items: state.items? state.items.concat(action.post): [].push(action.post),
-        lastUpdated: action.receivedAt
       })
     case EDIT_POST:
     const {post} = action
@@ -78,7 +91,6 @@ function posts(state = {
                 return {...oldpost, ...action.post}
             return oldpost
         }),
-        lastUpdated: action.receivedAt
       })
     // case RECEIVE_COMMENTS:
     // return Object.assign({}, state, {
@@ -128,12 +140,22 @@ function comments(state = {
         case COMMENT:
             return Object.assign({}, state, {
                 isLoading: false,
-                didInvalidate: false,
+                didInvalidate: true,
                 items: state.items? state.items.concat(action.comment): [].push(action.comment),
-                lastUpdated: action.receivedAt
             })
-            default:
-            return state
+        case EDIT_COMMENT:
+            const {comment} = action
+            return Object.assign({}, state, {
+                isLoading: false,
+                didInvalidate: true,
+                items: state.items.map((oldcomment) => {
+                    if(oldcomment.id === comment.id) 
+                        return {...oldcomment, ...action.comment}
+                    return oldcomment
+                }),
+            })
+        default:
+        return state
     }
 }
 
@@ -164,21 +186,11 @@ function alert(state = null, action){
 // function comments(state = null, action){
 //     const {comment, comments, post} = action
 //     switch(action.type){
-
-
-
-//         case COMMENT:
-//             return comments.concat(comment)
                     
 //         case DELETE_COMMENT:
 //             return {
 //                      ...state,
 //                      [comment]: state[comment].deleted = true 
-//                     }
-//         case EDIT_COMMENT:
-//             return {
-//                      ...state,
-//                      [comment]: state[comment] = comment 
 //                     }
 //         case RATE_COMMENT:
 //             return {
@@ -204,6 +216,19 @@ function post(state = null, action){
     }
 }
 
+//current comment state (for editing a comment)
+function comment(state = null, action){
+    const {comment} = action
+    switch(action.type){
+        case GET_COMMENT:
+            return comment
+        case CANCEL_COMMENTING:
+            return null
+        default:
+            return state
+    }
+}
+
 //submitting flag
 function submitting(state = false, action){
     switch(action.type){
@@ -219,18 +244,7 @@ function submitting(state = false, action){
 // function posts(state = null, action){
 //     const {post, posts, category} = action
 //     switch(action.type){
-//         case POST_PAGE:
-//             return post
-
-//         case GET_POSTS:
-//             return posts
-
-//         case CATEGORY_POSTS:
-//             return posts.filter((post) => post.category === category.name)
-           
-//         case POST:
-//             return posts.concat(post)
-                    
+                   
 //         case DELETE_POST:
 //             return {
 //                      ...state,
@@ -253,5 +267,5 @@ function submitting(state = false, action){
 //     }
 // }
 
-export default combineReducers({submitting, post, posts, comments, category, categories, alert})
+export default combineReducers({submitting, post, posts, comment, comments, category, categories, alert})
 

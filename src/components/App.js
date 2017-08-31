@@ -19,9 +19,9 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 
 //TODO: Design CSS
 //TODO: Sorting 
-//TODO: update and delete buttons, functions and messages 
+//TODO: delete buttons 
 //TODO: voting buttons
-//TODO: Back button works like browser back not app back
+//TODO: make a different back button in each page
 
 
 class App extends Component {
@@ -33,9 +33,10 @@ class App extends Component {
       this.props.getCategories({categories})
       //If homepage load all posts
       if(location.pathname === '/')
-        this.props.fetchPosts(null) 
-      else if(this.isCategory(location.pathname.substr(1))){
-        this.props.fetchPosts(location.pathname.substr(1))        
+        this.props.fetchPosts(null)
+      //if on a category page/subpage load only category's posts 
+      else if(this.isCategory(location.pathname.substr(1).split('/')[0])){
+        this.props.fetchPosts(location.pathname.substr(1).split('/')[0])        
       }
     })
 
@@ -43,16 +44,24 @@ class App extends Component {
 
   componentWillReceiveProps(nextProps){ 
     //If url changes check props to reload all posts when returning 
-    //to homepage 
-    const {location} = this.props
+    //to homepage
+    const {location, posts} = this.props
     if(nextProps.location.pathname !== location.pathname){
+      //check when returning from category pages if we need to fetch all posts
       if(nextProps.location.pathname === '/') 
         {
-          this.props.invalidatePosts()
-          this.props.fetchPosts(null) 
+          console.log(nextProps.location.pathname)
+          this.props.setCategory(null)
+          if(!posts.allPosts)
+            {
+              this.props.invalidatePosts()
+              this.props.fetchPosts(null)
+            } 
         }
-      else if(this.isCategory(nextProps.location.pathname.substr(1))){
-        this.props.setCategory(nextProps.location.pathname.substr(1))        
+      //if on a category page/subpage load only category's posts
+      else if(this.isCategory(nextProps.location.pathname.substr(1).split('/')[0])){
+        this.props.setCategory(nextProps.location.pathname.substr(1).split('/')[0])        
+        this.props.fetchPosts(nextProps.location.pathname.substr(1).split('/')[0]) 
       }
     }
   }
@@ -124,7 +133,7 @@ class App extends Component {
               <div className='container'>
                 {categories? categories.map((category) => 
                 <div key={category.name} className="list">                
-                  <Link onClick={() => this.props.setCategory(category.name)} to={`/${category.path}`}
+                  <Link to={`/${category.path}`}
                   key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
                 : <h2>No categories to display</h2>}
@@ -196,7 +205,6 @@ function mapStateToProps({posts, comments, category, categories, alert}){
 function mapDispatchToProps(dispatch){
   return{
     getPost: (data) => dispatch(dispatchers.getPost(data)),
-    getCategoryPosts: (data) => dispatch(dispatchers.getCategoryPosts(data)),
     getCategories: (data) => dispatch(dispatchers.getCategories(data)),
     fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),
     setCategory: (data) => dispatch(dispatchers.setCategory(data)),
