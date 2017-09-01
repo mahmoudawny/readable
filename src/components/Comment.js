@@ -3,8 +3,15 @@ import React, { Component } from 'react'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import FaEdit from 'react-icons/lib/fa/edit'
+import FaMinusSquare from 'react-icons/lib/fa/minus-square'
 
 class Comment extends Component{
+    fireConfirmation(comment){
+      if(window.confirm("Are you sure you want to delete this comment?")){
+        this.props.deleteComment(comment)
+      }
+    }
+
     render(){
         const {comment} = this.props
         let timestamp = new Date(Number(comment.timestamp));
@@ -20,8 +27,11 @@ class Comment extends Component{
             <button 
                 onClick = {() => this.props.getComment({comment})}
                 className = 'icon-btn' 
-            ><FaEdit size='40'/></button>
-            <button className='comment-remove' >Delete</button>
+            ><FaEdit size='40'/>Edit Comment</button>
+            <button 
+                onClick = {() => this.fireConfirmation(comment)}
+                className = 'icon-btn' 
+            ><FaMinusSquare size='40'/>Delete Comment</button>
             <button className='comment-voteup' >Vote Up</button>
             <button className='comment-votedown' >Vote Down</button>
           </div>

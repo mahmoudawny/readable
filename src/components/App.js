@@ -19,9 +19,9 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 
 //TODO: Design CSS
 //TODO: Sorting 
-//TODO: delete buttons 
 //TODO: voting buttons
 //TODO: make a different back button in each page
+//TODO: route error page when invalid id's and categories in url 
 
 
 class App extends Component {

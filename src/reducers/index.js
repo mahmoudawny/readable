@@ -42,7 +42,8 @@ function posts(state = {
                 didInvalidate: false,
                 items: []
                 }, action) {
-  switch (action.type) {
+  const {post} = action
+  switch (action.type) {     
     case INVALIDATE_POST:
       return Object.assign({}, state, {
         didInvalidate: true
@@ -81,8 +82,7 @@ function posts(state = {
         didInvalidate: false,
         items: state.items? state.items.concat(action.post): [].push(action.post),
       })
-    case EDIT_POST:
-    const {post} = action
+    case EDIT_POST:  
       return Object.assign({}, state, {
         isLoading: false,
         didInvalidate: false,
@@ -92,6 +92,14 @@ function posts(state = {
             return oldpost
         }),
       })
+    case DELETE_POST:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didInvalidate: true,
+        items: state.items.filter((oldpost) => 
+                oldpost.id !== post.id
+            ),
+    })
     // case RECEIVE_COMMENTS:
     // return Object.assign({}, state, {
     //     isLoading: false,
@@ -109,6 +117,7 @@ function comments(state = {
                 didInvalidate: false,
                 items: []
                 }, action) {
+    const {comment, post} = action
     switch (action.type) {
         case INVALIDATE_COMMENT:
             return Object.assign({}, state, {
@@ -144,7 +153,6 @@ function comments(state = {
                 items: state.items? state.items.concat(action.comment): [].push(action.comment),
             })
         case EDIT_COMMENT:
-            const {comment} = action
             return Object.assign({}, state, {
                 isLoading: false,
                 didInvalidate: true,
@@ -153,6 +161,22 @@ function comments(state = {
                         return {...oldcomment, ...action.comment}
                     return oldcomment
                 }),
+            })
+        case DELETE_COMMENT:
+            return Object.assign({}, state, {
+                isLoading: false,
+                didInvalidate: false,
+                items: state.items.filter((oldcomment) => 
+                    oldcomment.id !== comment.id 
+                ),
+            })
+        case DELETE_POST:
+            return Object.assign({}, state, {
+                isLoading: false,
+                didInvalidate: false,
+                items: state.items.filter((oldcomment) => 
+                    oldcomment.parentId !== post.id
+                ),
             })
         default:
         return state

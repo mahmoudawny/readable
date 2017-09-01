@@ -8,7 +8,8 @@ import FaArrowCircleORight from 'react-icons/lib/fa/arrow-circle-right'
 import {Link} from 'react-router-dom'
 import FaEdit from 'react-icons/lib/fa/edit'
 import FaBan from 'react-icons/lib/fa/ban'
-
+import FaMinusSquare from 'react-icons/lib/fa/minus-square'
+import {withRouter} from "react-router-dom";
 
 //TODO: scroll on clicking edit to show edit fields
 
@@ -25,6 +26,15 @@ class PostDetails extends Component{
         }
     }
 
+    //confirm delete
+    fireConfirmation(post){
+      if(window.confirm("Are you sure you want to delete this post?")){
+        this.props.deletePost(post)
+        this.props.history.push(`/${post.category}`)
+      }
+    }
+
+    //submit comment
     newSubmit = (e) => {
         const {comment} = this.props
         e.preventDefault()
@@ -100,7 +110,10 @@ class PostDetails extends Component{
                     to = {`/${post.category}/${post.id}/edit_post`}
                     className = 'icon-btn' 
                 ><FaEdit size='40'/></Link>
-                <button className='post-remove' >Delete</button>
+                <button 
+                    onClick = {() => this.fireConfirmation(post)}
+                    className = 'icon-btn' 
+                ><FaMinusSquare size='40'/></button>
                 <button className='post-voteup' >Vote Up</button>
                 <button className='post-votedown' >Vote Down</button>
             </div>
@@ -127,13 +140,11 @@ function mapDispatchToProps(dispatch){
     editPost: (data) => dispatch(dispatchers.editPost(data)),
     ratePost: (data) => dispatch(dispatchers.ratePost(data)),
     doComment: (data) => dispatch(dispatchers.doComment(data)),
-    deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
     editComment: (data) => dispatch(dispatchers.editComment(data)),
     cancelEditComment: (data) => dispatch(dispatchers.cancelEditComment(data)),
-    rateComment: (data) => dispatch(dispatchers.rateComment(data)),
     setSubmitting: (data) => dispatch(dispatchers.setSubmitting(data)),
     invalidateComments: (data) => dispatch(dispatchers.invalidateComments(data)),
     setNotSubmitting: (data) => dispatch(dispatchers.setNotSubmitting(data))
   }
 }
-export default connect(mapStateToProps,mapDispatchToProps)(PostDetails)
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(PostDetails))

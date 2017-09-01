@@ -32,6 +32,7 @@ export const START_COMMENT = 'START_COMMENT'
 export const CANCEL_COMMENTING = 'CANCEL_COMMENTING'
 
 //TODO: Add Handling failed fetches in all fetches
+//TODO: \n not working with alert messages
 
 //server constants
 const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
@@ -202,13 +203,6 @@ export function fetchPostsIfNeeded(category) {
   }
 }
 
-export function deletePost({post}){
-    return{
-        type: DELETE_POST,
-        post
-    }
-}
-
 
 export function getPost({post}){
     return{
@@ -276,6 +270,34 @@ export function editPost({post, body}){
             setTimeout(() => {dispatch(clearMessage())}, 3000)                
         }).catch((error) =>  {
             dispatch(dangerMessage({message: error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
+
+export function doDeletePost(post){
+    return{
+        type: DELETE_POST,
+        post
+    }
+}
+
+export function deletePost(post){
+    return dispatch => {
+        dispatch(startPosting())
+        return fetch(`${api}/posts/${post.id}`, { method: 'DELETE', headers })
+        .then(handleErrors)
+        .then((res) => {
+            if(!res.error) {
+                dispatch(doDeletePost(post))
+                dispatch(successMessage({message: messages.postDeleted}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.postDeleteFailed}))
+            }
+            setTimeout(() => {dispatch(clearMessage())}, 3000)                
+        }).catch((error) =>  {
+            dispatch(dangerMessage({message: messages.postDeleteFailed + `\n` + error.toString()}))
             setTimeout(() => {dispatch(clearMessage())}, 3000) 
         })
     }
@@ -424,13 +446,34 @@ function fetchComments(posts){
 
 
 
-export function deleteComment({comment}){
+function doDeleteComment(comment){
     return{
         type: DELETE_COMMENT,
         comment
     }
 }
 
+export function deleteComment(comment){
+    return dispatch => {
+        dispatch(startCommenting())
+        return fetch(`${api}/comments/${comment.id}`, { method: 'DELETE', headers })
+        .then(handleErrors)
+        .then(res => res.json())
+        .then((comment) => {
+            if(comment.id) {
+                dispatch(doDeleteComment(comment))
+                dispatch(successMessage({message: messages.commentDeleted}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.commentDeleteFailed}))
+            }
+            setTimeout(() => {dispatch(clearMessage())}, 3000)                
+        }).catch((error) =>  {
+            dispatch(dangerMessage({message: messages.commentDeleteFailed + `\n` + error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
 
 export function rateComment({comment, option}){
     return{

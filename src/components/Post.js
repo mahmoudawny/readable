@@ -5,6 +5,7 @@ import * as dispatchers from '../actions'
 import {Link} from 'react-router-dom'
 import FaEdit from 'react-icons/lib/fa/edit'
 
+//TODO: add delete control functionality 
 
 class Post extends Component{
     render(){
