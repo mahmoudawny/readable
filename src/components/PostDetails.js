@@ -26,11 +26,11 @@ class PostDetails extends Component{
         }
     }
 
-    //confirm delete
+    //confirm delete and redirect to previous page
     fireConfirmation(post){
       if(window.confirm("Are you sure you want to delete this post?")){
         this.props.deletePost(post)
-        this.props.history.push(`/${post.category}`)
+        this.props.history.goBack()
       }
     }
 

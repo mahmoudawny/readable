@@ -20,9 +20,8 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 //TODO: Design CSS
 //TODO: Sorting 
 //TODO: voting buttons
-//TODO: make a different back button in each page
 //TODO: route error page when invalid id's and categories in url 
-
+//TODO: make a function for location pathname checking and routing
 
 class App extends Component {
 
@@ -50,7 +49,6 @@ class App extends Component {
       //check when returning from category pages if we need to fetch all posts
       if(nextProps.location.pathname === '/') 
         {
-          console.log(nextProps.location.pathname)
           this.props.setCategory(null)
           if(!posts.allPosts)
             {
@@ -112,10 +110,9 @@ class App extends Component {
         <div className="container">
           <div className="subheader">
               {location.pathname !== "/" &&
-                <Link className="back"
-                    to={location.pathname !== "/"? "/":{javascript: this.button.click()}} ><button onClick={() => history.goBack()} className='icon-btn'> 
-                        <FaArrowCircleOLeft size='40'/></button>
-                </Link>}
+                <button onClick={() => history.goBack()} className='icon-btn'> 
+                        <FaArrowCircleOLeft size='40'/>
+                </button>}
           </div>
           <div className="subheader">
             <h2>Welcome to the Readable posts project! </h2>

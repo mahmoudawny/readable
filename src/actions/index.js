@@ -164,7 +164,10 @@ function fetchPosts(category) {
         return fetch(`${api}/posts`, { headers })
         .then(response => response.json())
         .then(posts => {
-                dispatch(receivePosts(category, posts, true)) 
+// added filter to handle getallposts retrieving deleted posts  
+//(bug in posts.js, change const posts into let)
+                let filteredPosts = posts.filter((post) => !post.deleted)
+                dispatch(receivePosts(category, filteredPosts, true)) 
                 dispatch(fetchComments(posts))         
         })
     //get posts for a category    
@@ -172,7 +175,8 @@ function fetchPosts(category) {
         return fetch(`${api}/${category}/posts`, { headers })
         .then(response => response.json())
         .then(posts => {
-            dispatch(receivePosts(category, posts, false))
+            let filteredPosts = posts.filter((post) => !post.deleted)
+            dispatch(receivePosts(category, filteredPosts, false))
             dispatch(fetchComments(posts))                     
         })
   }

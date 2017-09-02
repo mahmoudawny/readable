@@ -19,8 +19,7 @@ class CreatePost extends Component{
         this.props.doPost(values).then(() => {
             if(this.props.alert.type === "success"){
                 this.props.setNotSubmitting()
-                this.props.category? this.props.history.push(`/${this.props.category}`) 
-                : this.props.history.push("/")
+                this.props.history.goBack()
             } 
         }) 
     }
