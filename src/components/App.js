@@ -21,7 +21,6 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 //TODO: Sorting 
 //TODO: route error page when invalid id's and categories in url 
 //TODO: make a function for location pathname checking and routing
-//TODO: make alert appear on top of viewport
 //TODO: alert slides up with green color
 //TODO: if categories are null disable buttons 
 //TODO: while submitting any action disable all buttons 
@@ -105,7 +104,7 @@ class App extends Component {
     const {items} = posts
     return (
       <div className="App">         
-        <Collapse 
+        <Collapse className="alert"
             in={alert? true: false}>
             <div><Alert bsStyle={alert? alert.type : "success"} onDismiss={this.handleAlertDismiss}>
               <button type="button" className="close" aria-label="Close" data-dismiss="alert">
@@ -113,41 +112,46 @@ class App extends Component {
               </button>
               <h4>{alert && alert.message}</h4></Alert></div>
         </Collapse> 
-        <div className="container">
-          <div className="subheader">
+        <div className="col-xs-12">
+          <div>
               {location.pathname !== "/" &&
                 <button onClick={() => history.goBack()} className='icon-btn'> 
                         <FaArrowCircleOLeft size='40'/>
                 </button>}
           </div>
-          <div className="subheader">
-            <h2>Welcome to the Readable posts project! </h2>
+          <div className="main-header">
+            <div className="title">
+            <h2><pre/>Welcome to the Readable posts project! <br/>Have fun posting :)<pre/></h2>
+            </div>
               {location.pathname.substr(1).split('/').pop() !== "add_post" && <Link 
                 to = {this.isCategory(location.pathname.substr(1).split('/')[0])?
                  `/${location.pathname.substr(1).split('/')[0]}/add_post` :
                  "/add_post"}
                 className = 'icon-btn' 
                 ><FaPlusSquare size='40'/></Link>}
+                <div className="main-menu">
+                 {categories? categories.map((category) => 
+                <div key={category.name} className="menu-item">                
+                  <Link to={`/${category.path}`}
+                  key={category.name}>{capitalize(category.name)}</Link>
+                </div>)
+                : <h2>No categories to display</h2>}
+                </div>
           </div>
           {(posts.isLoading || comments.isLoading) && <Loading delay={200} type='spin' color='#222' className='loading' />}
            <div>
             <Route exact path='/' className="main"
               render={() => 
-              <div className='container'>
-                {categories? categories.map((category) => 
-                <div key={category.name} className="list">                
-                  <Link to={`/${category.path}`}
-                  key={category.name}>{capitalize(category.name)}</Link>
-                </div>)
-                : <h2>No categories to display</h2>}
+              <div>
                 <ul className='list'>
                   <span className='header'> All Posts</span>
+                  <div className='container'>
                     {items && items.map((post) => 
                       <li key={post.id}>
                           <Post post={post}>
                           </Post>
                       </li>)
-                    } 
+                    }</div>
                 </ul>  
               </div>              
               }

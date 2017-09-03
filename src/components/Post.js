@@ -25,15 +25,25 @@ class Post extends Component{
         return(
           <div>            
               <div className='post-details'>
-                  {!category && <p>{post.category}</p>}
                   <Link 
                   to = {`/${post.category}/${post.id}`}
-                  className = 'icon-btn'> 
-                  <p>Title: {post.title}</p>
-                  <p>Body: {post.body}</p>
-                  <p>Author: {post.author}</p>
-                  <p>Date: {timestamp.toLocaleDateString()}</p>
-                  <p>Time: {timestamp.toLocaleTimeString()}</p>
+                  className = 'icon-btn'>
+                  <div className="post">
+                      <div className="post-left">
+                        <p>Author: {post.author}</p>
+                        {!category && 
+                        <div className="field"><p className="left">Category: </p>
+                        <p className="right">{post.category}</p></div>}
+                        <p>Date: {timestamp.toLocaleDateString()}</p>
+                        <p>Time: {timestamp.toLocaleTimeString()}</p>
+                      </div>
+                      <div className="post-right">
+                        <p>Title: {post.title}</p>
+                        <p>Body: {post.body}</p>
+                      </div>
+                      </div> 
+
+
                   <p>Score: {post.voteScore}</p>
                   {postComments && <p>Comments: {postComments.length}</p>}
                 </Link>

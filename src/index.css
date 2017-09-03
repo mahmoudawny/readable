@@ -1,7 +1,11 @@
+html{
+    background-image: linear-gradient(to bottom, pink, lightyellow);
+    background-repeat: no-repeat;
+}
 body {
-  margin: 0;
-  padding: 0;
+  margin: 10px;
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
+
 }
 
 ul {
@@ -12,22 +16,71 @@ li {
   list-style-type: none;
 }
 
+.alert{
+  position: fixed;
+  top: 0;
+  width: 100%
+}
+
+.title {
+  display: inline-block;
+  text-align: center;
+  font-size: 50px;
+  font-weight: 300;
+  width: 95%;
+}
+
+.main-menu{
+  display: flex;
+  font-size: 40px;
+}
+
+.menu-item{
+  width: 100%;
+  font-size: 40px;
+  text-align: center;
+}
+
+.main-header{
+  display: inline-block;
+  position: relative;
+  top: 0;
+  width: 100%
+}
+
 .container {
-  margin: 0 auto;
-  max-width: 1070px;
-  padding: 20px;
-  min-width: 1070px;
+  margin: 2px auto;
+  border: 5px ridge cadetblue;
+  border-radius: 10px;
+  max-width: 95%;
+  padding: 5px;
+  min-width: 50%;
 }
 
 .header {
+  display: block;
+  text-align: center;
   font-size: 50px;
   font-weight: 300;
-  margin: 10px 0;
 }
 
 .subheader {
   font-size: 30px;
   font-weight: 300;
+}
+
+.field{
+  display: flex;
+  width: 100%;
+}
+
+.left{
+  text-align: left;
+}
+
+.right{
+  text-align: right;
+  color: green
 }
 
 .icon-btn {
@@ -178,8 +231,6 @@ li {
   background: none;
   font-size: 18px;
   border: none;
-  text-decoration: underline;
-  cursor: pointer;
 }
 
 .main {
@@ -207,10 +258,14 @@ li {
 .post {
   font-size: 23px;
   display: flex;
-  flex-direction: column;
-  height: 150px;
-  width: 100px;
-  justify-content: center;
+  justify-content: left;
+}
+
+.post-left{
+  font-size: 20px;
+  margin-right: 20px;
+  padding-right: 10px;
+  border-right: 2px solid lightblue;
 }
 
 .post svg {
