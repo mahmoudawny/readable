@@ -9,7 +9,9 @@ import {Link} from 'react-router-dom'
 import FaEdit from 'react-icons/lib/fa/edit'
 import FaBan from 'react-icons/lib/fa/ban'
 import FaMinusSquare from 'react-icons/lib/fa/minus-square'
-import {withRouter} from "react-router-dom";
+import {withRouter} from "react-router-dom"
+import FaThumbsODown from 'react-icons/lib/fa/thumbs-o-down'
+import FaThumbsOUp from 'react-icons/lib/fa/thumbs-o-up'
 
 //TODO: scroll on clicking edit to show edit fields
 
@@ -114,8 +116,14 @@ class PostDetails extends Component{
                     onClick = {() => this.fireConfirmation(post)}
                     className = 'icon-btn' 
                 ><FaMinusSquare size='40'/></button>
-                <button className='post-voteup' >Vote Up</button>
-                <button className='post-votedown' >Vote Down</button>
+                <button 
+                    onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEUP})}
+                    className = 'icon-btn vote-up' 
+                ><FaThumbsOUp size='40'/></button>
+                <button 
+                    onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEDOWN})}
+                    className = 'icon-btn vote-down' 
+                ><FaThumbsODown size='40'/></button>
             </div>
             )
             }

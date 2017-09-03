@@ -20,7 +20,7 @@ export const getPosts = (category) =>
   fetch(`${api}/${category}/posts`, { headers })
     .then(res => res.json())
  
-//TODO: check which methods to remove data from?
+//TODO: remove
 export const getAllPosts = () =>
   fetch(`${api}/posts`, { headers })
     .then(res => res.json())

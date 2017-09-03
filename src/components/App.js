@@ -19,9 +19,15 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 
 //TODO: Design CSS
 //TODO: Sorting 
-//TODO: voting buttons
 //TODO: route error page when invalid id's and categories in url 
 //TODO: make a function for location pathname checking and routing
+//TODO: make alert appear on top of viewport
+//TODO: alert slides up with green color
+//TODO: if categories are null disable buttons 
+//TODO: while submitting any action disable all buttons 
+//TODO: check when to reenable submit and show/hide loading
+//TODO: Add Handling failed fetches in all fetches in actions
+//TODO: \n not working with alert messages
 
 class App extends Component {
 

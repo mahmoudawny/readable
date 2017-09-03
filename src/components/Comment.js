@@ -4,6 +4,9 @@ import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 import FaEdit from 'react-icons/lib/fa/edit'
 import FaMinusSquare from 'react-icons/lib/fa/minus-square'
+import FaThumbsODown from 'react-icons/lib/fa/thumbs-o-down'
+import FaThumbsOUp from 'react-icons/lib/fa/thumbs-o-up'
+
 
 class Comment extends Component{
     fireConfirmation(comment){
@@ -27,21 +30,28 @@ class Comment extends Component{
             <button 
                 onClick = {() => this.props.getComment({comment})}
                 className = 'icon-btn' 
-            ><FaEdit size='40'/>Edit Comment</button>
+            ><FaEdit size='40'/></button>
             <button 
                 onClick = {() => this.fireConfirmation(comment)}
                 className = 'icon-btn' 
-            ><FaMinusSquare size='40'/>Delete Comment</button>
-            <button className='comment-voteup' >Vote Up</button>
-            <button className='comment-votedown' >Vote Down</button>
+            ><FaMinusSquare size='40'/></button>
+            <button 
+                onClick = {() => this.props.rateComment({comment, option: dispatchers.VOTEUP})}
+                className = 'icon-btn vote-up' 
+            ><FaThumbsOUp size='40'/></button>
+            <button 
+                onClick = {() => this.props.rateComment({comment, option: "downVote"})}
+                className = 'icon-btn vote-down' 
+            ><FaThumbsODown size='40'/></button>
           </div>
         )
     }
 }
 
-function mapStateToProps({post}){
+function mapStateToProps({post, comments}){
   return {
-    post
+    post,
+    comments
   }
 }
 

@@ -5,6 +5,8 @@ export const DELETE_POST = 'DELETE_POST'
 export const POST = 'POST'
 export const EDIT_POST = 'EDIT_POST'
 export const RATE_POST = 'RATE_POST'
+export const VOTEUP = 'upVote'
+export const VOTEDOWN = "downVote"
 export const DELETE_COMMENT = 'DELETE_COMMENT'
 export const COMMENT = 'COMMENT'
 export const EDIT_COMMENT = 'EDIT_COMMENT'
@@ -31,8 +33,7 @@ export const START_POST = 'START_POST'
 export const START_COMMENT = 'START_COMMENT'
 export const CANCEL_COMMENTING = 'CANCEL_COMMENTING'
 
-//TODO: Add Handling failed fetches in all fetches
-//TODO: \n not working with alert messages
+
 
 //server constants
 const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
@@ -216,11 +217,38 @@ export function getPost({post}){
 }
 
 
-export function ratePost({post, option}){
+function doRatePost({post, option}){
     return{
         type: RATE_POST,
         post,
         option
+    }
+}
+
+export function ratePost({post, option}){
+    return dispatch => {
+        dispatch(startPosting())
+        return  fetch(`${api}/posts/${post.id}`, {
+            method: 'POST',
+            headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({option})
+        })
+        .then(handleErrors)
+        .then((res) => {
+            if(!res.error) {
+                dispatch(doRatePost({post, option}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.generalFailed}))
+                setTimeout(() => {dispatch(clearMessage())}, 3000) 
+            }})
+        .catch((error) =>  {
+            dispatch(dangerMessage({message: messages.generalFailed + `\n` + error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
     }
 }
 
@@ -279,7 +307,7 @@ export function editPost({post, body}){
     }
 }
 
-export function doDeletePost(post){
+function doDeletePost(post){
     return{
         type: DELETE_POST,
         post
@@ -391,16 +419,6 @@ export function getComment({comment}){
     }
 }
 
-/*export const rateComment = (comment, body) =>
-  fetch(`${api}/comments/${comment.id}`, {
-    method: 'POST',
-    headers: {
-      ...headers,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  }).then(res => res.json())
-*/
 
 export function editComment({comment, body}){
     return dispatch => {
@@ -479,7 +497,7 @@ export function deleteComment(comment){
     }
 }
 
-export function rateComment({comment, option}){
+function doRateComment({comment, option}){
     return{
         type: RATE_COMMENT,
         comment,
@@ -488,24 +506,28 @@ export function rateComment({comment, option}){
 }
 
 
-
-// export function getPosts({posts}) {
-//   return {
-//     type: GET_POSTS,
-//     posts,
-//     category: null
-//   }
-// }
-
-
-
-// export function getCategoryPosts({posts, category, history}) {
-//   return {
-//     type: CATEGORY_POSTS,
-//     posts,
-//     category,
-//     history
-//   }
-// }
-
+export function rateComment({comment, option}){
+    return dispatch => {
+        dispatch(startCommenting())
+        return  fetch(`${api}/comments/${comment.id}`, {
+            method: 'POST',
+            headers: {...headers, 
+                'content-type': 'application/json'},
+            body: JSON.stringify({option})
+        })
+        .then(handleErrors)
+        .then((res) => {
+            if(!res.error) {
+                dispatch(doRateComment({comment, option}))
+            }
+            else{
+                dispatch(dangerMessage({message: messages.generalFailed}))
+                setTimeout(() => {dispatch(clearMessage())}, 3000) 
+            }})
+        .catch((error) =>  {
+            dispatch(dangerMessage({message: messages.generalFailed + `\n` + error.toString()}))
+            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+        })
+    }
+}
 

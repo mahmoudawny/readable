@@ -6,7 +6,7 @@ import {SUBMITTING, NOTSUBMITTING, //set flag for posting operations
         CANCEL_COMMENTING, //to cancel editing comment
         POST, COMMENT, EDIT_POST, EDIT_COMMENT, //async response for single items
         DELETE_POST, DELETE_COMMENT, 
-        RATE_COMMENT, RATE_POST,
+        RATE_COMMENT, RATE_POST, VOTEUP,
         GET_POST, GET_COMMENT, //get single post/comment and save them in store
         INVALIDATE_POST, INVALIDATE_COMMENT, //async refresh actions
         GET_POSTS, GET_COMMENTS, //async request actions for all items
@@ -58,6 +58,8 @@ function posts(state = {
         isLoading: true,
         didInvalidate: false
       })
+    case DANGER: //stop loading if error received
+    case RATE_COMMENT:
     case RECEIVE_COMMENTS:
       return Object.assign({}, state, {
         isLoading: false,
@@ -100,13 +102,17 @@ function posts(state = {
                 oldpost.id !== post.id
             ),
     })
-    // case RECEIVE_COMMENTS:
-    // return Object.assign({}, state, {
-    //     isLoading: false,
-    //     didInvalidate: false,
-    //     items: action.posts.map((post) => comments(post, action)),
-    //     lastUpdated: action.receivedAt
-    //   })
+    case RATE_POST:
+    return Object.assign({}, state, {
+        isLoading: false,
+        didInvalidate: false,
+        items: state.items.map((oldpost) => {
+            if(oldpost.id === post.id) 
+               return action.option === "upVote"? {...oldpost, ...action.post, ...action.post.voteScore++}
+                :{...oldpost, ...action.post, ...action.post.voteScore--}
+            return oldpost
+        }),
+      })
     default:
       return state
   }
@@ -146,6 +152,11 @@ function comments(state = {
                 isLoading: true,
                 didInvalidate: false
             })
+        case DANGER: //stop loading if error received
+            return Object.assign({}, state, {
+                isLoading: false,
+                didInvalidate: false
+            })
         case COMMENT:
             return Object.assign({}, state, {
                 isLoading: false,
@@ -178,6 +189,17 @@ function comments(state = {
                     oldcomment.parentId !== post.id
                 ),
             })
+        case RATE_COMMENT:
+            return Object.assign({}, state, {
+                isLoading: false,
+                didInvalidate: false,
+                items: state.items.map((oldcomment) => {
+                    if(oldcomment.id === comment.id) 
+                    return action.option === VOTEUP? {...oldcomment, ...action.comment, ...action.comment.voteScore++}
+                        :{...oldcomment, ...action.comment, ...action.comment.voteScore--}
+                    return oldcomment
+                }),
+            })
         default:
         return state
     }
@@ -205,28 +227,6 @@ function alert(state = null, action){
     }
 }
 
-
-
-// function comments(state = null, action){
-//     const {comment, comments, post} = action
-//     switch(action.type){
-                    
-//         case DELETE_COMMENT:
-//             return {
-//                      ...state,
-//                      [comment]: state[comment].deleted = true 
-//                     }
-//         case RATE_COMMENT:
-//             return {
-//                      ...state,
-//                      [comment]: action.option === "upVote"? 
-//                      state[comment].voteScore++ 
-//                      : state[comment].voteScore--
-//                     }
-//         default:
-//             return state
-//     }
-// }
 
 
 //current post state
@@ -265,31 +265,6 @@ function submitting(state = false, action){
     }
 }
 
-// function posts(state = null, action){
-//     const {post, posts, category} = action
-//     switch(action.type){
-                   
-//         case DELETE_POST:
-//             return {
-//                      ...state,
-//                      [post]: state[post].deleted = true 
-//                     }
-//         case EDIT_POST:
-//             return {
-//                      ...state,
-//                      [post]: state[post] = post 
-//                     }
-//         case RATE_POST:
-//             return {
-//                      ...state,
-//                      [post]: action.option === "upVote"? 
-//                      state[post].voteScore++ 
-//                      : state[post].voteScore--
-//                     }
-//         default:
-//             return state
-//     }
-// }
 
 export default combineReducers({submitting, post, posts, comment, comments, category, categories, alert})
 

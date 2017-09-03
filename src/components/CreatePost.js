@@ -7,10 +7,6 @@ import * as dispatchers from '../actions'
 import {capitalize} from '../utils/Helpers'
 
 
-//TODO: alert slides up with green color
-//TODO: if categories are null disable buttons 
-//TODO: check when to reenable submit and show/hide loading
-
 class CreatePost extends Component{
     newSubmit = (e) => {
         e.preventDefault()

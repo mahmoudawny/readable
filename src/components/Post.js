@@ -5,7 +5,8 @@ import * as dispatchers from '../actions'
 import {Link} from 'react-router-dom'
 import FaEdit from 'react-icons/lib/fa/edit'
 import FaMinusSquare from 'react-icons/lib/fa/minus-square'
-
+import FaThumbsODown from 'react-icons/lib/fa/thumbs-o-down'
+import FaThumbsOUp from 'react-icons/lib/fa/thumbs-o-up'
 
 class Post extends Component{
 
@@ -18,7 +19,7 @@ class Post extends Component{
 
     render(){
         const {post, category, comments} = this.props
-        //get this post's comments to show its count
+        //get current post's comments to show its count
         let postComments = comments.items.filter((comment) => comment.parentId === post.id)        
         let timestamp = new Date(Number(post.timestamp));
         return(
@@ -43,10 +44,16 @@ class Post extends Component{
                 ><FaEdit size='40'/></Link>
             <button 
                 onClick = {() => this.fireConfirmation(post)}
-                className = 'icon-btn' 
+                className = 'icon-btn dlt-btn' 
             ><FaMinusSquare size='40'/></button>
-            <button className='post-voteup' >Vote Up</button>
-            <button className='post-votedown' >Vote Down</button>
+            <button 
+                onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEUP})}
+                className = 'icon-btn vote-up' 
+            ><FaThumbsOUp size='40'/></button>
+            <button 
+                onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEDOWN})}
+                className = 'icon-btn vote-down' 
+            ><FaThumbsODown size='40'/></button>
             </div>
         )
     }
@@ -64,9 +71,6 @@ function mapDispatchToProps(dispatch){
     deletePost: (data) => dispatch(dispatchers.deletePost(data)),
     editPost: (data) => dispatch(dispatchers.editPost(data)),
     ratePost: (data) => dispatch(dispatchers.ratePost(data)),
-    deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
-    editComment: (data) => dispatch(dispatchers.editComment(data)),
-    rateComment: (data) => dispatch(dispatchers.rateComment(data)),
   }
 }
 
