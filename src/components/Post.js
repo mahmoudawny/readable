@@ -23,47 +23,48 @@ class Post extends Component{
         let postComments = comments.items.filter((comment) => comment.parentId === post.id)        
         let timestamp = new Date(Number(post.timestamp));
         return(
-          <div>            
-              <div className='post-details'>
+            <div>            
+                <div className='post-details'>
                   <Link 
                   to = {`/${post.category}/${post.id}`}
                   className = 'icon-btn'>
                   <div className="post">
-                      <div className="post-left">
-                        <p>Author: {post.author}</p>
+                      <div className="post-left col-xs-2">
+                        <p>By: {post.author}</p>
                         {!category && 
-                        <div className="field"><p className="left">Category: </p>
+                        <div className="field"><p className="left">Posted in: </p>
                         <p className="right">{post.category}</p></div>}
-                        <p>Date: {timestamp.toLocaleDateString()}</p>
-                        <p>Time: {timestamp.toLocaleTimeString()}</p>
+                        <p>{timestamp.toLocaleDateString()}</p>
+                        <p>{timestamp.toLocaleTimeString()}</p>
                       </div>
-                      <div className="post-right">
-                        <p>Title: {post.title}</p>
-                        <p>Body: {post.body}</p>
+                      <div className="panel panel-default post-right col-xs-9">
+                        <p className="panel-heading post-title">{post.title}</p>
+                        <p className="post-body">{post.body}</p>
                       </div>
                       </div> 
 
 
                   <p>Score: {post.voteScore}</p>
                   {postComments && <p>Comments: {postComments.length}</p>}
-                </Link>
-            </div>
-            <Link 
-                to = {`/${post.category}/${post.id}/edit_post`}
-                className = 'icon-btn' 
-                ><FaEdit size='40'/></Link>
-            <button 
-                onClick = {() => this.fireConfirmation(post)}
-                className = 'icon-btn dlt-btn' 
-            ><FaMinusSquare size='40'/></button>
-            <button 
-                onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEUP})}
-                className = 'icon-btn vote-up' 
-            ><FaThumbsOUp size='40'/></button>
-            <button 
-                onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEDOWN})}
-                className = 'icon-btn vote-down' 
-            ><FaThumbsODown size='40'/></button>
+                 </Link>
+                </div>
+                <Link 
+                    to = {`/${post.category}/${post.id}/edit_post`}
+                    className = 'icon-btn' 
+                    ><FaEdit size='40'/></Link>
+                <button 
+                    onClick = {() => this.fireConfirmation(post)}
+                    className = 'icon-btn dlt-btn' 
+                ><FaMinusSquare size='40'/></button>
+                <button 
+                    onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEUP})}
+                    className = 'icon-btn vote-up' 
+                ><FaThumbsOUp size='40'/></button>
+                <button 
+                    onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEDOWN})}
+                    className = 'icon-btn vote-down' 
+                ><FaThumbsODown size='40'/></button>
+                <div className="separator"> <pre/></div>
             </div>
         )
     }

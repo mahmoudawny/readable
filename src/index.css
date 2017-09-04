@@ -69,6 +69,19 @@ li {
   font-weight: 300;
 }
 
+.panel-heading{
+  border-radius: 10px
+}
+.post-title{
+  background-color: lightgray;
+  width: 100%;
+  font-size: 30px ;
+}
+
+.post-body{
+  color: darkslategrey;
+}
+
 .field{
   display: flex;
   width: 100%;
