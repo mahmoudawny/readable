@@ -16,9 +16,11 @@ import PostDetails from './PostDetails'
 import Loading from 'react-loading'
 import EditPost from './EditPost'
 import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
+import FaSortAsc from 'react-icons/lib/fa/sort-asc'
+import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 
 //TODO: Design CSS
-//TODO: Sorting 
+//TODO: Sorting state
 //TODO: route error page when invalid id's and categories in url 
 //TODO: make a function for location pathname checking and routing
 //TODO: alert slides up with green color
@@ -43,7 +45,6 @@ class App extends Component {
         this.props.fetchPosts(location.pathname.substr(1).split('/')[0])        
       }
     })
-
   }
 
   componentWillReceiveProps(nextProps){ 
@@ -90,7 +91,6 @@ class App extends Component {
     return false
   }
 
-
 /*Main App routes:
 - Global menu component (displays categories as menu items)
 - Home route '/' displays all posts
@@ -131,7 +131,7 @@ class App extends Component {
                 ><FaPlusSquare size='40'/></Link>}
                 <div className="main-menu">
                  {categories? categories.map((category) => 
-                <div key={category.name} className="menu-item">                
+                <div key={category.name} className="panel menu-item">                
                   <Link to={`/${category.path}`}
                   key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
@@ -145,6 +145,14 @@ class App extends Component {
               <div>
                 <ul className='list'>
                   <span className='header'> All Posts</span>
+                  <div className="panel menu-item">                
+                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
+                    >Date<FaSortAsc size='40'/></button>
+                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.CATEGORY_SORT)}
+                    >Category<FaSortAsc size='40'/></button>
+                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
+                    >Votes<FaSortAsc size='40'/></button>                  
+                  </div>
                   <div className='container'>
                     {items && items.map((post) => 
                       <li key={post.id}>
@@ -216,6 +224,7 @@ function mapDispatchToProps(dispatch){
     fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),
     setCategory: (data) => dispatch(dispatchers.setCategory(data)),
     invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
+    sortPosts: (data) => dispatch(dispatchers.sortPosts(data)),
   }
 }
 

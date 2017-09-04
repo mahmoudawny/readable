@@ -5,13 +5,14 @@ import {SUBMITTING, NOTSUBMITTING, //set flag for posting operations
         START_COMMENT, START_POST, //async request actions for single items
         CANCEL_COMMENTING, //to cancel editing comment
         POST, COMMENT, EDIT_POST, EDIT_COMMENT, //async response for single items
-        DELETE_POST, DELETE_COMMENT, 
-        RATE_COMMENT, RATE_POST, VOTEUP,
+        DELETE_POST, DELETE_COMMENT, //delete actions
+        RATE_COMMENT, RATE_POST, VOTEUP, //rating actions
         GET_POST, GET_COMMENT, //get single post/comment and save them in store
         INVALIDATE_POST, INVALIDATE_COMMENT, //async refresh actions
         GET_POSTS, GET_COMMENTS, //async request actions for all items
         RECEIVE_POSTS, RECEIVE_COMMENTS, //async response actions for all items
         CLEAR, SUCCESS, DANGER, WARNING, //alert actions
+        DATE_SORT, CATEGORY_SORT, VOTE_SORT, //sort actions
     } from '../actions'
 
 //TODO: Add comment ids in posts
@@ -108,10 +109,34 @@ function posts(state = {
         didInvalidate: false,
         items: state.items.map((oldpost) => {
             if(oldpost.id === post.id) 
-               return action.option === "upVote"? {...oldpost, ...action.post, ...action.post.voteScore++}
+               return action.option === VOTEUP? {...oldpost, ...action.post, ...action.post.voteScore++}
                 :{...oldpost, ...action.post, ...action.post.voteScore--}
             return oldpost
         }),
+      })
+    case DATE_SORT:
+    return Object.assign({}, state, {
+        items: state.items.sort(function(a, b) {
+                return a.timestamp - b.timestamp
+            })
+      })
+    case VOTE_SORT:
+    return Object.assign({}, state, {
+        items: state.items.sort(function(a, b) {
+                return a.voteScore - b.voteScore
+            })
+      })
+    case CATEGORY_SORT:
+    return Object.assign({}, state, {
+        items: state.items.sort(function(a, b) {
+                if (a.category < b.category) {
+                    return -1;
+                }
+                if (a.category > b.category) {
+                    return 1;
+                }
+                return 0;
+            })
       })
     default:
       return state
@@ -200,6 +225,18 @@ function comments(state = {
                     return oldcomment
                 }),
             })
+        case DATE_SORT:
+        return Object.assign({}, state, {
+            items: state.items.sort(function(a, b) {
+                    return a.timestamp - b.timestamp
+                })
+        })
+        case VOTE_SORT:
+        return Object.assign({}, state, {
+            items: state.items.sort(function(a, b) {
+                    return a.voteScore - b.voteScore
+                })
+        })        
         default:
         return state
     }

@@ -2,7 +2,8 @@
 import React, { Component } from 'react'
 import {capitalize} from '../utils/Helpers'
 import Post from './Post'
-// import * as api from '../utils/ReadableAPI'
+import FaSortAsc from 'react-icons/lib/fa/sort-asc'
+import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 
@@ -16,8 +17,14 @@ class Category extends Component {
         return(
             currentCategory &&
             <div className='category'>                
-                <h2 className='subheader'>{capitalize(currentCategory.name)}</h2>
-                <ul className='post-list'>
+                <h2 className='header'>{capitalize(currentCategory.name)}</h2>
+                <div className="panel menu-item">                
+                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
+                    >Date<FaSortAsc size='40'/></button>
+                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
+                    >Votes<FaSortAsc size='40'/></button>                  
+                </div>
+                <ul className='panel'>
                     {posts.items && posts.items.map((post) => 
                     <div key={post.id}>{post.category === currentCategory.name &&
                         <li key={post.id}>
