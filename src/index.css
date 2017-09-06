@@ -1,5 +1,5 @@
 html{
-    background-image: linear-gradient(to bottom, pink, lightyellow);
+    background-image: linear-gradient(to bottom, lightgrey, lightyellow);
     background-repeat: no-repeat;
 }
 body {
@@ -7,6 +7,12 @@ body {
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
 
 }
+
+.clickable {
+  color:#124050;
+}
+
+
 
 ul {
   padding-left: 0;
@@ -25,6 +31,7 @@ li {
 .title {
   display: inline-block;
   text-align: center;
+  font-family: fantasy;
   font-size: 50px;
   font-weight: 300;
   width: 95%;
@@ -36,9 +43,25 @@ li {
 }
 
 .menu-item{
+  font-family: cursive;
   width: 100%;
   font-size: 40px;
   text-align: center;
+}
+
+.left-menu-container{
+  display: flex;
+  justify-content: center;
+  /* text-align: center;  */
+}
+
+.left-menu{
+
+}
+
+.posts-container{
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .main-header{
@@ -58,6 +81,7 @@ li {
 }
 
 .header {
+  font-family: cursive;
   display: block;
   text-align: center;
   font-size: 50px;
@@ -69,9 +93,15 @@ li {
   font-weight: 300;
 }
 
+.sorting{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 200%;
+}
+
 .panel-heading{
   border-radius: 10px
 }
+
 .post-title{
   background-color: lightgray;
   width: 100%;
@@ -94,6 +124,34 @@ li {
 .right{
   text-align: right;
   color: green
+}
+
+.post-left{
+  text-align: center;
+  vertical-align: center;
+}
+
+.button-group{
+  display: flex;
+  justify-content: center
+}
+
+.counts{
+  display: flex;
+  font-family: fantasy;
+  font-size: 20px;
+  text-align: center;
+  border-bottom: solid 10px lightgrey;
+  border-radius: 3px;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post-counter{
+    width: 50%;
 }
 
 .icon-btn {
@@ -144,7 +202,6 @@ li {
   outline: 0;
 }
 
-/* ListContacts */
 
 .list-posts {
   padding-top: 60px;

@@ -115,37 +115,41 @@ class App extends Component {
         <div className="col-xs-12">
           <div>
               {location.pathname !== "/" &&
-                <button onClick={() => history.goBack()} className='icon-btn'> 
-                        <FaArrowCircleOLeft size='40'/>
+                <button onClick={() => history.goBack()} className='clickable icon-btn'> 
+                        <FaArrowCircleOLeft size='60'/>
                 </button>}
           </div>
           <div className="main-header">
             <div className="title">
-            <h2><pre/>Welcome to the Readable posts project! <br/>Have fun posting :)<pre/></h2>
+            <h2><pre/>Welcome to the Readable posts project! <br/>Have fun posting <pre/></h2>
             </div>
-              {location.pathname.substr(1).split('/').pop() !== "add_post" && <Link 
-                to = {this.isCategory(location.pathname.substr(1).split('/')[0])?
-                 `/${location.pathname.substr(1).split('/')[0]}/add_post` :
-                 "/add_post"}
-                className = 'icon-btn' 
-                ><FaPlusSquare size='40'/></Link>}
                 <div className="main-menu">
                  {categories? categories.map((category) => 
                 <div key={category.name} className="panel menu-item">                
-                  <Link to={`/${category.path}`}
+                  <Link className=''
+                  to={`/${category.path}`}
                   key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
-                : <h2>No categories to display</h2>}
+                : <h2>No categories found</h2>}
                 </div>
           </div>
           {(posts.isLoading || comments.isLoading) && <Loading delay={200} type='spin' color='#222' className='loading' />}
-           <div>
+           <div className="left-menu-container">
+             <div className="left-menu">
+                {location.pathname.substr(1).split('/').pop() !== "add_post" && 
+                <Link 
+                to = {this.isCategory(location.pathname.substr(1).split('/')[0])?
+                 `/${location.pathname.substr(1).split('/')[0]}/add_post` :
+                 "/add_post"}
+                className = 'clickable icon-btn' 
+                ><FaPlusSquare size='60'/></Link>}
+              </div>
             <Route exact path='/' className="main"
               render={() => 
-              <div>
+              <div className="posts-container">
                 <ul className='list'>
                   <span className='header'> All Posts</span>
-                  <div className="panel menu-item">                
+                  <div className="panel menu-item sorting">                
                     <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
                     >Date<FaSortAsc size='40'/></button>
                     <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.CATEGORY_SORT)}

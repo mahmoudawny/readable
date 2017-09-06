@@ -8,23 +8,27 @@ import {connect} from 'react-redux'
 import * as dispatchers from '../actions'
 
 
-//TODO: Sorting 
-
 class Category extends Component { 
 
     render(){
         const {posts, currentCategory} = this.props
         return(
             currentCategory &&
+            <div className="container">
             <div className='category'>                
                 <h2 className='header'>{capitalize(currentCategory.name)}</h2>
-                <div className="panel menu-item">                
-                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
-                    >Date<FaSortAsc size='40'/></button>
-                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
-                    >Votes<FaSortAsc size='40'/></button>                  
+                <div className="panel menu-item sorting">                
+                    <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
+                    >Date
+                    {this.props.sortState === 1? <FaSortDesc size='40'/>
+                    :<FaSortAsc size='40'/>}
+                    </button>
+                    <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
+                    >Votes{this.props.sortState === 2? <FaSortDesc size='40'/>
+                    :<FaSortAsc size='40'/>}
+                    </button>                  
                 </div>
-                <ul className='panel'>
+                <ul className=''>
                     {posts.items && posts.items.map((post) => 
                     <div key={post.id}>{post.category === currentCategory.name &&
                         <li key={post.id}>
@@ -35,17 +39,19 @@ class Category extends Component {
                     )}
                 </ul>
             </div>
+            </div>
         )
     }
 }
 
-function mapStateToProps({posts, comments, category}){
-  return {posts, comments, category}
+function mapStateToProps({posts, comments, category, sortState}){
+  return {posts, comments, category, sortState}
 }
 
 function mapDispatchToProps(dispatch){
   return{
      fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),
+     sortPosts: (data) => dispatch(dispatchers.sortPosts(data)),
   }
 }
 

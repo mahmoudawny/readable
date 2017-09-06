@@ -43,27 +43,30 @@ class Post extends Component{
                       </div>
                       </div> 
 
-
-                  <p>Score: {post.voteScore}</p>
-                  {postComments && <p>Comments: {postComments.length}</p>}
+                    <div className="counts">
+                        <p className="post-counter">Score: {post.voteScore}</p>
+                        {postComments && <p className="post-counter">Comments: {postComments.length}</p>}
+                    </div>
                  </Link>
                 </div>
-                <Link 
-                    to = {`/${post.category}/${post.id}/edit_post`}
-                    className = 'icon-btn' 
-                    ><FaEdit size='40'/></Link>
-                <button 
-                    onClick = {() => this.fireConfirmation(post)}
-                    className = 'icon-btn dlt-btn' 
-                ><FaMinusSquare size='40'/></button>
-                <button 
-                    onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEUP})}
-                    className = 'icon-btn vote-up' 
-                ><FaThumbsOUp size='40'/></button>
-                <button 
-                    onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEDOWN})}
-                    className = 'icon-btn vote-down' 
-                ><FaThumbsODown size='40'/></button>
+                <div className="button-group">
+                    <Link 
+                        to = {`/${post.category}/${post.id}/edit_post`}
+                        className = 'clickable icon-btn' 
+                        ><FaEdit size='40'/></Link>
+                    <button 
+                        onClick = {() => this.fireConfirmation(post)}
+                        className = 'clickable icon-btn dlt-btn' 
+                    ><FaMinusSquare size='40'/></button>
+                    <button 
+                        onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEUP})}
+                        className = 'clickable icon-btn vote-up' 
+                    ><FaThumbsOUp size='40'/></button>
+                    <button 
+                        onClick = {() => this.props.ratePost({post, option: dispatchers.VOTEDOWN})}
+                        className = 'clickable icon-btn vote-down' 
+                    ><FaThumbsODown size='40'/></button>
+                </div>
                 <div className="separator"> <pre/></div>
             </div>
         )
