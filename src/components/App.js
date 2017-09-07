@@ -19,8 +19,10 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 import FaSortAsc from 'react-icons/lib/fa/sort-asc'
 import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 
-//TODO: Design CSS
-//TODO: Sorting state
+//TODO: Design post details CSS
+//TODO: issue in category sorting
+//TODO: add current sorting header
+//TODO: implement comments sorting UI
 //TODO: route error page when invalid id's and categories in url 
 //TODO: make a function for location pathname checking and routing
 //TODO: alert slides up with green color
@@ -40,10 +42,13 @@ class App extends Component {
       //If homepage load all posts
       if(location.pathname === '/')
         this.props.fetchPosts(null)
+        .then(() => this.props.sortPosts(dispatchers.DATE_SORT))
       //if on a category page/subpage load only category's posts 
       else if(this.isCategory(location.pathname.substr(1).split('/')[0])){
-        this.props.fetchPosts(location.pathname.substr(1).split('/')[0])        
+        this.props.fetchPosts(location.pathname.substr(1).split('/')[0])
+        .then(() => this.props.sortPosts(dispatchers.DATE_SORT))        
       }
+      
     })
   }
 
@@ -150,12 +155,19 @@ class App extends Component {
                 <ul className='list'>
                   <span className='header'> All Posts</span>
                   <div className="panel menu-item sorting">                
-                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
-                    >Date<FaSortAsc size='40'/></button>
-                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.CATEGORY_SORT)}
-                    >Category<FaSortAsc size='40'/></button>
-                    <button className = 'icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
-                    >Votes<FaSortAsc size='40'/></button>                  
+                    <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
+                    >Date
+                    {posts.sortBy === -1? <FaSortAsc size='40'/>
+                    :<FaSortDesc size='40'/>}
+                    </button>
+                    <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
+                    >Votes{posts.sortBy === -2? <FaSortAsc size='40'/>
+                    :<FaSortDesc size='40'/>}
+                    </button>  
+                    <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.CATEGORY_SORT)}
+                    >Category{posts.sortBy === 3? <FaSortDesc size='40'/>
+                    :<FaSortAsc size='40'/>}
+                    </button>                
                   </div>
                   <div className='container'>
                     {items && items.map((post) => 

@@ -115,20 +115,41 @@ function posts(state = {
         }),
       })
     case DATE_SORT:
-    return Object.assign({}, state, {
-        items: state.items.sort(function(a, b) {
-                return a.timestamp - b.timestamp
-            })
-      })
+        return Object.assign({}, state, {
+            sortBy: Math.abs(state.sortBy) === 1? state.sortBy * -1 : -1, //if current sorting is by date reverse it, else set sorting by date desc
+            items: Math.abs(state.sortBy) === 1? 
+                state.items.sort(function(a, b) {
+                        return ((b.timestamp - a.timestamp) * state.sortBy)
+                    })
+                : state.items.sort(function(a, b) {
+                        return b.timestamp - a.timestamp
+                    })
+        })
     case VOTE_SORT:
-    return Object.assign({}, state, {
-        items: state.items.sort(function(a, b) {
-                return a.voteScore - b.voteScore
-            })
-      })
+        return Object.assign({}, state, {
+            sortBy: Math.abs(state.sortBy) === 2? state.sortBy * -1 : -2, //if current sorting is by vote reverse it, else set sorting by vote desc            
+            items: Math.abs(state.sortBy) === 2? 
+                state.items.sort(function(a, b) {
+                    return ((b.voteScore - a.voteScore) * state.sortBy)
+                })
+                : state.items.sort(function(a, b) {
+                        return b.voteScore - a.voteScore
+                })
+        })
     case CATEGORY_SORT:
     return Object.assign({}, state, {
-        items: state.items.sort(function(a, b) {
+        sortBy: Math.abs(state.sortBy) === 3? state.sortBy * -1 : 3, //if current sorting is by category reverse it, else set sorting by category asc            
+        items: Math.abs(state.sortBy) === 3? 
+            state.items.sort(function(a, b) {
+                if (a.category < b.category) {
+                    return -1 * state.sortBy;
+                }
+                if (a.category > b.category) {
+                    return 1 * state.sortBy;
+                }
+                return 0;
+            })
+            : state.items.sort(function(a, b) {
                 if (a.category < b.category) {
                     return -1;
                 }
@@ -169,7 +190,7 @@ function comments(state = {
         case GET_POSTS:
             return Object.assign({}, state, {
                 isLoading: true,
-                didInvalidate: true,
+                didInvalidate: true,                
                 items: []
             })
         case START_COMMENT:
@@ -226,17 +247,27 @@ function comments(state = {
                 }),
             })
         case DATE_SORT:
-        return Object.assign({}, state, {
-            items: state.items.sort(function(a, b) {
-                    return a.timestamp - b.timestamp
-                })
-        })
+            return Object.assign({}, state, {
+                sortBy: Math.abs(state.sortBy) === 1? state.sortBy * -1 : -1, //if current sorting is by date reverse it, else set sorting by date desc
+                items: Math.abs(state.sortBy) === 1? 
+                    state.items.sort(function(a, b) {
+                            return ((b.timestamp - a.timestamp) * state.sortBy)
+                        })
+                    : state.items.sort(function(a, b) {
+                            return b.timestamp - a.timestamp
+                        })
+            })
         case VOTE_SORT:
-        return Object.assign({}, state, {
-            items: state.items.sort(function(a, b) {
-                    return a.voteScore - b.voteScore
-                })
-        })        
+            return Object.assign({}, state, {
+                sortBy: Math.abs(state.sortBy) === 2? state.sortBy * -1 : -2, //if current sorting is by vote reverse it, else set sorting by vote desc            
+                items: Math.abs(state.sortBy) === 2? 
+                    state.items.sort(function(a, b) {
+                        return ((b.voteScore - a.voteScore) * state.sortBy)
+                    })
+                    : state.items.sort(function(a, b) {
+                            return b.voteScore - a.voteScore
+                    })
+            })        
         default:
         return state
     }
@@ -289,6 +320,7 @@ function comment(state = null, action){
             return state
     }
 }
+
 
 //submitting flag
 function submitting(state = false, action){

@@ -144,6 +144,7 @@ function mapStateToProps({post, comments, comment, alert}){
 
 function mapDispatchToProps(dispatch){
   return{
+    sortComments: (data) => dispatch(dispatchers.sortComments(data)),
     deletePost: (data) => dispatch(dispatchers.deletePost(data)),
     editPost: (data) => dispatch(dispatchers.editPost(data)),
     ratePost: (data) => dispatch(dispatchers.ratePost(data)),

@@ -32,7 +32,6 @@ export const NOTSUBMITTING = 'NOTSUBMITTING'
 export const START_POST = 'START_POST'
 export const START_COMMENT = 'START_COMMENT'
 export const CANCEL_COMMENTING = 'CANCEL_COMMENTING'
-// export const SORT_POSTS = 'SORT_POSTS'
 export const DATE_SORT = "DATE_SORT"
 export const CATEGORY_SORT = "CATEGORY_SORT"
 export const VOTE_SORT = "VOTE_SORT"
@@ -540,3 +539,8 @@ export function rateComment({comment, option}){
     }
 }
 
+export function sortComments(by){
+    return{
+        type: by
+    }
+}

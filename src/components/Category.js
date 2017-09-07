@@ -20,12 +20,12 @@ class Category extends Component {
                 <div className="panel menu-item sorting">                
                     <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
                     >Date
-                    {this.props.sortState === 1? <FaSortDesc size='40'/>
-                    :<FaSortAsc size='40'/>}
+                    {posts.sortBy === -1? <FaSortAsc size='40'/>
+                    :<FaSortDesc size='40'/>}
                     </button>
                     <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
-                    >Votes{this.props.sortState === 2? <FaSortDesc size='40'/>
-                    :<FaSortAsc size='40'/>}
+                    >Votes{posts.sortBy === -2? <FaSortAsc size='40'/>
+                    :<FaSortDesc size='40'/>}
                     </button>                  
                 </div>
                 <ul className=''>
@@ -44,8 +44,8 @@ class Category extends Component {
     }
 }
 
-function mapStateToProps({posts, comments, category, sortState}){
-  return {posts, comments, category, sortState}
+function mapStateToProps({posts, comments, category}){
+  return {posts, comments, category}
 }
 
 function mapDispatchToProps(dispatch){
