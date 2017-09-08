@@ -21,13 +21,11 @@ import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 
 //TODO: Design comments CSS
 //TODO: Add homepage link
-//TODO: issue in alert because of back position
 //TODO: issue in category sorting
 //TODO: add current sorting header
 //TODO: implement comments sorting UI
 //TODO: route error page when invalid id's and categories in url 
 //TODO: make a function for location pathname checking and routing
-//TODO: alert slides up with green color
 //TODO: if categories are null disable buttons 
 //TODO: while submitting any action disable all buttons 
 //TODO: check when to reenable submit and show/hide loading
@@ -112,9 +110,9 @@ class App extends Component {
     const {items} = posts
     return (
       <div className="App">         
-        <Collapse className="alert"
-            in={alert? true: false}>
-            <div><Alert bsStyle={alert? alert.type : "success"} onDismiss={this.handleAlertDismiss}>
+        <Collapse 
+            in={alert.message? true: false}>
+            <div><Alert bsStyle={alert.type} onDismiss={this.handleAlertDismiss}>
               <button type="button" className="close" aria-label="Close" data-dismiss="alert">
                   <span aria-hidden="true">&times;</span>
               </button>

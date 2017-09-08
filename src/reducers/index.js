@@ -267,7 +267,7 @@ function comments(state = {
     }
 }
 
-function alert(state = null, action){
+function alert(state = {type: "clear"}, action){
     const {message} = action
     switch(action.type){
         case SUCCESS:
@@ -281,9 +281,15 @@ function alert(state = null, action){
                 type: "danger"
             }
         case WARNING:
-            return message
+            return {  
+                message,
+                type: "warning"
+            }
         case CLEAR:
-            return null
+            return {  
+                message: null,
+                type: state.type
+            }
         default:
             return state
     }

@@ -54,10 +54,12 @@ li {
 }
 
 .alert{
+  z-index: 2;
   position: fixed;
   top: 0;
   width: 100%
 }
+
 
 .title {
   text-align: center;
@@ -86,7 +88,9 @@ li {
 }
 
 .left-menu{
-
+  display: inline-block;
+  flex-direction: row-reverse;
+  align-self: left;
 }
 
 .back-btn{

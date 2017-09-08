@@ -62,14 +62,15 @@ class PostDetails extends Component {
     render() {
         const { post, comment } = this.props
         if (post) {
-            let timestamp = new Date(Number(post.timestamp));
+            let timestamp = new Date(Number(post.timestamp))
+            if(post.id){
             return (
                 <div>
                     <div className='container'>
                         <div className="post-details">
                         <div className="post">
                             <div className="post-left col-xs-2">
-                                <h1>{capitalize(post.category)}</h1>
+                                <h1>{post.category && capitalize(post.category)}</h1>
                                 <p>{post.author}</p>
                                 <p>{timestamp.toLocaleDateString()}</p>
                                 <p>{timestamp.toLocaleTimeString()}</p>
@@ -139,9 +140,13 @@ class PostDetails extends Component {
 
                 </div>
             )
+            }
+        else return (
+            <div><h3>The page you requested does not exist or is no longer available.</h3></div>
+        )
         }
         else return (
-            <div><p>Your page is being loaded, hit refresh if it takes too long.</p></div>
+            <div><h3>Your page is being loaded, hit refresh if it takes too long.</h3></div>
         )
     }
 }
