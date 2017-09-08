@@ -10,9 +10,40 @@ body {
 
 .clickable {
   color:#124050;
+  padding: 10px
 }
 
+textarea {
+  width: 100%;
+  resize: none;
+}
 
+.help{
+  display: flex;
+  justify-content: center;
+}
+
+.submit{
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#submit{
+  background-color: inherit;
+}
+
+select{
+    width: 100%;
+    border: 2px solid #447;
+    border-radius: 10px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 ul {
   padding-left: 0;
@@ -29,12 +60,11 @@ li {
 }
 
 .title {
-  display: inline-block;
   text-align: center;
   font-family: fantasy;
   font-size: 50px;
   font-weight: 300;
-  width: 95%;
+  width: 100%;
 }
 
 .main-menu{
@@ -59,15 +89,18 @@ li {
 
 }
 
+.back-btn{
+  /* position: fixed;
+  z-index: 5; */
+}
+
 .posts-container{
     margin-left: auto;
     margin-right: auto;
 }
 
 .main-header{
-  display: inline-block;
-  position: relative;
-  top: 0;
+ 
   width: 100%
 }
 
@@ -112,9 +145,10 @@ li {
   color: darkslategrey;
 }
 
-.field{
-  display: flex;
-  width: 100%;
+
+
+.input-field{
+  height: 50px;
 }
 
 .left{
@@ -122,13 +156,15 @@ li {
 }
 
 .right{
-  text-align: right;
   color: green
 }
 
 .post-left{
   text-align: center;
-  vertical-align: center;
+  font-size: 20px;
+  margin-right: 20px;
+  padding-right: 10px;
+  border-right: 2px solid whitesmoke;
 }
 
 .button-group{
@@ -177,7 +213,10 @@ li {
 }
 
 .create-post-details {
-  margin-left: 20px;
+  font-size: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 .create-post-details input {
@@ -258,10 +297,9 @@ li {
 
 
 .post-details {
-  padding-left: 20px;
+  padding-left: 5px;
   border-left: 1px solid #eee;
 
-  flex: 1;
   overflow: hidden;
 
   display: flex;
@@ -331,12 +369,6 @@ li {
   justify-content: left;
 }
 
-.post-left{
-  font-size: 20px;
-  margin-right: 20px;
-  padding-right: 10px;
-  border-right: 2px solid lightblue;
-}
 
 .post svg {
   margin: 0 auto;

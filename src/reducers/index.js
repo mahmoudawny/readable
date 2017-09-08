@@ -187,12 +187,6 @@ function comments(state = {
                 items: state.items? state.items.concat(action.comments): action.comments,
                 lastUpdated: action.receivedAt
             })
-        case GET_POSTS:
-            return Object.assign({}, state, {
-                isLoading: true,
-                didInvalidate: true,                
-                items: []
-            })
         case START_COMMENT:
             return Object.assign({}, state, {
                 isLoading: true,

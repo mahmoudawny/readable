@@ -23,24 +23,24 @@ class CreatePost extends Component{
     render(){
         const {submitting} = this.props
         return(
-        <div>
+        <div className="container">
             <div className="header">Create a post</div>
-            <span><p>Just fill all fields and click the right arrow!</p></span>
+            <span className="help"><p>Just fill all fields and click the right arrow!</p></span>
             <form name="postform" onSubmit={this.newSubmit} >
                 <div className='create-post-details'>
                     {this.props.category? <input type='hidden' name='category' value={this.props.category}/>
-                    :<select required name='category'>
+                    :<div className="select"><select required name='category'>
                         <option readOnly value="" >Please select a category</option>
                     {this.props.categories && this.props.categories.map((category) => 
                         <option value={category.name} key={category.name}>{capitalize(category.name)}</option>
                         )}
-                    </select>}
+                    </select></div>}
                     <input type='hidden' name='id' value={Math.random().toString(36).substr(-8)}/>
                     <input type='hidden' name='timestamp' value={Number(Date.now())}/>
-                    <input required name='title' placeholder='Title' type='text'/>
-                    <input required name='body' placeholder='Body' type='text'/>
-                    <input required name='author' placeholder='Author' type='text'/>
-                    <button disabled={submitting} id="submit"  className='icon-btn' title='Add Post'>
+                    <input className="input-field" required name='title' placeholder='Title' type='text'/>
+                    <textarea required name='body' placeholder='Body' type='text'/>
+                    <input className="input-field" required name='author' placeholder='Author' type='text'/>
+                    <button disabled={submitting} id="submit"  className='submit clickable icon-btn' title='Add Post'>
                         <FaArrowCircleORight  size='40'/>
                     </button>
                 </div>

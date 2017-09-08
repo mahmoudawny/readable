@@ -19,7 +19,9 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 import FaSortAsc from 'react-icons/lib/fa/sort-asc'
 import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 
-//TODO: Design post details CSS
+//TODO: Design comments CSS
+//TODO: Add homepage link
+//TODO: issue in alert because of back position
 //TODO: issue in category sorting
 //TODO: add current sorting header
 //TODO: implement comments sorting UI
@@ -69,6 +71,7 @@ class App extends Component {
         }
       //if on a category page/subpage load only category's posts
       else if(this.isCategory(nextProps.location.pathname.substr(1).split('/')[0])){
+        this.props.invalidatePosts()
         this.props.setCategory(nextProps.location.pathname.substr(1).split('/')[0])        
         this.props.fetchPosts(nextProps.location.pathname.substr(1).split('/')[0]) 
       }
@@ -118,7 +121,7 @@ class App extends Component {
               <h4>{alert && alert.message}</h4></Alert></div>
         </Collapse> 
         <div className="col-xs-12">
-          <div>
+          <div className="back-btn">
               {location.pathname !== "/" &&
                 <button onClick={() => history.goBack()} className='clickable icon-btn'> 
                         <FaArrowCircleOLeft size='60'/>

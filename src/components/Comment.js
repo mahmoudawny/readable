@@ -30,19 +30,19 @@ class Comment extends Component{
             <button 
                 onClick = {() => this.props.getComment({comment})}
                 className = 'icon-btn' 
-            ><FaEdit size='40'/></button>
+            ><FaEdit size='30'/></button>
             <button 
                 onClick = {() => this.fireConfirmation(comment)}
                 className = 'icon-btn' 
-            ><FaMinusSquare size='40'/></button>
+            ><FaMinusSquare size='30'/></button>
             <button 
                 onClick = {() => this.props.rateComment({comment, option: dispatchers.VOTEUP})}
                 className = 'icon-btn vote-up' 
-            ><FaThumbsOUp size='40'/></button>
+            ><FaThumbsOUp size='30'/></button>
             <button 
                 onClick = {() => this.props.rateComment({comment, option: "downVote"})}
                 className = 'icon-btn vote-down' 
-            ><FaThumbsODown size='40'/></button>
+            ><FaThumbsODown size='30'/></button>
           </div>
         )
     }

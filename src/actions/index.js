@@ -43,35 +43,35 @@ const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
 let token = localStorage.token
 
 if (!token)
-  token = localStorage.token = Math.random().toString(36).substr(-8)
+    token = localStorage.token = Math.random().toString(36).substr(-8)
 
 const headers = {
-  'Accept': 'application/json',
-  'Authorization': token
+    'Accept': 'application/json',
+    'Authorization': token
 }
 
 //global 
 
-export function getCategories({categories}) {
+export function getCategories({ categories }) {
     return {
         type: CATEGORIES,
         categories
     }
 }
 
-export function successMessage({message}) {
+export function successMessage({ message }) {
     return {
         type: SUCCESS,
         message
     }
 }
-export function warningMessage({message}) {
+export function warningMessage({ message }) {
     return {
         type: WARNING,
         message
     }
 }
-export function dangerMessage({message}) {
+export function dangerMessage({ message }) {
     return {
         type: DANGER,
         message
@@ -93,19 +93,19 @@ function handleErrors(response) {
     return response;
 }
 
-export function setSubmitting(){
+export function setSubmitting() {
     return {
         type: SUBMITTING
     }
 }
 
-export function setNotSubmitting(){
+export function setNotSubmitting() {
     return {
         type: NOTSUBMITTING
     }
 }
 
-export function setCategory(category){
+export function setCategory(category) {
     return {
         type: SET_CATEGORY,
         category
@@ -114,44 +114,44 @@ export function setCategory(category){
 
 //posts 
 
-export function invalidatePosts(){
+export function invalidatePosts() {
     return {
         type: INVALIDATE_POST
     }
 }
 
 function requestPosts(category) {
-  return {
-    type: GET_POSTS,
-    category
-  }
+    return {
+        type: GET_POSTS,
+        category
+    }
 }
 
 
 function receivePosts(category, posts, allPosts) {
-  return {
-    type: RECEIVE_POSTS,
-    category,
-    posts,
-    allPosts,
-    receivedAt: Date.now()
-  }
+    return {
+        type: RECEIVE_POSTS,
+        category,
+        posts,
+        allPosts,
+        receivedAt: Date.now()
+    }
 }
 
-function startPosting(){
+function startPosting() {
     return {
         type: START_POST
     }
 }
 
-function postDone(post){
+function postDone(post) {
     return {
         type: POST,
         post
     }
 }
 
-function editPostDone(post){
+function editPostDone(post) {
     return {
         type: EDIT_POST,
         post
@@ -160,185 +160,191 @@ function editPostDone(post){
 
 //function to return fetch posts promise and then dispatch get posts' (if any) comments 
 function fetchPosts(category) {
-  return dispatch => {
-    dispatch(requestPosts(category))
-    //get all posts if category is not specified
-    if(!category)
-        return fetch(`${api}/posts`, { headers })
-        .then(response => response.json())
-        .then(posts => {
-// added filter to handle getallposts retrieving deleted posts  
-//(bug in posts.js, change const posts into let)
-                let filteredPosts = posts.filter((post) => !post.deleted)
-                dispatch(receivePosts(category, filteredPosts, true)) 
-                dispatch(fetchComments(posts))         
-        })
-    //get posts for a category    
-    else
-        return fetch(`${api}/${category}/posts`, { headers })
-        .then(response => response.json())
-        .then(posts => {
-            let filteredPosts = posts.filter((post) => !post.deleted)
-            dispatch(receivePosts(category, filteredPosts, false))
-            dispatch(fetchComments(posts))                     
-        })
-  }
+    return dispatch => {
+        dispatch(requestPosts(category))
+        //get all posts if category is not specified
+        if (!category)
+            return fetch(`${api}/posts`, { headers })
+                .then(response => response.json())
+                .then(posts => {
+                    // added filter to handle getallposts retrieving deleted posts  
+                    //(bug in posts.js, change const posts into let)
+                    let filteredPosts = posts.filter((post) => !post.deleted)
+                    dispatch(receivePosts(category, filteredPosts, true))                        
+                    if (filteredPosts.length > 0) {
+                        dispatch(fetchComments(filteredPosts))
+                    }
+                })
+        //get posts for a category    
+        else
+            return fetch(`${api}/${category}/posts`, { headers })
+                .then(response => response.json())
+                .then(posts => {
+                    let filteredPosts = posts.filter((post) => !post.deleted)
+                    dispatch(receivePosts(category, filteredPosts, false))                        
+                    if (filteredPosts.length > 0 ) {
+                        dispatch(fetchComments(filteredPosts))
+                    }
+                })
+    }
 }
 
 
 
 //function to check if a new call should be made (true if current state is empty or if posts are invalidated)
 function shouldFetchPosts(state, category) {
-  const {posts} = state
-  if (!posts.items.length) {
-    return true
-  } else if (posts.isFetching) {
-    return false
-  } else {
-    return posts.didInvalidate
-  }
+    const { posts } = state
+    if (!posts.items.length) {
+        return true
+    } else if (posts.isFetching) {
+        return false
+    } else {
+        return posts.didInvalidate
+    }
 }
 
 //main fetch function to call on loading posts and their comments
 export function fetchPostsIfNeeded(category) {
-  return (dispatch, getState) => {
-   if (shouldFetchPosts(getState(), category)) {
-      return dispatch(fetchPosts(category))
-    } else {
-      return Promise.resolve()
+    return (dispatch, getState) => {
+        if (shouldFetchPosts(getState(), category)) {
+            return dispatch(fetchPosts(category))
+        } else {
+            return Promise.resolve()
+        }
     }
-  }
 }
 
 
-export function getPost({post}){
-    return{
+export function getPost({ post }) {
+    return {
         type: GET_POST,
         post
     }
 }
 
 
-function doRatePost({post, option}){
-    return{
+function doRatePost({ post, option }) {
+    return {
         type: RATE_POST,
         post,
         option
     }
 }
 
-export function ratePost({post, option}){
+export function ratePost({ post, option }) {
     return dispatch => {
         dispatch(startPosting())
-        return  fetch(`${api}/posts/${post.id}`, {
+        return fetch(`${api}/posts/${post.id}`, {
             method: 'POST',
             headers: {
-            ...headers,
-            'Content-Type': 'application/json'
+                ...headers,
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({option})
+            body: JSON.stringify({ option })
         })
-        .then(handleErrors)
-        .then((res) => {
-            if(!res.error) {
-                dispatch(doRatePost({post, option}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.generalFailed}))
-                setTimeout(() => {dispatch(clearMessage())}, 3000) 
-            }})
-        .catch((error) =>  {
-            dispatch(dangerMessage({message: messages.generalFailed + `\n` + error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
+            .then(handleErrors)
+            .then((res) => {
+                if (!res.error) {
+                    dispatch(doRatePost({ post, option }))
+                }
+                else {
+                    dispatch(dangerMessage({ message: messages.generalFailed }))
+                    setTimeout(() => { dispatch(clearMessage()) }, 3000)
+                }
+            })
+            .catch((error) => {
+                dispatch(dangerMessage({ message: messages.generalFailed + `\n` + error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            })
     }
 }
 
-export function doPost(post){
+export function doPost(post) {
     return dispatch => {
         dispatch(startPosting())
         return fetch(`${api}/posts`, {
             method: 'POST',
             headers: {
-            ...headers,
-            'Content-Type': 'application/json'
+                ...headers,
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(post)
         }).then(handleErrors)
-        .then((res) => res.json())
-        .then((post) => {
-            if(post.id) {
-                dispatch(postDone(post))
-                dispatch(successMessage({message: messages.postCreated}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.postFailed}))
-            }
-            setTimeout(() => {dispatch(clearMessage())}, 3000)                
-        }).catch((error) =>  {
-            dispatch(dangerMessage({message: error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
+            .then((res) => res.json())
+            .then((post) => {
+                if (post.id) {
+                    dispatch(postDone(post))
+                    dispatch(successMessage({ message: messages.postCreated }))
+                }
+                else {
+                    dispatch(dangerMessage({ message: messages.postFailed }))
+                }
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            }).catch((error) => {
+                dispatch(dangerMessage({ message: error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            })
     }
 }
 
-export function editPost({post, body}){
+export function editPost({ post, body }) {
     return dispatch => {
         dispatch(startPosting())
-        return fetch(`${api}/posts/${post.id}`, { method: 'PUT', 
+        return fetch(`${api}/posts/${post.id}`, {
+            method: 'PUT',
             headers: {
-            ...headers,
-            'Content-Type': 'application/json'
+                ...headers,
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
         }).then(handleErrors)
-        .then(res => res.json())
-        .then((post) => {
-            if(post.id) {
-                dispatch(editPostDone(post))
-                dispatch(successMessage({message: messages.postEdited}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.postEditFailed}))
-            }
-            setTimeout(() => {dispatch(clearMessage())}, 3000)                
-        }).catch((error) =>  {
-            dispatch(dangerMessage({message: error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
+            .then(res => res.json())
+            .then((post) => {
+                if (post.id) {
+                    dispatch(editPostDone(post))
+                    dispatch(successMessage({ message: messages.postEdited }))
+                }
+                else {
+                    dispatch(dangerMessage({ message: messages.postEditFailed }))
+                }
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            }).catch((error) => {
+                dispatch(dangerMessage({ message: error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            })
     }
 }
 
-function doDeletePost(post){
-    return{
+function doDeletePost(post) {
+    return {
         type: DELETE_POST,
         post
     }
 }
 
-export function deletePost(post){
+export function deletePost(post) {
     return dispatch => {
         dispatch(startPosting())
         return fetch(`${api}/posts/${post.id}`, { method: 'DELETE', headers })
-        .then(handleErrors)
-        .then((res) => {
-            if(!res.error) {
-                dispatch(doDeletePost(post))
-                dispatch(successMessage({message: messages.postDeleted}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.postDeleteFailed}))
-            }
-            setTimeout(() => {dispatch(clearMessage())}, 3000)                
-        }).catch((error) =>  {
-            dispatch(dangerMessage({message: messages.postDeleteFailed + `\n` + error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
+            .then(handleErrors)
+            .then((res) => {
+                if (!res.error) {
+                    dispatch(doDeletePost(post))
+                    dispatch(successMessage({ message: messages.postDeleted }))
+                }
+                else {
+                    dispatch(dangerMessage({ message: messages.postDeleteFailed }))
+                }
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            }).catch((error) => {
+                dispatch(dangerMessage({ message: messages.postDeleteFailed + `\n` + error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            })
     }
 }
 
-export function sortPosts(by){
-    return{
+export function sortPosts(by) {
+    return {
         type: by
     }
 }
@@ -346,7 +352,7 @@ export function sortPosts(by){
 //comments
 
 
-function requestComments(posts){
+function requestComments(posts) {
     return {
         type: GET_COMMENTS,
         posts
@@ -354,159 +360,161 @@ function requestComments(posts){
 }
 
 function receiveComments(comments) {
-  return {
-    type: RECEIVE_COMMENTS,
-    comments,
-    receivedAt: Date.now()
-  }
+    return {
+        type: RECEIVE_COMMENTS,
+        comments,
+        receivedAt: Date.now()
+    }
 }
 
-export function invalidateComments(){
+export function invalidateComments() {
     return {
         type: INVALIDATE_COMMENT
     }
 }
 
-function startCommenting(comment){
+function startCommenting(comment) {
     return {
         type: START_COMMENT,
         comment
     }
 }
 
-function commentDone(comment){
+function commentDone(comment) {
     return {
         type: COMMENT,
         comment
     }
 }
 
-function editCommentDone(comment){
+function editCommentDone(comment) {
     return {
         type: EDIT_COMMENT,
         comment
     }
 }
 
-export function cancelEditComment(){
+export function cancelEditComment() {
     return {
         type: CANCEL_COMMENTING
     }
 }
 
-export function doComment(comment){
+export function doComment(comment) {
     return dispatch => {
-        const {commentCreated, commentFailed} = messages
+        const { commentCreated, commentFailed } = messages
         dispatch(startCommenting(comment))
         return fetch(`${api}/comments`, {
             method: 'POST',
             headers: {
-            ...headers,
-            'Content-Type': 'application/json'
+                ...headers,
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(comment)
         }).then((res) => res.json()).then((comment) => {
-            if(comment.id) {
+            if (comment.id) {
                 dispatch(commentDone(comment))
-                document.forms[0].reset()                
-                dispatch(successMessage({message: commentCreated}))
+                document.forms[0].reset()
+                dispatch(successMessage({ message: commentCreated }))
             }
-            else dispatch(dangerMessage({message: commentFailed}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000)  
-        }).catch((error) =>  {
-            dispatch(dangerMessage({message: error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
+            else dispatch(dangerMessage({ message: commentFailed }))
+            setTimeout(() => { dispatch(clearMessage()) }, 3000)
+        }).catch((error) => {
+            dispatch(dangerMessage({ message: error.toString() }))
+            setTimeout(() => { dispatch(clearMessage()) }, 3000)
         })
     }
 }
 
-export function getComment({comment}){
-    return{
+export function getComment({ comment }) {
+    return {
         type: GET_COMMENT,
         comment
     }
 }
 
 
-export function editComment({comment, body}){
+export function editComment({ comment, body }) {
     return dispatch => {
         dispatch(startCommenting())
-        return fetch(`${api}/comments/${comment.id}`, { method: 'PUT', 
+        return fetch(`${api}/comments/${comment.id}`, {
+            method: 'PUT',
             headers: {
-            ...headers,
-            'Content-Type': 'application/json'
+                ...headers,
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
         }).then(handleErrors)
-        .then(res => res.json())
-        .then((comment) => {
-            if(comment.id) {
-                document.forms[0].reset()
-                dispatch(editCommentDone(comment))
-                dispatch(successMessage({message: messages.commentEdited}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.commentEditFailed}))
-            }
-            setTimeout(() => {dispatch(clearMessage())}, 3000)                
-        }).catch((error) =>  {
-            dispatch(dangerMessage({message: messages.commentEditFailed + `\n` + error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
-    }
-}
-
-
-
-function fetchComments(posts){
-    return dispatch => {
-    dispatch(requestComments(posts))
-    return Promise.all(posts.map((post) => {
-        return fetch(`${api}/posts/${post.id}/comments`, { headers })}
-    ))
-        .then(responses => {
-            responses.forEach((response) => {
-                response.json().then((comments) => dispatch(receiveComments(comments)))
+            .then(res => res.json())
+            .then((comment) => {
+                if (comment.id) {
+                    document.forms[0].reset()
+                    dispatch(editCommentDone(comment))
+                    dispatch(successMessage({ message: messages.commentEdited }))
+                }
+                else {
+                    dispatch(dangerMessage({ message: messages.commentEditFailed }))
+                }
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            }).catch((error) => {
+                dispatch(dangerMessage({ message: messages.commentEditFailed + `\n` + error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
             })
-            
-        })
     }
-    
 }
 
 
 
-function doDeleteComment(comment){
-    return{
+function fetchComments(posts) {
+    return dispatch => {
+        dispatch(requestComments(posts))
+        return Promise.all(posts.map((post) => {
+            return fetch(`${api}/posts/${post.id}/comments`, { headers })
+        }
+        ))
+            .then(responses => {
+                responses.forEach((response) => {
+                    response.json().then((comments) => dispatch(receiveComments(comments)))
+                })
+
+            })
+    }
+
+}
+
+
+
+function doDeleteComment(comment) {
+    return {
         type: DELETE_COMMENT,
         comment
     }
 }
 
-export function deleteComment(comment){
+export function deleteComment(comment) {
     return dispatch => {
         dispatch(startCommenting())
         return fetch(`${api}/comments/${comment.id}`, { method: 'DELETE', headers })
-        .then(handleErrors)
-        .then(res => res.json())
-        .then((comment) => {
-            if(comment.id) {
-                dispatch(doDeleteComment(comment))
-                dispatch(successMessage({message: messages.commentDeleted}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.commentDeleteFailed}))
-            }
-            setTimeout(() => {dispatch(clearMessage())}, 3000)                
-        }).catch((error) =>  {
-            dispatch(dangerMessage({message: messages.commentDeleteFailed + `\n` + error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
+            .then(handleErrors)
+            .then(res => res.json())
+            .then((comment) => {
+                if (comment.id) {
+                    dispatch(doDeleteComment(comment))
+                    dispatch(successMessage({ message: messages.commentDeleted }))
+                }
+                else {
+                    dispatch(dangerMessage({ message: messages.commentDeleteFailed }))
+                }
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            }).catch((error) => {
+                dispatch(dangerMessage({ message: messages.commentDeleteFailed + `\n` + error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            })
     }
 }
 
-function doRateComment({comment, option}){
-    return{
+function doRateComment({ comment, option }) {
+    return {
         type: RATE_COMMENT,
         comment,
         option
@@ -514,33 +522,36 @@ function doRateComment({comment, option}){
 }
 
 
-export function rateComment({comment, option}){
+export function rateComment({ comment, option }) {
     return dispatch => {
         dispatch(startCommenting())
-        return  fetch(`${api}/comments/${comment.id}`, {
+        return fetch(`${api}/comments/${comment.id}`, {
             method: 'POST',
-            headers: {...headers, 
-                'content-type': 'application/json'},
-            body: JSON.stringify({option})
+            headers: {
+                ...headers,
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({ option })
         })
-        .then(handleErrors)
-        .then((res) => {
-            if(!res.error) {
-                dispatch(doRateComment({comment, option}))
-            }
-            else{
-                dispatch(dangerMessage({message: messages.generalFailed}))
-                setTimeout(() => {dispatch(clearMessage())}, 3000) 
-            }})
-        .catch((error) =>  {
-            dispatch(dangerMessage({message: messages.generalFailed + `\n` + error.toString()}))
-            setTimeout(() => {dispatch(clearMessage())}, 3000) 
-        })
+            .then(handleErrors)
+            .then((res) => {
+                if (!res.error) {
+                    dispatch(doRateComment({ comment, option }))
+                }
+                else {
+                    dispatch(dangerMessage({ message: messages.generalFailed }))
+                    setTimeout(() => { dispatch(clearMessage()) }, 3000)
+                }
+            })
+            .catch((error) => {
+                dispatch(dangerMessage({ message: messages.generalFailed + `\n` + error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            })
     }
 }
 
-export function sortComments(by){
-    return{
+export function sortComments(by) {
+    return {
         type: by
     }
 }
