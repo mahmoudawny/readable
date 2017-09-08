@@ -13,6 +13,9 @@ import { withRouter } from "react-router-dom"
 import FaThumbsODown from 'react-icons/lib/fa/thumbs-o-down'
 import FaThumbsOUp from 'react-icons/lib/fa/thumbs-o-up'
 import { capitalize } from '../utils/Helpers'
+import FaSortAsc from 'react-icons/lib/fa/sort-asc'
+import FaSortDesc from 'react-icons/lib/fa/sort-desc'
+
 //TODO: scroll on clicking edit to show edit fields
 
 class PostDetails extends Component {
@@ -63,87 +66,98 @@ class PostDetails extends Component {
         const { post, comment } = this.props
         if (post) {
             let timestamp = new Date(Number(post.timestamp))
-            if(post.id){
-            return (
-                <div>
-                    <div className='container'>
-                        <div className="post-details">
-                        <div className="post">
-                            <div className="post-left col-xs-2">
-                                <h1>{post.category && capitalize(post.category)}</h1>
-                                <p>{post.author}</p>
-                                <p>{timestamp.toLocaleDateString()}</p>
-                                <p>{timestamp.toLocaleTimeString()}</p>
-                            </div>
-                            <div className="panel panel-default post-right col-xs-9">
-                                <p className="panel-heading post-title">{post.title}</p>
-                                <p className="post-body">{post.body}</p>
-                            </div>
-                        </div>
-                        <div className="counts">
-                            <p className="post-counter">Score: {post.voteScore}</p>
-                        </div>
-                        </div>
-                        <div className="button-group">
-                            <Link
-                                to={`/${post.category}/${post.id}/edit_post`}
-                                className='clickable icon-btn'
-                            ><FaEdit size='40' /></Link>
-                            <button
-                                onClick={() => this.fireConfirmation(post)}
-                                className='clickable icon-btn'
-                            ><FaMinusSquare size='40' /></button>
-                            <button
-                                onClick={() => this.props.ratePost({ post, option: dispatchers.VOTEUP })}
-                                className='clickable icon-btn'
-                            ><FaThumbsOUp size='40' /></button>
-                            <button
-                                onClick={() => this.props.ratePost({ post, option: dispatchers.VOTEDOWN })}
-                                className='clickable icon-btn'
-                            ><FaThumbsODown size='40' /></button>
-                        </div>
-                        {post.comments &&
-                            <div className='comment-list'>
-                                <p className="counters"><strong>Comments: {post.comments.length}</strong></p>
-                                {post.comments.map((comment) =>
-                                    <Comment key={comment.id} comment={comment} />
-                                )}
-                            </div>
-                        }
-                    </div>
-                    <form name="commentform" onSubmit={this.newSubmit} className='create-post-details'>
-                        <div className='create-comment-details'>
-                            {comment ?
-                                <div key={comment.id}>
-                                    <input type='hidden' name='parentId' value={comment.parentId} />
-                                    <input type='hidden' name='id' value={comment.id} />
-                                    <input type='hidden' name='timestamp' value={comment.timestamp} />
-                                    <textarea defaultValue={comment.body} ref={(input) => this.input = input} required name='body' placeholder='Body' type='text' />
-                                    <input defaultValue={comment.author} ref={(input) => this.input = input} required name='author' placeholder='Author' type='text' />
+            if (post.id) {
+                return (
+                    <div>
+                        <div className='container'>
+                            <div className="post-details">
+                                <div className="post">
+                                    <div className="post-left col-xs-2">
+                                        <h1>{post.category && capitalize(post.category)}</h1>
+                                        <p>{post.author}</p>
+                                        <p>{timestamp.toLocaleDateString()}</p>
+                                        <p>{timestamp.toLocaleTimeString()}</p>
+                                    </div>
+                                    <div className="panel panel-default post-right col-xs-9">
+                                        <p className="panel-heading post-title">{post.title}</p>
+                                        <p className="post-body">{post.body}</p>
+                                    </div>
                                 </div>
-                                : <div>
-                                    <input type='hidden' name='parentId' value={post.id} />
-                                    <input type='hidden' name='id' value={Math.random().toString(36).substr(-8)} />
-                                    <input type='hidden' name='timestamp' value={Number(Date.now())} />
-                                    <textarea className="body-field" required name='body' placeholder='Body' type='text' />
-                                    <input className="input-field" required name='author' placeholder='Author' type='text' />
+                                <div className="counts">
+                                    <p className="post-counter">Score: {post.voteScore}</p>
+                                </div>
+                            </div>
+                            <div className="button-group">
+                                <Link
+                                    to={`/${post.category}/${post.id}/edit_post`}
+                                    className='clickable icon-btn'
+                                ><FaEdit size='40' /></Link>
+                                <button
+                                    onClick={() => this.fireConfirmation(post)}
+                                    className='clickable icon-btn'
+                                ><FaMinusSquare size='40' /></button>
+                                <button
+                                    onClick={() => this.props.ratePost({ post, option: dispatchers.VOTEUP })}
+                                    className='clickable icon-btn'
+                                ><FaThumbsOUp size='40' /></button>
+                                <button
+                                    onClick={() => this.props.ratePost({ post, option: dispatchers.VOTEDOWN })}
+                                    className='clickable icon-btn'
+                                ><FaThumbsODown size='40' /></button>
+                            </div>
+                            {post.comments &&
+                                <div className='comment-list'>
+                                    <div className="panel menu-item sorting">
+                                        <button className='clickable icon-btn' onClick={() => this.props.sortComments(dispatchers.COMMENT_DATE_SORT)}
+                                        >Date
+                                        {post.sortBy === -1 ? <FaSortAsc size='20' />
+                                                : <FaSortDesc size='20' />}
+                                        </button>
+                                        <button className='clickable icon-btn' onClick={() => this.props.sortComments(dispatchers.COMMENT_VOTE_SORT)}
+                                        >Votes{post.sortBy === -2 ? <FaSortAsc size='20' />
+                                            : <FaSortDesc size='20' />}
+                                        </button>
+                                    </div>
+                                    <p className="counters"><strong>Comments: {post.comments.length}</strong></p>
+                                    {post.comments.map((comment) =>
+                                        <Comment key={comment.id} comment={comment} />
+                                    )}
                                 </div>
                             }
-                            <button id="submit" className='clickable submit icon-btn' title='Add/Edit Comment'>
-                                <FaArrowCircleORight size='50' />
-                            </button>
-                            {comment && <button id="cancel" onClick={() => this.props.cancelEditComment()} className='clickable icon-btn' title='Cancel Edit'>
-                                <FaBan size='30' />
-                            </button>}
                         </div>
-                    </form>
+                        <form name="commentform" onSubmit={this.newSubmit} className='create-post-details'>
+                            <div className='create-comment-details'>
+                                {comment ?
+                                    <div key={comment.id}>
+                                        <input type='hidden' name='parentId' value={comment.parentId} />
+                                        <input type='hidden' name='id' value={comment.id} />
+                                        <input type='hidden' name='timestamp' value={comment.timestamp} />
+                                        <textarea defaultValue={comment.body} ref={(input) => this.input = input} required name='body' placeholder='Body' type='text' />
+                                        <input defaultValue={comment.author} ref={(input) => this.input = input} required name='author' placeholder='Author' type='text' />
+                                    </div>
+                                    : <div>
+                                        <input type='hidden' name='parentId' value={post.id} />
+                                        <input type='hidden' name='id' value={Math.random().toString(36).substr(-8)} />
+                                        <input type='hidden' name='timestamp' value={Number(Date.now())} />
+                                        <textarea className="body-field" required name='body' placeholder='Body' type='text' />
+                                        <input className="input-field" required name='author' placeholder='Author' type='text' />
+                                    </div>
+                                }
+                                <button id="submit" className='clickable submit icon-btn' title='Add/Edit Comment'>
+                                    <FaArrowCircleORight size='50' />
+                                </button>
+                                {comment && <button id="cancel" onClick={() => this.props.cancelEditComment()} className='clickable icon-btn' title='Cancel Edit'>
+                                    <FaBan size='30' />
+                                </button>}
+                            </div>
+                        </form>
 
-                </div>
-            )
+                    </div>
+                )
             }
-        else return (
-            <div><h3>The page you requested does not exist or is no longer available.</h3></div>
-        )
+            else return (
+                <div><h3>The page you requested does not exist or is no longer available.</h3></div>
+            )
         }
         else return (
             <div><h3>Your page is being loaded, hit refresh if it takes too long.</h3></div>

@@ -42,11 +42,15 @@ class App extends Component {
       //If homepage load all posts
       if(location.pathname === '/')
         this.props.fetchPosts(null)
-        .then(() => this.props.sortPosts(dispatchers.DATE_SORT))
+        .then(() => {
+          this.props.sortPosts(dispatchers.VOTE_SORT)          
+        })   
       //if on a category page/subpage load only category's posts 
       else if(this.isCategory(location.pathname.substr(1).split('/')[0])){
         this.props.fetchPosts(location.pathname.substr(1).split('/')[0])
-        .then(() => this.props.sortPosts(dispatchers.DATE_SORT))        
+        .then(() => {
+          this.props.sortPosts(dispatchers.VOTE_SORT)
+        })        
       }
       
     })
@@ -80,7 +84,10 @@ class App extends Component {
   getPostAndComments = (id) => {
         api.getPost({id}).then((post) => {
           if(post) api.getComments(post).then((comments) => {
-                post.comments = comments
+                post.comments = comments.sort((a, b) => 
+                    b.voteScore - a.voteScore
+                )
+                  post.sortBy = -2
                 this.props.getPost({post})
               })           
         })
@@ -242,6 +249,7 @@ function mapDispatchToProps(dispatch){
     setCategory: (data) => dispatch(dispatchers.setCategory(data)),
     invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
     sortPosts: (data) => dispatch(dispatchers.sortPosts(data)),
+
   }
 }
 

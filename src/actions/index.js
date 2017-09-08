@@ -35,6 +35,8 @@ export const CANCEL_COMMENTING = 'CANCEL_COMMENTING'
 export const DATE_SORT = "DATE_SORT"
 export const CATEGORY_SORT = "CATEGORY_SORT"
 export const VOTE_SORT = "VOTE_SORT"
+export const COMMENT_DATE_SORT = "COMMENT_DATE_SORT"
+export const COMMENT_VOTE_SORT = "COMMENT_VOTE_SORT"
 
 
 //server constants
@@ -474,7 +476,9 @@ function fetchComments(posts) {
         ))
             .then(responses => {
                 responses.forEach((response) => {
-                    response.json().then((comments) => dispatch(receiveComments(comments)))
+                    response.json().then((comments) => {
+                        dispatch(receiveComments(comments))
+                    })
                 })
 
             })
