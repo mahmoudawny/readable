@@ -20,10 +20,6 @@ import FaSortAsc from 'react-icons/lib/fa/sort-asc'
 import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 
 //TODO: Design comments CSS
-//TODO: Add homepage link
-//TODO: issue in category sorting
-//TODO: add current sorting header
-//TODO: implement comments sorting UI
 //TODO: route error page when invalid id's and categories in url 
 //TODO: make a function for location pathname checking and routing
 //TODO: if categories are null disable buttons 
@@ -139,6 +135,7 @@ class App extends Component {
                 <div className="main-menu">
                  {categories? categories.map((category) => 
                 <div key={category.name} className="panel menu-item">                
+                  <Link to='/'>Home</Link>
                   <Link className=''
                   to={`/${category.path}`}
                   key={category.name}>{capitalize(category.name)}</Link>
@@ -161,8 +158,14 @@ class App extends Component {
               render={() => 
               <div className="posts-container">
                 <ul className='list'>
-                  <span className='header'> All Posts</span>
-                  <div className="panel menu-item sorting">                
+                  <span className='header'>All Posts</span>
+                  <div className="panel menu-item sorting">  
+                    <p>Sorted by: {posts.sortBy == 1? "Date (oldest first)"
+                      :posts.sortBy == -1? "Date (newest first)"
+                      :posts.sortBy == 2? "Votes (lowest first)"
+                      :posts.sortBy == -2? "Votes (highest first)"
+                      :posts.sortBy == 3? "Category (ascendingly)"
+                      :"Category (descendingly)"}</p>              
                     <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
                     >Date
                     {posts.sortBy === -1? <FaSortAsc size='40'/>

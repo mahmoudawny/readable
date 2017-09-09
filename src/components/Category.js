@@ -17,7 +17,11 @@ class Category extends Component {
             <div className="container">
             <div className='category'>                
                 <h2 className='header'>{capitalize(currentCategory.name)}</h2>
-                <div className="panel menu-item sorting">                
+                <div className="panel menu-item sorting"> 
+                    <p>Sorted by: {posts.sortBy == 1? "Date (oldest first)"
+                      : posts.sortBy == -1? "Date (newest first)"
+                      : posts.sortBy == 2? "Vote (lowest first)"
+                      : "Vote (highest first)"}</p>               
                     <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
                     >Date
                     {posts.sortBy === -1? <FaSortAsc size='40'/>

@@ -83,9 +83,9 @@ class PostDetails extends Component {
                                         <p className="post-body">{post.body}</p>
                                     </div>
                                 </div>
-                                <div className="counts">
-                                    <p className="post-counter">Score: {post.voteScore}</p>
-                                </div>
+                               
+                                    <p className="counters">Score: {post.voteScore}</p>
+                                
                             </div>
                             <div className="button-group">
                                 <Link
