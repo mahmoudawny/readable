@@ -1,5 +1,5 @@
 html{
-    background-image: linear-gradient(to bottom, lightgrey, lightyellow);
+    background-image: linear-gradient(to bottom, lightgreen, lightyellow);
     background-repeat: no-repeat;
 }
 body {
@@ -9,7 +9,12 @@ body {
 }
 
 .clickable {
-  color:#124050;
+  color:#998866;
+  padding: 10px
+}
+
+.edit-link {
+  color: white;
   padding: 10px
 }
 
@@ -30,9 +35,21 @@ textarea {
 }
 
 #submit{
+  
   background-color: inherit;
 }
+.cancel{
+  display: inline-flex;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+#cancel{
+    margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  background-color: inherit;
+}
 select{
     width: 100%;
     border: 2px solid #447;
@@ -57,7 +74,8 @@ li {
   z-index: 2;
   position: fixed;
   top: 0;
-  width: 100%
+  width: 100%;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
 }
 
 
@@ -110,8 +128,8 @@ li {
 
 .container {
   margin: 2px auto;
-  border: 5px ridge cadetblue;
-  border-radius: 10px;
+  border-left: 25px ridge darkgreen;
+  border-radius: 20px;
   max-width: 95%;
   padding: 5px;
   min-width: 50%;
@@ -147,12 +165,28 @@ li {
 
 .post-body{
   color: darkslategrey;
+  background-color: white;
+  border: none;
+  height: 100px;
+  
 }
 
 
 
 .input-field{
   height: 50px;
+}
+
+.red{
+  color: red;
+}
+
+.delete{
+  color: darkred;
+}
+
+.green{
+  color: green;
 }
 
 .left{
@@ -173,7 +207,14 @@ li {
 
 .button-group{
   display: flex;
-  justify-content: center
+  color: white;
+  background-color: lightseagreen;
+  border-radius: 10px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  border-bottom: 15px white solid;
+  margin-bottom: 10px;
 }
 
 .counts{
@@ -189,6 +230,26 @@ li {
   margin-left: auto;
   margin-right: auto;
 }
+
+.post-score{
+  display: flex;
+  font-family: fantasy;
+  font-size: 200%;
+  justify-content: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.comment-score{
+  display: flex;
+  font-size: 20px;
+  justify-content: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
 .post-counter{
     width: 50%;
@@ -299,13 +360,10 @@ li {
   }
 }
 
-
 .post-details {
   padding-left: 5px;
   border-left: 1px solid #eee;
-
   overflow: hidden;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -455,13 +513,14 @@ li {
 }
 
 .comment-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: block;
+  
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .comment-list li {
-  font-size: 24px;
+  font-size: 44px;
   padding: 5px;
 }
 

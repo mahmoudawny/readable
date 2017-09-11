@@ -37,7 +37,7 @@ export const CATEGORY_SORT = "CATEGORY_SORT"
 export const VOTE_SORT = "VOTE_SORT"
 export const COMMENT_DATE_SORT = "COMMENT_DATE_SORT"
 export const COMMENT_VOTE_SORT = "COMMENT_VOTE_SORT"
-
+export const ERROR = "ERROR"
 
 //server constants
 const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
@@ -60,6 +60,14 @@ export function getCategories({ categories }) {
         categories
     }
 }
+
+export function setError({message}){
+    return {
+        type: ERROR,
+        message
+    }
+}
+
 
 export function successMessage({ message }) {
     return {

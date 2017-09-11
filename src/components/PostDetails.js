@@ -80,34 +80,40 @@ class PostDetails extends Component {
                                     </div>
                                     <div className="panel panel-default post-right col-xs-9">
                                         <p className="panel-heading post-title">{post.title}</p>
-                                        <p className="post-body">{post.body}</p>
+                                        <textarea disabled className="post-body" value={post.body}></textarea>
                                     </div>
                                 </div>
-                               
-                                    <p className="counters">Score: {post.voteScore}</p>
-                                
+                                <div className="post-score"><p>Score:&nbsp; </p><p className={post.voteScore > 0 ? "green" : "red"}>{post.voteScore}</p>
+                                </div>
+
                             </div>
                             <div className="button-group">
                                 <Link
                                     to={`/${post.category}/${post.id}/edit_post`}
-                                    className='clickable icon-btn'
+                                    className='edit-link icon-btn'
                                 ><FaEdit size='40' /></Link>
                                 <button
                                     onClick={() => this.fireConfirmation(post)}
-                                    className='clickable icon-btn'
+                                    className='delete icon-btn'
                                 ><FaMinusSquare size='40' /></button>
                                 <button
                                     onClick={() => this.props.ratePost({ post, option: dispatchers.VOTEUP })}
-                                    className='clickable icon-btn'
+                                    className=' icon-btn'
                                 ><FaThumbsOUp size='40' /></button>
                                 <button
                                     onClick={() => this.props.ratePost({ post, option: dispatchers.VOTEDOWN })}
-                                    className='clickable icon-btn'
+                                    className=' icon-btn'
                                 ><FaThumbsODown size='40' /></button>
                             </div>
                             {post.comments &&
                                 <div className='comment-list'>
                                     <div className="panel menu-item sorting">
+                                        <p>Sorted by: {post.sortBy === 1 ? "Date (oldest first)"
+                                            : post.sortBy === -1 ? "Date (newest first)"
+                                                : post.sortBy === 2 ? "Votes (lowest first)"
+                                                    : post.sortBy === -2 ? "Votes (highest first)"
+                                                        : post.sortBy === 3 ? "Category (ascendingly)"
+                                                            : "Category (descendingly)"}</p>
                                         <button className='clickable icon-btn' onClick={() => this.props.sortComments(dispatchers.COMMENT_DATE_SORT)}
                                         >Date
                                         {post.sortBy === -1 ? <FaSortAsc size='20' />
@@ -118,14 +124,17 @@ class PostDetails extends Component {
                                             : <FaSortDesc size='20' />}
                                         </button>
                                     </div>
-                                    <p className="counters"><strong>Comments: {post.comments.length}</strong></p>
-                                    {post.comments.map((comment) =>
-                                        <Comment key={comment.id} comment={comment} />
-                                    )}
+                                    <div className="container">
+                                        <h3><strong>Comments: {post.comments.length}</strong></h3>
+                                        {post.comments.map((comment) =>
+                                            <Comment key={comment.id} comment={comment} />
+                                        )}
+                                    </div>
                                 </div>
                             }
                         </div>
                         <form name="commentform" onSubmit={this.newSubmit} className='create-post-details'>
+                            <div className="title">{comment ? "Edit Comment" : "Add Comment"}</div>
                             <div className='create-comment-details'>
                                 {comment ?
                                     <div key={comment.id}>
@@ -143,12 +152,14 @@ class PostDetails extends Component {
                                         <input className="input-field" required name='author' placeholder='Author' type='text' />
                                     </div>
                                 }
-                                <button id="submit" className='clickable submit icon-btn' title='Add/Edit Comment'>
-                                    <FaArrowCircleORight size='50' />
-                                </button>
-                                {comment && <button id="cancel" onClick={() => this.props.cancelEditComment()} className='clickable icon-btn' title='Cancel Edit'>
-                                    <FaBan size='30' />
-                                </button>}
+                                <div className="button-group">
+                                    <button id="submit" className='clickable submit icon-btn' title='Add/Edit Comment'>
+                                        <FaArrowCircleORight size='50' />
+                                    </button>
+                                    {comment && <button id="cancel" onClick={() => this.props.cancelEditComment()} className='clickable icon-btn' title='Cancel Edit'>
+                                        <FaBan size='50' />
+                                    </button>}
+                                </div>
                             </div>
                         </form>
 
@@ -156,11 +167,11 @@ class PostDetails extends Component {
                 )
             }
             else return (
-                <div><h3>The page you requested does not exist or is no longer available.</h3></div>
+                <div className="title"><h3>The page you requested does not exist or is no longer available.</h3></div>
             )
         }
         else return (
-            <div><h3>Your page is being loaded, hit refresh if it takes too long.</h3></div>
+            <div className="title"><h3>Your page is being loaded, hit refresh if it takes too long.</h3></div>
         )
     }
 }

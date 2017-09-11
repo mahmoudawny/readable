@@ -28,12 +28,13 @@ class EditPost extends Component{
 
 
     render(){
-        const {submitting, post} = this.props
-        if(post) {
+        const {submitting, post, categories} = this.props
+        if(post && categories) {
             return(
             <div>
                 <div className="header">Edit post: {post.title}</div>
-                <span><p>Edit and click the right arrow, or click Back to cancel!</p></span>
+                <div className="container">
+                <span><p>Enter new values and click the right arrow, or click Back to cancel.</p></span>
                 <form key={post.id} name="postform" onSubmit={this.newSubmit}>
                     <div className='create-post-details'>
                         <select defaultValue={post.category} required name='category'>
@@ -52,11 +53,12 @@ class EditPost extends Component{
                         </button>
                     </div>
                 </form>
+                </div>
             </div>
             )
             }
         else return(
-                <div><p>Your page is being loaded, hit refresh if it takes too long.</p></div>
+                <div className="title"><p>Your page is being loaded, hit refresh if it takes too long.</p></div>
         )
     }
 }

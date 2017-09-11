@@ -39,7 +39,7 @@ class Post extends Component {
                             </div>
                             <div className="panel panel-default post-right col-xs-9">
                                 <p className="panel-heading post-title">{post.title}</p>
-                                <p className="post-body">{post.body}</p>
+                                <textarea disabled className="post-body" value={post.body}></textarea>
                             </div>
                         </div>
 

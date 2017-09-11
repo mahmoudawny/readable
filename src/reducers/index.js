@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import {
     SUBMITTING, NOTSUBMITTING, //set flag for posting operations
+    ERROR, //for error page
     SET_CATEGORY, //set the current category
     CATEGORIES, //get categories
     START_COMMENT, START_POST, //async request actions for single items
@@ -363,6 +364,14 @@ function submitting(state = false, action) {
     }
 }
 
+function error(state = null, action){
+    switch (action.type){
+        case ERROR:
+            return action.message
+        default:
+            return state
+    }
+}
 
-export default combineReducers({ submitting, post, posts, comment, comments, category, categories, alert })
+export default combineReducers({ error, submitting, post, posts, comment, comments, category, categories, alert })
 

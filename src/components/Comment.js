@@ -19,30 +19,32 @@ class Comment extends Component{
         const {comment} = this.props
         let timestamp = new Date(Number(comment.timestamp));
         return(
-          <div>
+          <div className="post-left">
             <div className='comment-details'>
-                <p>Body: {comment.body}</p>
-                <p>Author: {comment.author}</p>
-                <p>Date: {timestamp.toLocaleDateString()}</p>
-                <p>Time: {timestamp.toLocaleTimeString()}</p>
-                <p>Score: {comment.voteScore}</p>
+                <textarea disabled className="post-body" value={comment.body}></textarea>
+                <p>Comment by: {comment.author}</p>
+                <p>{timestamp.toLocaleDateString()} {timestamp.toLocaleTimeString()}</p>
+                <div className="comment-score"><p>Score:&nbsp; </p><p className={comment.voteScore > 0? "green": "red"}>{comment.voteScore}</p>
+                </div>
             </div>
+            <div className="button-group">
             <button 
                 onClick = {() => this.props.getComment({comment})}
-                className = 'icon-btn' 
+                className = ' icon-btn' 
             ><FaEdit size='30'/></button>
             <button 
                 onClick = {() => this.fireConfirmation(comment)}
-                className = 'icon-btn' 
+                className = 'delete icon-btn' 
             ><FaMinusSquare size='30'/></button>
             <button 
                 onClick = {() => this.props.rateComment({comment, option: dispatchers.VOTEUP})}
-                className = 'icon-btn vote-up' 
+                className = ' icon-btn' 
             ><FaThumbsOUp size='30'/></button>
             <button 
                 onClick = {() => this.props.rateComment({comment, option: "downVote"})}
-                className = 'icon-btn vote-down' 
+                className = ' icon-btn' 
             ><FaThumbsODown size='30'/></button>
+            </div>
           </div>
         )
     }
