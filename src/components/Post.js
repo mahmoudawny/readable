@@ -25,7 +25,7 @@ class Post extends Component {
         return (
             <div>
                 <div className='post-details'>
-                    <Link
+                    <Link style={{textDecoration: 'none' }}
                         to={`/${post.category}/${post.id}`}
                         className='icon-btn'>
                         <div className="post">
@@ -52,19 +52,19 @@ class Post extends Component {
                 <div className="button-group">
                     <Link
                         to={`/${post.category}/${post.id}/edit_post`}
-                        className='clickable icon-btn'
+                        className='edit-link icon-btn'
                     ><FaEdit size='40' /></Link>
                     <button
                         onClick={() => this.fireConfirmation(post)}
-                        className='clickable icon-btn dlt-btn'
+                        className='delete icon-btn'
                     ><FaMinusSquare size='40' /></button>
                     <button
                         onClick={() => this.props.ratePost({ post, option: dispatchers.VOTEUP })}
-                        className='clickable icon-btn vote-up'
+                        className=' icon-btn'
                     ><FaThumbsOUp size='40' /></button>
                     <button
                         onClick={() => this.props.ratePost({ post, option: dispatchers.VOTEDOWN })}
-                        className='clickable icon-btn vote-down'
+                        className=' icon-btn'
                     ><FaThumbsODown size='40' /></button>
                 </div>
                 <div className="separator"> <pre /></div>

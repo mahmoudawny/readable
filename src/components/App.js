@@ -9,8 +9,6 @@ import * as api from '../utils/ReadableAPI'
 import { connect } from 'react-redux'
 import * as dispatchers from '../actions'
 import FaPlusSquare from 'react-icons/lib/fa/plus-square'
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/css/bootstrap-theme.css';
 import { Alert, Collapse } from 'react-bootstrap'
 import PostDetails from './PostDetails'
 import Loading from 'react-loading'
@@ -19,7 +17,7 @@ import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
 import FaSortAsc from 'react-icons/lib/fa/sort-asc'
 import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 
-//TODO: Design comments CSS
+
 //TODO: while submitting any action disable all buttons until alert
 //TODO: Add Handling failed fetches in all fetches in actions
 
@@ -142,96 +140,101 @@ class App extends Component {
             </div>
           </div>
           {(posts.isLoading || comments.isLoading) && <Loading delay={200} type='spin' color='#222' className='loading' />}
-          {categories && 
-          <div className="left-menu-container">
-            <div className="left-menu">
-              {this.splitPath(location.pathname).pop() !== "add_post" &&
-                this.splitPath(location.pathname).pop() !== "edit_post" &&
-                <Link
-                  to={this.isCategory(this.splitPath(location.pathname)[0]) ?
-                    `/${this.splitPath(location.pathname)[0]}/add_post` :
-                    "/add_post"}
-                  className='clickable icon-btn'
-                ><FaPlusSquare size='60' /></Link>}
-            </div>
-            <Switch>
-              <Route exact path='/' className="main"
-                render={() =>
-                  <div className="posts-container">
-                    <ul className='list'>
-                      <span className='header'>All Posts</span>
-                      <div className="panel menu-item sorting">
-                        <p>Sorted by: {posts.sortBy === 1 ? "Date (oldest first)"
-                          : posts.sortBy === -1 ? "Date (newest first)"
-                            : posts.sortBy === 2 ? "Votes (lowest first)"
-                              : posts.sortBy === -2 ? "Votes (highest first)"
-                                : posts.sortBy === 3 ? "Category (ascendingly)"
-                                  : "Category (descendingly)"}</p>
-                        <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
-                        >Date
-                    {posts.sortBy === -1 ? <FaSortAsc size='40' />
-                            : <FaSortDesc size='40' />}
-                        </button>
-                        <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
-                        >Votes{posts.sortBy === -2 ? <FaSortAsc size='40' />
-                          : <FaSortDesc size='40' />}
-                        </button>
-                        <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.CATEGORY_SORT)}
-                        >Category{posts.sortBy === 3 ? <FaSortDesc size='40' />
-                          : <FaSortAsc size='40' />}
-                        </button>
-                      </div>
-                      <div className='container'>
-                        {items && items.map((post) =>
-                          <li key={post.id}>
-                            <Post post={post}>
-                            </Post>
-                          </li>)
-                        }</div>
-                    </ul>
-                  </div>
-                } />
-              {this.isCategory(location.pathname.substr(1)) &&
-                <Route path="/:category" className="container"
-                  render={(props) =>
-                    <Category
-                      currentCategory={this.isCategory(props.match.params.category) ?
-                        { name: props.match.params.category, path: props.match.params.category }
-                        : null}></Category>
-                  }
-                />}
-              {this.isCategory(this.splitPath(location.pathname)[0]) &&
-                this.splitPath(location.pathname).pop() !== "edit_post" &&
-                this.splitPath(location.pathname).pop() !== "add_post" &&
-                <Route path="/:category/:post" className="container"
-                  render={(props) =>
-                    <PostDetails getPostAndComments={(id) => this.getPostAndComments(id)}
-                      postId={props.match.params.post}
-                    ></PostDetails>
-                  }
-                />}
-              {this.splitPath(location.pathname).pop() === "edit_post" &&
-                <Route path="/:category/:post/edit_post" className="container"
-                  render={(props) =>
-                    <EditPost getPostAndComments={(id) => this.getPostAndComments(id)}
-                      postId={props.match.params.post}
-                    ></EditPost>
-                  }
-                />}
-              {this.splitPath(location.pathname).pop() === "add_post" &&
-                <Route path={this.isCategory(this.splitPath(location.pathname)[0]) ?
-                  `/:category/add_post` :
-                  "/add_post"} className="container"
+          {categories &&
+            <div className="left-menu-container">
+              <div className="left-menu">
+                {this.splitPath(location.pathname).pop() !== "add_post" &&
+                  this.splitPath(location.pathname).pop() !== "edit_post" &&
+                  <Link
+                    to={this.isCategory(this.splitPath(location.pathname)[0]) ?
+                      `/${this.splitPath(location.pathname)[0]}/add_post` :
+                      "/add_post"}
+                    className='clickable icon-btn'
+                  ><FaPlusSquare size='60' /></Link>}
+              </div>
+              <Switch>
+                <Route exact path='/' className="main"
                   render={() =>
-                    <CreatePost ></CreatePost>
-                  }
-                />}
-              <Route path="*" render={() =>
-                <div className="title"><h3>Sorry, Page Not Found!</h3>
-                  <br />{this.props.error}</div>} />
-            </Switch>
-          </div>}
+                    <div className="posts-container">
+                      <ul className='list'>
+                        <span className='header'>All Posts</span>
+                        <div className=" sorting-container">
+                          <p className='sorted-by'>Sorted by: {posts.sortBy === 1 ? "Date (oldest first)"
+                            : posts.sortBy === -1 ? "Date (newest first)"
+                              : posts.sortBy === 2 ? "Votes (lowest first)"
+                                : posts.sortBy === -2 ? "Votes (highest first)"
+                                  : posts.sortBy === 3 ? "Category (ascendingly)"
+                                    : "Category (descendingly)"}</p>
+                          <div className="sorting">
+                            <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
+                            >Date
+                    {posts.sortBy === -1 ? <FaSortAsc size='40' />
+                                : <FaSortDesc size='40' />}
+                            </button>
+                            <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
+                            >Votes{posts.sortBy === -2 ? <FaSortAsc size='40' />
+                              : <FaSortDesc size='40' />}
+                            </button>
+                            <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.CATEGORY_SORT)}
+                            >Category{posts.sortBy === 3 ? <FaSortDesc size='40' />
+                              : <FaSortAsc size='40' />}
+                            </button>
+                          </div>
+                        </div>
+                        <div className='container'>
+                          {items && items.map((post) =>
+                            <li key={post.id}>
+                              <Post post={post}>
+                              </Post>
+                            </li>)
+                          }</div>
+                      </ul>
+                    </div>
+                  } />
+                {this.isCategory(location.pathname.substr(1)) &&
+                  <Route path="/:category" className="container"
+                    render={(props) =>
+                      <Category
+                        currentCategory={this.isCategory(props.match.params.category) ?
+                          { name: props.match.params.category, path: props.match.params.category }
+                          : null}></Category>
+                    }
+                  />}
+                {this.isCategory(this.splitPath(location.pathname)[0]) &&
+                  this.splitPath(location.pathname).pop() !== "edit_post" &&
+                  this.splitPath(location.pathname).pop() !== "add_post" &&
+                  <Route path="/:category/:post" className="container"
+                    render={(props) =>
+                      <PostDetails getPostAndComments={(id) => this.getPostAndComments(id)}
+                        postId={props.match.params.post}
+                      ></PostDetails>
+                    }
+                  />}
+                {this.splitPath(location.pathname).pop() === "edit_post" &&
+                  <Route path="/:category/:post/edit_post" className="container"
+                    render={(props) =>
+                      <EditPost getPostAndComments={(id) => this.getPostAndComments(id)}
+                        postId={props.match.params.post}
+                      ></EditPost>
+                    }
+                  />}
+                {this.splitPath(location.pathname).pop() === "add_post" &&
+                  <Route path={this.isCategory(this.splitPath(location.pathname)[0]) ?
+                    `/:category/add_post` :
+                    "/add_post"} className="container"
+                    render={() =>
+                      <CreatePost ></CreatePost>
+                    }
+                  />}
+                <Route path="*" render={() =>
+                  <div className="title"><h3>Sorry, Page Not Found!</h3>
+                    <br />{this.props.error}</div>} />
+              </Switch>
+            </div>}
+          <pre />
+          <footer style={{ textAlign: 'center' }}>All rights reserved</footer>
         </div>
+
       </div>
     )
   }

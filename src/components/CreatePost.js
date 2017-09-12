@@ -41,7 +41,7 @@ class CreatePost extends Component {
                         <textarea required name='body' placeholder='Body' type='text' />
                         <input className="input-field" required name='author' placeholder='Author' type='text' />
                         <button disabled={submitting} id="submit" className='submit clickable icon-btn' title='Add Post'>
-                            <FaArrowCircleORight size='40' />
+                            <FaArrowCircleORight size='60' />
                         </button>
                     </div>
                 </form>

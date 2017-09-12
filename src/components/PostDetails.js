@@ -107,22 +107,24 @@ class PostDetails extends Component {
                             </div>
                             {post.comments &&
                                 <div className='comment-list'>
-                                    <div className="panel menu-item sorting">
-                                        <p>Sorted by: {post.sortBy === 1 ? "Date (oldest first)"
+                                    <div className="sorting-container ">
+                                        <p className="sorted-by">Sorted by: {post.sortBy === 1 ? "Date (oldest first)"
                                             : post.sortBy === -1 ? "Date (newest first)"
                                                 : post.sortBy === 2 ? "Votes (lowest first)"
                                                     : post.sortBy === -2 ? "Votes (highest first)"
                                                         : post.sortBy === 3 ? "Category (ascendingly)"
                                                             : "Category (descendingly)"}</p>
-                                        <button className='clickable icon-btn' onClick={() => this.props.sortComments(dispatchers.COMMENT_DATE_SORT)}
-                                        >Date
+                                        <div className="sorting">
+                                            <button className='clickable icon-btn' onClick={() => this.props.sortComments(dispatchers.COMMENT_DATE_SORT)}
+                                            >Date
                                         {post.sortBy === -1 ? <FaSortAsc size='20' />
+                                                    : <FaSortDesc size='20' />}
+                                            </button>
+                                            <button className='clickable icon-btn' onClick={() => this.props.sortComments(dispatchers.COMMENT_VOTE_SORT)}
+                                            >Votes{post.sortBy === -2 ? <FaSortAsc size='20' />
                                                 : <FaSortDesc size='20' />}
-                                        </button>
-                                        <button className='clickable icon-btn' onClick={() => this.props.sortComments(dispatchers.COMMENT_VOTE_SORT)}
-                                        >Votes{post.sortBy === -2 ? <FaSortAsc size='20' />
-                                            : <FaSortDesc size='20' />}
-                                        </button>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div className="container">
                                         <h3><strong>Comments: {post.comments.length}</strong></h3>
@@ -133,9 +135,9 @@ class PostDetails extends Component {
                                 </div>
                             }
                         </div>
-                        <form name="commentform" onSubmit={this.newSubmit} className='create-post-details'>
+                        <form name="commentform" onSubmit={this.newSubmit} >
                             <div className="title">{comment ? "Edit Comment" : "Add Comment"}</div>
-                            <div className='create-comment-details'>
+                            <div className='create-post-details'>
                                 {comment ?
                                     <div key={comment.id}>
                                         <input type='hidden' name='parentId' value={comment.parentId} />
@@ -152,14 +154,14 @@ class PostDetails extends Component {
                                         <input className="input-field" required name='author' placeholder='Author' type='text' />
                                     </div>
                                 }
-                                <div className="button-group">
-                                    <button id="submit" className='clickable submit icon-btn' title='Add/Edit Comment'>
-                                        <FaArrowCircleORight size='50' />
-                                    </button>
-                                    {comment && <button id="cancel" onClick={() => this.props.cancelEditComment()} className='clickable icon-btn' title='Cancel Edit'>
-                                        <FaBan size='50' />
-                                    </button>}
-                                </div>
+                            </div>
+                            <div className="edit-comment-buttons">
+                                <button className=' submit icon-btn' title='Add/Edit Comment'>
+                                    <FaArrowCircleORight size='50' />
+                                </button>
+                                {comment && <button id="cancel" onClick={() => this.props.cancelEditComment()} className=' icon-btn' title='Cancel Edit'>
+                                    <FaBan size='50' />
+                                </button>}
                             </div>
                         </form>
 

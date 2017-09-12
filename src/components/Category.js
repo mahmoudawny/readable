@@ -17,11 +17,12 @@ class Category extends Component {
             <div className="container">
             <div className='category'>                
                 <h2 className='header'>{capitalize(currentCategory.name)}</h2>
-                <div className="panel menu-item sorting"> 
+                <div className="panel sorting-container"> 
                     <p>Sorted by: {posts.sortBy === 1? "Date (oldest first)"
                       : posts.sortBy === -1? "Date (newest first)"
                       : posts.sortBy === 2? "Vote (lowest first)"
-                      : "Vote (highest first)"}</p>               
+                      : "Vote (highest first)"}</p> 
+                      <div className="sorting">              
                     <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
                     >Date
                     {posts.sortBy === -1? <FaSortAsc size='40'/>
@@ -30,7 +31,8 @@ class Category extends Component {
                     <button className = 'clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
                     >Votes{posts.sortBy === -2? <FaSortAsc size='40'/>
                     :<FaSortDesc size='40'/>}
-                    </button>                  
+                    </button>   
+                    </div>               
                 </div>
                 <ul className=''>
                     {posts.items && posts.items.map((post) => 
