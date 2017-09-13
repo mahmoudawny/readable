@@ -18,10 +18,7 @@ body {
   padding: 10px
 }
 
-textarea {
-  width: 100%;
-  resize: none;
-}
+
 
 .help{
   display: flex;
@@ -49,17 +46,6 @@ textarea {
   margin-right: auto;
   display: flex;
   background-color: inherit;
-}
-select{
-    width: 100%;
-    border: 2px solid #447;
-    border-radius: 10px;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 ul {
@@ -195,10 +181,31 @@ li {
   
 }
 
+textarea {
+  width: 100%;
+  resize: none;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px
+}
+
+select{
+    width: 100%;
+    border: 2px solid white;
+    border-radius: 10px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 10px;
+    margin: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 
 .input-field{
   height: 50px;
+  padding: 10px;
+  margin: 10px
 }
 
 .red{

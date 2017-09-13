@@ -168,7 +168,7 @@ class App extends Component {
                           <div className="sorting">
                             <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
                             >Date
-                    {posts.sortBy === -1 ? <FaSortAsc size='40' />
+                            {posts.sortBy === -1 ? <FaSortAsc size='40' />
                                 : <FaSortDesc size='40' />}
                             </button>
                             <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
