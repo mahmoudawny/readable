@@ -29,7 +29,10 @@ class Comment extends Component {
         </div>
         <div className="button-group">
           <button
-            onClick={() => this.props.getComment({ comment })}
+            onClick={() => {
+              this.props.getComment({ comment })
+              window.scrollTo(0,document.body.scrollHeight);
+              }}
             className=' icon-btn'
           ><FaEdit size='30' /></button>
           <button

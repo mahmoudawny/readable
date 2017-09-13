@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Route, Link, Switch } from 'react-router-dom'
 import { capitalize } from '../utils/Helpers'
 import Category from './Category'
-import Post from './Post'
 import CreatePost from './CreatePost'
 import * as api from '../utils/ReadableAPI'
 import { connect } from 'react-redux'
@@ -14,13 +13,11 @@ import PostDetails from './PostDetails'
 import Loading from 'react-loading'
 import EditPost from './EditPost'
 import FaArrowCircleOLeft from 'react-icons/lib/fa/arrow-circle-left'
-import FaSortAsc from 'react-icons/lib/fa/sort-asc'
-import FaSortDesc from 'react-icons/lib/fa/sort-desc'
+import HomePage from './HomePage'
 
 
-//TODO: while submitting any action disable all buttons until alert
-//TODO: Add Handling failed fetches in all fetches in actions
-
+//TODO: while submitting any action disable all buttons until alert, make fetchpost thunk
+//TODO: in postdetails preserve comment sorting and resort on adding new
 
 class App extends Component {
 
@@ -59,6 +56,7 @@ class App extends Component {
         if (!posts.allPosts) {
           this.props.invalidatePosts()
           this.props.fetchPosts(null)
+            .then(() => this.props.sortPosts(dispatchers.CURRENT_SORT))
         }
       }
       //if on a category page/subpage load only category's posts
@@ -66,6 +64,16 @@ class App extends Component {
         this.props.invalidatePosts()
         this.props.setCategory(this.splitPath(nextProps.location.pathname)[0])
         this.props.fetchPosts(this.splitPath(nextProps.location.pathname)[0])
+          .then(() => {
+            if (Math.abs(posts.sortBy) === 3)
+              {
+                this.props.sortPosts(dispatchers.VOTE_SORT)
+                this.props.warningMessage({message: "Category sorting is unavailable in this page. Sorting was reset."})
+                setTimeout(() => { this.props.clearMessage() }, 3000)
+              }
+            else
+              this.props.sortPosts(dispatchers.CURRENT_SORT)
+          })
       }
     }
   }
@@ -94,7 +102,7 @@ class App extends Component {
     return false
   }
 
-
+  //splitPath function to parse destination url and return array of its elements
   splitPath(path) {
     return path.substr(1).split('/')
   }
@@ -109,7 +117,6 @@ class App extends Component {
   */
   render() {
     const { posts, comments, categories, location, alert, history } = this.props
-    const { items } = posts
     return (
       <div className="App">
         <Collapse
@@ -154,43 +161,7 @@ class App extends Component {
               </div>
               <Switch>
                 <Route exact path='/' className="main"
-                  render={() =>
-                    <div className="posts-container">
-                      <ul className='list'>
-                        <span className='header'>All Posts</span>
-                        <div className=" sorting-container">
-                          <p className='sorted-by'>Sorted by: {posts.sortBy === 1 ? "Date (oldest first)"
-                            : posts.sortBy === -1 ? "Date (newest first)"
-                              : posts.sortBy === 2 ? "Votes (lowest first)"
-                                : posts.sortBy === -2 ? "Votes (highest first)"
-                                  : posts.sortBy === 3 ? "Category (ascendingly)"
-                                    : "Category (descendingly)"}</p>
-                          <div className="sorting">
-                            <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.DATE_SORT)}
-                            >Date
-                            {posts.sortBy === -1 ? <FaSortAsc size='40' />
-                                : <FaSortDesc size='40' />}
-                            </button>
-                            <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.VOTE_SORT)}
-                            >Votes{posts.sortBy === -2 ? <FaSortAsc size='40' />
-                              : <FaSortDesc size='40' />}
-                            </button>
-                            <button className='clickable icon-btn' onClick={() => this.props.sortPosts(dispatchers.CATEGORY_SORT)}
-                            >Category{posts.sortBy === 3 ? <FaSortDesc size='40' />
-                              : <FaSortAsc size='40' />}
-                            </button>
-                          </div>
-                        </div>
-                        <div className='container'>
-                          {items && items.map((post) =>
-                            <li key={post.id}>
-                              <Post post={post}>
-                              </Post>
-                            </li>)
-                          }</div>
-                      </ul>
-                    </div>
-                  } />
+                  component={HomePage} />
                 {this.isCategory(location.pathname.substr(1)) &&
                   <Route path="/:category" className="container"
                     render={(props) =>
@@ -222,8 +193,7 @@ class App extends Component {
                   <Route path={this.isCategory(this.splitPath(location.pathname)[0]) ?
                     `/:category/add_post` :
                     "/add_post"} className="container"
-                    render={() =>
-                      <CreatePost ></CreatePost>
+                    component ={CreatePost}/>
                     }
                   />}
                 <Route path="*" render={() =>
@@ -260,6 +230,8 @@ function mapDispatchToProps(dispatch) {
     setCategory: (data) => dispatch(dispatchers.setCategory(data)),
     invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
     sortPosts: (data) => dispatch(dispatchers.sortPosts(data)),
+    warningMessage: (data) => dispatch(dispatchers.warningMessage(data)),
+    clearMessage: (data) => dispatch(dispatchers.clearMessage(data)),
   }
 }
 

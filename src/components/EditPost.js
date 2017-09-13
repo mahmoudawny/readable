@@ -20,8 +20,6 @@ class EditPost extends Component {
         this.props.editPost({ post, body }).then(() => {
             this.props.setNotSubmitting()
             if (this.props.alert.type === "success") {
-                // this.props.category? this.props.history.push(`/${this.props.category}`) 
-                // : 
                 this.props.history.goBack()
             }
         })

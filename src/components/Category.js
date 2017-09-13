@@ -14,10 +14,10 @@ class Category extends Component {
         const { posts, currentCategory } = this.props
         return (
             currentCategory &&
-            <div className="category">
+            <div className="list">
                 <h2 className='header'>{capitalize(currentCategory.name)}&nbsp;Posts</h2>
 
-                <div className='container'>
+                <div className="container">
                     <div className="panel sorting-container">
                         <p className="sorted-by">Sorted by: {posts.sortBy === 1 ? "Date (oldest first)"
                             : posts.sortBy === -1 ? "Date (newest first)"

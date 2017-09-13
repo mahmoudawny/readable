@@ -16,7 +16,6 @@ import { capitalize } from '../utils/Helpers'
 import FaSortAsc from 'react-icons/lib/fa/sort-asc'
 import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 
-//TODO: scroll on clicking edit to show edit fields
 
 class PostDetails extends Component {
     componentDidMount() {

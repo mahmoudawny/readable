@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Post from './Post'
 import { connect } from 'react-redux'
 import * as dispatchers from '../actions'
-import { Alert, Collapse } from 'react-bootstrap'
 import FaSortAsc from 'react-icons/lib/fa/sort-asc'
 import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 

@@ -15,7 +15,8 @@ import {
     RECEIVE_POSTS, RECEIVE_COMMENTS, //async response actions for all items
     CLEAR, SUCCESS, DANGER, WARNING, //alert actions
     DATE_SORT, CATEGORY_SORT, VOTE_SORT, //post sort actions
-    COMMENT_DATE_SORT, COMMENT_VOTE_SORT // comment sort actions
+    COMMENT_DATE_SORT, COMMENT_VOTE_SORT, // comment sort actions
+    CURRENT_SORT                        // retain current sorting between pages
 } from '../actions'
 
 //TODO: Add comment ids in posts
@@ -86,7 +87,26 @@ function posts(state = {
             return Object.assign({}, state, {
                 isLoading: false,
                 didInvalidate: false,
-                items: state.items ? state.items.concat(action.post) : [].push(action.post),
+                //concat post and sort according to current sorting setting
+                items: state.items ? state.items.concat(action.post).sort((a, b) => {
+                    switch (state.sortBy) {
+                        case 1:  //date asc
+                            return a.timestamp - b.timestamp
+                        case -1: //date desc
+                            return b.timestamp - a.timestamp
+                        case 2:  //vote score asc
+                            return a.voteScore - b.voteScore
+                        case -2: //vote score desc
+                            return b.voteScore - a.voteScore
+                        case 3:  //cat score asc
+                            return a.category > b.category? 1 : -1
+                        case -3: //cat score desc
+                            return b.category > a.category? 1 : -1
+                        default:
+                            return 0
+                    }
+                })
+                    : [].push(action.post),
             })
         case EDIT_POST:
             return Object.assign({}, state, {
@@ -148,7 +168,7 @@ function posts(state = {
                             return state.sortBy;
                         }
                         if (a.category > b.category) {
-                            
+
                             return state.sortBy * -1;
                         }
                         return 0;
@@ -162,6 +182,27 @@ function posts(state = {
                         }
                         return 0;
                     })
+            })
+        case CURRENT_SORT:
+            return Object.assign({}, state, {
+                items: state.items.sort((a, b) => {
+                    switch (state.sortBy) {
+                        case 1:  //date asc
+                            return a.timestamp - b.timestamp
+                        case -1: //date desc
+                            return b.timestamp - a.timestamp
+                        case 2:  //vote score asc
+                            return a.voteScore - b.voteScore
+                        case -2: //vote score desc
+                            return b.voteScore - a.voteScore
+                        case 3:  //cat score asc
+                            return a.category > b.category? 1 : -1
+                        case -3: //cat score desc
+                            return b.category > a.category? 1 : -1
+                        default:
+                            return 0
+                    }
+                })
             })
         default:
             return state
@@ -364,8 +405,8 @@ function submitting(state = false, action) {
     }
 }
 
-function error(state = null, action){
-    switch (action.type){
+function error(state = null, action) {
+    switch (action.type) {
         case ERROR:
             return action.message
         default:
