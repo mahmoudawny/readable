@@ -391,7 +391,7 @@ function receivePost({ post, comments }) {
 //function to check if a new call should be made (true if current state is empty or if posts are invalidated)
 function shouldFetchPost(state) {
     const { post } = state
-    if (!post) {
+    if (!post.id) {
         return true
     } else if (post.isLoading) {
         return false

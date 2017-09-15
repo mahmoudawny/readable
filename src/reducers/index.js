@@ -3,7 +3,7 @@ import {
     SUBMITTING, NOTSUBMITTING, //set flag for posting operations
     ERROR, //for error page
     SET_CATEGORY, //set the current category
-    FETCH_CATEGORIES, CATEGORIES, //get categories
+    CATEGORIES, //get categories
     START_COMMENT, START_POST, //async request actions for single items
     CANCEL_COMMENTING, //to cancel editing comment
     POST, COMMENT, EDIT_POST, EDIT_COMMENT, //async response for single items

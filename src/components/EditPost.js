@@ -10,6 +10,10 @@ class EditPost extends Component {
 
     componentDidMount() {
         this.props.getPostAndComments(this.props.postId)
+        .then((post) => {
+            if (post.id)
+                this.props.getPostComments(post)
+        })
     }
 
     newSubmit = (e) => {
@@ -33,7 +37,7 @@ class EditPost extends Component {
                 <div>
                     <div className="header">Edit post: {post.title}</div>
                     <div className="container">
-                        <span><p>Enter new values and click the right arrow, or click Back to cancel.</p></span>
+                        <span><p className="help">Enter new values and click the right arrow, or click Back to cancel.</p></span>
                         <form key={post.id} name="postform" onSubmit={this.newSubmit}>
                             <div className='create-post-details'>
                                 <select defaultValue={post.category} required name='category'>
@@ -69,6 +73,7 @@ function mapStateToProps({ post, category, categories, alert, submitting }) {
 function mapDispatchToProps(dispatch) {
     return {
         getPostAndComments: (data) => dispatch(dispatchers.getPostAndComments(data)),
+        getPostComments: (data) => dispatch(dispatchers.getPostComments(data)),
         editPost: (data) => dispatch(dispatchers.editPost(data)),
         setSubmitting: (data) => dispatch(dispatchers.setSubmitting(data)),
         invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),

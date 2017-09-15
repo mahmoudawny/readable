@@ -24,14 +24,13 @@ class App extends Component {
     //Get all categories on loading App
     this.props.fetchCategories().then(() => {
       if (this.props.categories) {
-       // this.props.getCategories({ categories })
         //If homepage load all posts
         if (location.pathname === '/')
           this.props.fetchPosts(null)
             .then(() => {
               this.props.sortPosts(dispatchers.VOTE_SORT)
             })
-        //if on a category page load only category's posts 
+        //If on a category page load only category's posts 
         else if (this.isCategory(this.splitPath(location.pathname).pop())) {
           this.props.fetchPosts(this.splitPath(location.pathname).pop())
             .then(() => {
@@ -40,7 +39,7 @@ class App extends Component {
         }
       }
     })
-
+//If on any other page handle loading in page's DidMount
   }
 
   componentWillReceiveProps(nextProps) {

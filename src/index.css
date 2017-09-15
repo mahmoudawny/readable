@@ -29,6 +29,12 @@ body {
   justify-content: center;
 }
 
+.post {
+   font-size: 23px;
+   display: flex;
+   justify-content: left;
+  }
+
 .submit{
   display: flex;
   margin-left: auto;
