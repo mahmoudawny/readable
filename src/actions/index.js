@@ -15,6 +15,7 @@ export const GET_POSTS = 'GET_POSTS'
 export const CATEGORY_POSTS = 'CATEGORY_POSTS'
 export const POST_PAGE = 'POST_PAGE'
 export const CATEGORIES = 'CATEGORIES'
+export const FETCH_CATEGORIES = 'FETCH_CATEGORIES'
 export const SUCCESS = 'SUCCESS'
 export const WARNING = 'WARNING'
 export const DANGER = 'DANGER'
@@ -23,6 +24,7 @@ export const GET_COMMENTS = 'GET_COMMENTS'
 export const INVALIDATE_COMMENT = 'INVALIDATE_COMMENT'
 export const RECEIVE_COMMENTS = 'RECEIVE_COMMENTS'
 export const GET_POST = 'GET_POST'
+export const RECEIVE_POST = 'RECEIVE_POST'
 export const GET_COMMENT = 'GET_COMMENT'
 export const INVALIDATE_POST = 'INVALIDATE_POST'
 export const RECEIVE_POSTS = 'RECEIVE_POSTS'
@@ -32,13 +34,14 @@ export const NOTSUBMITTING = 'NOTSUBMITTING'
 export const START_POST = 'START_POST'
 export const START_COMMENT = 'START_COMMENT'
 export const CANCEL_COMMENTING = 'CANCEL_COMMENTING'
-export const DATE_SORT = "DATE_SORT"
-export const CATEGORY_SORT = "CATEGORY_SORT"
-export const VOTE_SORT = "VOTE_SORT"
-export const CURRENT_SORT = "CURRENT_SORT"
-export const COMMENT_DATE_SORT = "COMMENT_DATE_SORT"
-export const COMMENT_VOTE_SORT = "COMMENT_VOTE_SORT"
-export const ERROR = "ERROR"
+export const DATE_SORT = 'DATE_SORT'
+export const CATEGORY_SORT = 'CATEGORY_SORT'
+export const VOTE_SORT = 'VOTE_SORT'
+export const CURRENT_SORT = 'CURRENT_SORT'
+export const COMMENT_CURRENT_SORT = 'COMMENT_CURRENT_SORT'
+export const COMMENT_DATE_SORT = 'COMMENT_DATE_SORT'
+export const COMMENT_VOTE_SORT = 'COMMENT_VOTE_SORT'
+export const ERROR = 'ERROR'
 
 //server constants
 const api = process.env.REACT_APP_READABLE_API_URL || 'http://localhost:5001'
@@ -53,16 +56,33 @@ const headers = {
     'Authorization': token
 }
 
-//global 
+//global dispatches
 
-export function getCategories({ categories }) {
+//update store with categories
+function getCategories(categories) {
     return {
         type: CATEGORIES,
         categories
     }
 }
 
-export function setError({message}){
+//async fetch categories list
+export function fetchCategories() {
+    return dispatch => {
+        return fetch(`${api}/categories`, { headers })
+        .then(handleErrors)
+        .then(res => res.json())
+        .then(data => {
+            dispatch(getCategories(data.categories))
+        })
+        .catch((error) => {
+            dispatch(dangerMessage({ message: messages.generalFailed + `\n` + error.toString() }))
+            setTimeout(() => { dispatch(clearMessage()) }, 3000)
+        })
+    }
+}
+
+export function setError({ message }) {
     return {
         type: ERROR,
         message
@@ -181,7 +201,7 @@ function fetchPosts(category) {
                     // added filter to handle getallposts retrieving deleted posts  
                     //(bug in posts.js, change const posts into let)
                     let filteredPosts = posts.filter((post) => !post.deleted)
-                    dispatch(receivePosts(category, filteredPosts, true))                        
+                    dispatch(receivePosts(category, filteredPosts, true))
                     if (filteredPosts.length > 0) {
                         dispatch(fetchComments(filteredPosts))
                     }
@@ -192,8 +212,8 @@ function fetchPosts(category) {
                 .then(response => response.json())
                 .then(posts => {
                     let filteredPosts = posts.filter((post) => !post.deleted)
-                    dispatch(receivePosts(category, filteredPosts, false))                        
-                    if (filteredPosts.length > 0 ) {
+                    dispatch(receivePosts(category, filteredPosts, false))
+                    if (filteredPosts.length > 0) {
                         dispatch(fetchComments(filteredPosts))
                     }
                 })
@@ -207,7 +227,7 @@ function shouldFetchPosts(state, category) {
     const { posts } = state
     if (!posts.items.length) {
         return true
-    } else if (posts.isFetching) {
+    } else if (posts.isLoading) {
         return false
     } else {
         return posts.didInvalidate
@@ -222,14 +242,6 @@ export function fetchPostsIfNeeded(category) {
         } else {
             return Promise.resolve()
         }
-    }
-}
-
-
-export function getPost({ post }) {
-    return {
-        type: GET_POST,
-        post
     }
 }
 
@@ -358,6 +370,77 @@ export function sortPosts(by) {
     return {
         type: by
     }
+}
+
+//single post details
+
+function requestPost() {
+    return {
+        type: GET_POST,
+    }
+}
+
+function receivePost({ post, comments }) {
+    return {
+        type: RECEIVE_POST,
+        post,
+        comments
+    }
+}
+
+//function to check if a new call should be made (true if current state is empty or if posts are invalidated)
+function shouldFetchPost(state) {
+    const { post } = state
+    if (!post) {
+        return true
+    } else if (post.isLoading) {
+        return false
+    } else {
+        return post.didInvalidate
+    }
+}
+
+//main fetch function to call on loading posts and their comments
+export function getPost(id) {
+    return (dispatch, getState) => {
+        if (shouldFetchPost(getState())) {
+            return dispatch(getPostAndComments(id))
+        } else {
+            return Promise.resolve()
+        }
+    }
+}
+
+
+//getPostAndComments retrieves single post and inserts comments in a post object 
+export function getPostAndComments(id) {
+    return dispatch => {
+        dispatch(requestPost())
+        return fetch(`${api}/posts/${id}`, { headers })
+            .then(handleErrors)
+            .then((res) => res.json())
+            .catch((error) => {
+                dispatch(dangerMessage({ message: messages.generalFailed + `\n` + error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            })
+    }
+}
+
+
+//fetch single post's comments
+export function getPostComments(post) {
+    return dispatch => {
+        return fetch(`${api}/posts/${post.id}/comments`, { headers })
+            .then((response) => response.json())
+            .then((comments) => {
+                dispatch(receivePost({ post, comments }))
+            })
+            .catch((error) => {
+                dispatch(dangerMessage({ message: messages.generalFailed + `\n` + error.toString() }))
+                setTimeout(() => { dispatch(clearMessage()) }, 3000)
+            })
+    }
+
 }
 
 //comments
@@ -492,8 +575,8 @@ function fetchComments(posts) {
 
             })
     }
-
 }
+
 
 
 

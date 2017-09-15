@@ -19,7 +19,7 @@ class Comment extends Component {
     const { comment } = this.props
     let timestamp = new Date(Number(comment.timestamp));
     return (
-      <div className="post-left">
+      <div className="comment">
         <div className='comment-details'>
           <textarea disabled className="post-body" value={comment.body}></textarea>
           <p>Comment by: {comment.author}</p>

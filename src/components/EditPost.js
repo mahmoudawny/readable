@@ -68,6 +68,7 @@ function mapStateToProps({ post, category, categories, alert, submitting }) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        getPostAndComments: (data) => dispatch(dispatchers.getPostAndComments(data)),
         editPost: (data) => dispatch(dispatchers.editPost(data)),
         setSubmitting: (data) => dispatch(dispatchers.setSubmitting(data)),
         invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),

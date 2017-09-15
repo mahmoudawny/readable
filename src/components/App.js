@@ -4,7 +4,6 @@ import { Route, Link, Switch } from 'react-router-dom'
 import { capitalize } from '../utils/Helpers'
 import Category from './Category'
 import CreatePost from './CreatePost'
-import * as api from '../utils/ReadableAPI'
 import { connect } from 'react-redux'
 import * as dispatchers from '../actions'
 import FaPlusSquare from 'react-icons/lib/fa/plus-square'
@@ -17,25 +16,24 @@ import HomePage from './HomePage'
 
 
 //TODO: while submitting any action disable all buttons until alert, make fetchpost thunk
-//TODO: in postdetails preserve comment sorting and resort on adding new
 
 class App extends Component {
 
   componentDidMount() {
     const { location } = this.props
     //Get all categories on loading App
-    api.getCategories().then((categories) => {
-      if (categories) {
-        this.props.getCategories({ categories })
+    this.props.fetchCategories().then(() => {
+      if (this.props.categories) {
+       // this.props.getCategories({ categories })
         //If homepage load all posts
         if (location.pathname === '/')
           this.props.fetchPosts(null)
             .then(() => {
               this.props.sortPosts(dispatchers.VOTE_SORT)
             })
-        //if on a category page/subpage load only category's posts 
-        else if (this.isCategory(location.pathname.substr(1).split('/')[0])) {
-          this.props.fetchPosts(location.pathname.substr(1).split('/')[0])
+        //if on a category page load only category's posts 
+        else if (this.isCategory(this.splitPath(location.pathname).pop())) {
+          this.props.fetchPosts(this.splitPath(location.pathname).pop())
             .then(() => {
               this.props.sortPosts(dispatchers.VOTE_SORT)
             })
@@ -78,18 +76,7 @@ class App extends Component {
     }
   }
 
-  //getPostAndComments retrieves post and inserts comments in a post object 
-  getPostAndComments = (id) => {
-    api.getPost({ id }).then((post) => {
-      if (post) api.getComments(post).then((comments) => {
-        post.comments = comments.sort((a, b) =>
-          b.voteScore - a.voteScore
-        )
-        post.sortBy = -2
-        this.props.getPost({ post })
-      })
-    })
-  }
+
 
   //isCategory method to check if a string value exists in currently
   // loaded categories
@@ -176,7 +163,7 @@ class App extends Component {
                   this.splitPath(location.pathname).pop() !== "add_post" &&
                   <Route path="/:category/:post" className="container"
                     render={(props) =>
-                      <PostDetails getPostAndComments={(id) => this.getPostAndComments(id)}
+                      <PostDetails
                         postId={props.match.params.post}
                       ></PostDetails>
                     }
@@ -184,7 +171,7 @@ class App extends Component {
                 {this.splitPath(location.pathname).pop() === "edit_post" &&
                   <Route path="/:category/:post/edit_post" className="container"
                     render={(props) =>
-                      <EditPost getPostAndComments={(id) => this.getPostAndComments(id)}
+                      <EditPost
                         postId={props.match.params.post}
                       ></EditPost>
                     }
@@ -224,8 +211,7 @@ function mapStateToProps({ posts, comments, category, categories, alert }) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    getPost: (data) => dispatch(dispatchers.getPost(data)),
-    getCategories: (data) => dispatch(dispatchers.getCategories(data)),
+    fetchCategories: (data) => dispatch(dispatchers.fetchCategories(data)),
     fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),
     setCategory: (data) => dispatch(dispatchers.setCategory(data)),
     invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),

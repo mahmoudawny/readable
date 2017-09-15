@@ -20,15 +20,15 @@ import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 class PostDetails extends Component {
     componentDidMount() {
         this.props.getPostAndComments(this.props.postId)
+            .then((post) => {
+                if (post.id)
+                    this.props.getPostComments(post)
+                        .then(() => {
+                            this.props.sortComments(dispatchers.COMMENT_VOTE_SORT)
+                        })
+            })
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { comments } = this.props
-        if (comments)
-            if (comments.items.length !== nextProps.comments.items.length) {
-                this.props.getPostAndComments(this.props.postId)
-            }
-    }
 
     //confirm delete and redirect to previous page
     fireConfirmation(post) {
@@ -50,6 +50,7 @@ class PostDetails extends Component {
                 this.props.setNotSubmitting()
                 if (this.props.alert.type === "success")
                     this.props.getPostAndComments(this.props.postId)
+                        .then(() => this.props.sortComments(dispatchers.COMMENT_CURRENT_SORT))
             })
         else this.props.doComment(body)
             .then(() => {
@@ -57,7 +58,9 @@ class PostDetails extends Component {
                 this.props.setNotSubmitting()
                 if (this.props.alert.type === "success")
                     this.props.getPostAndComments(this.props.postId)
+                        .then(() => this.props.sortComments(dispatchers.COMMENT_CURRENT_SORT))
             })
+
     }
 
 
@@ -110,9 +113,8 @@ class PostDetails extends Component {
                                         <p className="sorted-by">Sorted by: {post.sortBy === 1 ? "Date (oldest first)"
                                             : post.sortBy === -1 ? "Date (newest first)"
                                                 : post.sortBy === 2 ? "Votes (lowest first)"
-                                                    : post.sortBy === -2 ? "Votes (highest first)"
-                                                        : post.sortBy === 3 ? "Category (ascendingly)"
-                                                            : "Category (descendingly)"}</p>
+                                                    : "Votes (highest first)"
+                                        }</p>
                                         <div className="sorting">
                                             <button className='clickable icon-btn' onClick={() => this.props.sortComments(dispatchers.COMMENT_DATE_SORT)}
                                             >Date
@@ -188,6 +190,9 @@ function mapStateToProps({ post, comments, comment, alert }) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        getPostAndComments: (data) => dispatch(dispatchers.getPostAndComments(data)),
+        getPost: (data) => dispatch(dispatchers.getPost(data)),
+        getPostComments: (data) => dispatch(dispatchers.getPostComments(data)),
         sortComments: (data) => dispatch(dispatchers.sortComments(data)),
         deletePost: (data) => dispatch(dispatchers.deletePost(data)),
         editPost: (data) => dispatch(dispatchers.editPost(data)),
