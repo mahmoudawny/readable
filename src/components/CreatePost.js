@@ -4,6 +4,7 @@ import serializeForm from 'form-serialize'
 import FaArrowCircleORight from 'react-icons/lib/fa/arrow-circle-right'
 import { connect } from 'react-redux'
 import * as dispatchers from '../actions'
+import * as postActions from '../actions/PostActions'
 import { capitalize } from '../utils/Helpers'
 
 
@@ -59,7 +60,7 @@ function mapStateToProps({ category, categories, alert, submitting }) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        doPost: (data) => dispatch(dispatchers.doPost(data)),
+        doPost: (data) => dispatch(postActions.doPost(data)),
         setSubmitting: (data) => dispatch(dispatchers.setSubmitting(data)),
         setNotSubmitting: (data) => dispatch(dispatchers.setNotSubmitting(data))
     }

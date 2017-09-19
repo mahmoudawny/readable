@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Post from './Post'
 import { connect } from 'react-redux'
-import * as dispatchers from '../actions'
+import * as dispatchers from '../actions/types'
+import * as postActions from '../actions/PostActions'
 import FaSortAsc from 'react-icons/lib/fa/sort-asc'
 import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 
@@ -57,7 +58,7 @@ function mapStateToProps({ posts }) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    sortPosts: (data) => dispatch(dispatchers.sortPosts(data)),
+    sortPosts: (data) => dispatch(postActions.sortPosts(data)),
   }
 }
 

@@ -5,7 +5,9 @@ import { capitalize } from '../utils/Helpers'
 import Category from './Category'
 import CreatePost from './CreatePost'
 import { connect } from 'react-redux'
-import * as dispatchers from '../actions'
+import * as dispatchers from '../actions/types'
+import * as postActions from '../actions/PostActions'
+import * as globalActions from '../actions'
 import FaPlusSquare from 'react-icons/lib/fa/plus-square'
 import { Alert, Collapse } from 'react-bootstrap'
 import PostDetails from './PostDetails'
@@ -123,13 +125,13 @@ class App extends Component {
             </div>
             <div className="main-menu">
               <Link className="panel menu-item" to='/'>Home</Link>
-              {categories ? categories.map((category) =>
+              {categories && categories.map((category) =>
                 <div key={category.name} className="panel menu-item">
                   <Link className=''
                     to={`/${category.path}`}
                     key={category.name}>{capitalize(category.name)}</Link>
                 </div>)
-                : <h2 className="title">There was a problem retrieving categories. Please try again later.</h2>}
+               }
             </div>
           </div>
           {(posts.isLoading || comments.isLoading) && <Loading delay={200} type='spin' color='#222' className='loading' />}
@@ -183,12 +185,12 @@ class App extends Component {
                     }
                   />}
                 <Route path="*" render={() =>
-                  <div className="title"><h3>Sorry, Page Not Found!</h3>
+                  <div className="title"><h3>Sorry, Page Not Found! Please click <Link to='/'>here to go to homepage</Link></h3>
                     <br />{this.props.error}</div>} />
               </Switch>
             </div>}
           <pre />
-          <footer style={{ textAlign: 'center' }}>All rights reserved</footer>
+          <footer >All rights reserved</footer>
         </div>
 
       </div>
@@ -210,13 +212,13 @@ function mapStateToProps({ posts, comments, category, categories, alert }) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    fetchCategories: (data) => dispatch(dispatchers.fetchCategories(data)),
-    fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),
-    setCategory: (data) => dispatch(dispatchers.setCategory(data)),
-    invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
-    sortPosts: (data) => dispatch(dispatchers.sortPosts(data)),
-    warningMessage: (data) => dispatch(dispatchers.warningMessage(data)),
-    clearMessage: (data) => dispatch(dispatchers.clearMessage(data)),
+    fetchCategories: (data) => dispatch(globalActions.fetchCategories(data)),
+    fetchPosts: (data) => dispatch(postActions.fetchPostsIfNeeded(data)),
+    setCategory: (data) => dispatch(globalActions.setCategory(data)),
+    invalidatePosts: (data) => dispatch(postActions.invalidatePosts(data)),
+    sortPosts: (data) => dispatch(postActions.sortPosts(data)),
+    warningMessage: (data) => dispatch(globalActions.warningMessage(data)),
+    clearMessage: (data) => dispatch(globalActions.clearMessage(data)),
   }
 }
 

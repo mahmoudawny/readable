@@ -8,6 +8,10 @@ body {
 
 }
 
+footer{
+  text-align: center;
+}
+
 .loading {
   align-self: center;
   margin: 0 auto;

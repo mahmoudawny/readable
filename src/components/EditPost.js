@@ -4,6 +4,7 @@ import serializeForm from 'form-serialize'
 import FaArrowCircleORight from 'react-icons/lib/fa/arrow-circle-right'
 import { connect } from 'react-redux'
 import * as dispatchers from '../actions'
+import * as postActions from '../actions/PostActions'
 import { capitalize } from '../utils/Helpers'
 
 class EditPost extends Component {
@@ -72,11 +73,11 @@ function mapStateToProps({ post, category, categories, alert, submitting }) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getPostAndComments: (data) => dispatch(dispatchers.getPostAndComments(data)),
-        getPostComments: (data) => dispatch(dispatchers.getPostComments(data)),
-        editPost: (data) => dispatch(dispatchers.editPost(data)),
+        getPostAndComments: (data) => dispatch(postActions.getPostAndComments(data)),
+        getPostComments: (data) => dispatch(postActions.getPostComments(data)),
+        editPost: (data) => dispatch(postActions.editPost(data)),
         setSubmitting: (data) => dispatch(dispatchers.setSubmitting(data)),
-        invalidatePosts: (data) => dispatch(dispatchers.invalidatePosts(data)),
+        invalidatePosts: (data) => dispatch(postActions.invalidatePosts(data)),
         setNotSubmitting: (data) => dispatch(dispatchers.setNotSubmitting(data))
     }
 }

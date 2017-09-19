@@ -5,7 +5,9 @@ import Post from './Post'
 import FaSortAsc from 'react-icons/lib/fa/sort-asc'
 import FaSortDesc from 'react-icons/lib/fa/sort-desc'
 import { connect } from 'react-redux'
-import * as dispatchers from '../actions'
+import * as dispatchers from '../actions/types'
+import * as postActions from '../actions/PostActions'
+
 
 
 class Category extends Component {
@@ -57,8 +59,8 @@ function mapStateToProps({ posts, comments, category }) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        fetchPosts: (data) => dispatch(dispatchers.fetchPostsIfNeeded(data)),
-        sortPosts: (data) => dispatch(dispatchers.sortPosts(data)),
+        fetchPosts: (data) => dispatch(postActions.fetchPostsIfNeeded(data)),
+        sortPosts: (data) => dispatch(postActions.sortPosts(data)),
     }
 }
 

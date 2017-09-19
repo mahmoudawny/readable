@@ -1,7 +1,8 @@
 /*Post component displays a post's fields to be displayed in a list of posts*/
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import * as dispatchers from '../actions'
+import * as dispatchers from '../actions/types'
+import * as postActions from '../actions/PostActions'
 import { Link } from 'react-router-dom'
 import FaEdit from 'react-icons/lib/fa/edit'
 import FaMinusSquare from 'react-icons/lib/fa/minus-square'
@@ -82,9 +83,9 @@ function mapStateToProps({ comments, category }) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        deletePost: (data) => dispatch(dispatchers.deletePost(data)),
-        editPost: (data) => dispatch(dispatchers.editPost(data)),
-        ratePost: (data) => dispatch(dispatchers.ratePost(data)),
+        deletePost: (data) => dispatch(postActions.deletePost(data)),
+        editPost: (data) => dispatch(postActions.editPost(data)),
+        ratePost: (data) => dispatch(postActions.ratePost(data)),
     }
 }
 

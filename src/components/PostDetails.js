@@ -1,7 +1,10 @@
 /*PostDetails component displays a single post's details and comments, and allows commenting and rating*/
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import * as dispatchers from '../actions'
+import * as dispatchers from '../actions/types'
+import * as globalActions from '../actions'
+import * as postActions from '../actions/PostActions'
+import * as commentActions from '../actions/CommentActions'
 import Comment from './Comment'
 import serializeForm from 'form-serialize'
 import FaArrowCircleORight from 'react-icons/lib/fa/arrow-circle-right'
@@ -190,19 +193,19 @@ function mapStateToProps({ post, comments, comment, alert }) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        getPostAndComments: (data) => dispatch(dispatchers.getPostAndComments(data)),
-        getPost: (data) => dispatch(dispatchers.getPost(data)),
-        getPostComments: (data) => dispatch(dispatchers.getPostComments(data)),
-        sortComments: (data) => dispatch(dispatchers.sortComments(data)),
-        deletePost: (data) => dispatch(dispatchers.deletePost(data)),
-        editPost: (data) => dispatch(dispatchers.editPost(data)),
-        ratePost: (data) => dispatch(dispatchers.ratePost(data)),
-        doComment: (data) => dispatch(dispatchers.doComment(data)),
-        editComment: (data) => dispatch(dispatchers.editComment(data)),
-        cancelEditComment: (data) => dispatch(dispatchers.cancelEditComment(data)),
-        setSubmitting: (data) => dispatch(dispatchers.setSubmitting(data)),
-        invalidateComments: (data) => dispatch(dispatchers.invalidateComments(data)),
-        setNotSubmitting: (data) => dispatch(dispatchers.setNotSubmitting(data))
+        getPostAndComments: (data) => dispatch(postActions.getPostAndComments(data)),
+        getPost: (data) => dispatch(postActions.getPost(data)),
+        getPostComments: (data) => dispatch(postActions.getPostComments(data)),
+        sortComments: (data) => dispatch(commentActions.sortComments(data)),
+        deletePost: (data) => dispatch(postActions.deletePost(data)),
+        editPost: (data) => dispatch(postActions.editPost(data)),
+        ratePost: (data) => dispatch(postActions.ratePost(data)),
+        doComment: (data) => dispatch(commentActions.doComment(data)),
+        editComment: (data) => dispatch(commentActions.editComment(data)),
+        cancelEditComment: (data) => dispatch(commentActions.cancelEditComment(data)),
+        setSubmitting: (data) => dispatch(globalActions.setSubmitting(data)),
+        invalidateComments: (data) => dispatch(commentActions.invalidateComments(data)),
+        setNotSubmitting: (data) => dispatch(globalActions.setNotSubmitting(data))
     }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostDetails))

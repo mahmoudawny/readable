@@ -1,7 +1,8 @@
 /*Comment component displays a comment's fields to be displayed in a list*/
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import * as dispatchers from '../actions'
+import * as dispatchers from '../actions/types'
+import * as commentActions from '../actions/CommentActions'
 import FaEdit from 'react-icons/lib/fa/edit'
 import FaMinusSquare from 'react-icons/lib/fa/minus-square'
 import FaThumbsODown from 'react-icons/lib/fa/thumbs-o-down'
@@ -62,10 +63,10 @@ function mapStateToProps({ post, comments }) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    getComment: (data) => dispatch(dispatchers.getComment(data)),
-    deleteComment: (data) => dispatch(dispatchers.deleteComment(data)),
-    editComment: (data) => dispatch(dispatchers.editComment(data)),
-    rateComment: (data) => dispatch(dispatchers.rateComment(data)),
+    getComment: (data) => dispatch(commentActions.getComment(data)),
+    deleteComment: (data) => dispatch(commentActions.deleteComment(data)),
+    editComment: (data) => dispatch(commentActions.editComment(data)),
+    rateComment: (data) => dispatch(commentActions.rateComment(data)),
   }
 }
 
